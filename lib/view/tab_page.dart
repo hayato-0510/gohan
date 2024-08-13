@@ -14,6 +14,7 @@ class _BottomTabPageState extends State<BottomTabPage> {
   int _currentIndex = 0;
 
   final List<Widget> _pageWidgets = [
+    const TabBarPage(),
     const HomePage(),
     const SearchPage(),
     const ProfilePage(),
@@ -52,5 +53,32 @@ class _BottomTabPageState extends State<BottomTabPage> {
     setState(() {
       _currentIndex = index;
     });
+  }
+}
+
+class TabBarPage extends StatelessWidget {
+  const TabBarPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          bottom: const TabBar(
+            tabs: <Widget>[
+              Tab(text: 'おすすめ'),
+              Tab(text: '保存リスト'),
+            ],
+          ),
+        ),
+        body: const TabBarView(
+          children: <Widget>[
+            SizedBox.shrink(),
+            SizedBox.shrink(),
+          ],
+        ),
+      ),
+    );
   }
 }
