@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:gohan/components/sample_list/sample_list.dart'; // 正しいパスに変更
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,7 +12,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Scrollbar(
@@ -21,13 +23,42 @@ class _HomePageState extends State<HomePage> {
                   padding: EdgeInsets.symmetric(horizontal: 25.0),
                   child: Column(
                     children: [
-                      Text("Hello World",
-                      style:TextStyle(
-                        color: Colors.black,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      )),
-                    ],
+                      CardList(
+                        onTap: () async {
+                          // ここに非同期処理を記述します
+                          print("Card tapped!");
+                        },
+                      ),
+                      CardList(
+                        onTap: () async {
+                          // ここに非同期処理を記述します
+                          print("Card tapped!");
+                        },
+                      ),
+                      CardList(
+                        onTap: () async {
+                          // ここに非同期処理を記述します
+                          print("Card tapped!");
+                        },
+                      ),
+                      CardList(
+                        onTap: () async {
+                          // ここに非同期処理を記述します
+                          print("Card tapped!");
+                        },
+                      ),
+                      CardList(
+                        onTap: () async {
+                          // ここに非同期処理を記述します
+                          print("Card tapped!");
+                        },
+                      ),
+                      CardList(
+                        onTap: () async {
+                          // ここに非同期処理を記述します
+                          print("Card tapped!");
+                        },
+                      ),],
                   ),
                 ),
               ],
