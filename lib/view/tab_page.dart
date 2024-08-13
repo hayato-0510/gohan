@@ -66,6 +66,8 @@ class TabBarPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           bottom: const TabBar(
+            indicatorColor: Colors.green,
+            labelColor: Colors.green,
             tabs: <Widget>[
               Tab(text: 'おすすめ'),
               Tab(text: '保存リスト'),
