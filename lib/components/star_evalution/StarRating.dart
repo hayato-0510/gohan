@@ -1,3 +1,14 @@
+// NumericStarRating の使用例
+
+// NumericStarRating(
+//   rating: "評価（必須、double型）",
+//   maxRating: "最大評価数（オプション、デフォルト5）",
+//   starSize: "星のサイズ（オプション、デフォルト24）",デフォルトは要調整
+//   filledColor: "塗りつぶされた星の色（オプション、デフォルトColors.yellow）",
+//   unfilledColor: "塗りつぶされていない星の色（オプション、デフォルトColors.grey）",
+//   position: "表示位置（必須、Alignment型）",
+// ),
+
 import 'package:flutter/material.dart';
 
 class StarRating extends StatelessWidget {
@@ -13,7 +24,7 @@ class StarRating extends StatelessWidget {
     required this.rating,
     this.maxRating = 5,
     this.starSize = 24,
-    this.filledColor = Colors.amber,
+    this.filledColor = Colors.yellow,
     this.unfilledColor = Colors.grey,
     required this.position,
   }) : super(key: key);
