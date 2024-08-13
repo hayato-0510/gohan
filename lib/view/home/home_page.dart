@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gohan/components/sample_list/sample_list.dart'; // 正しいパスに変更
 
 class HomePage extends StatefulWidget {

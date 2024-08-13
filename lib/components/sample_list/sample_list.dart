@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class CardList extends StatefulWidget {
   final Future<void> Function() onTap;
-  final IconData? icon;
   final String? mainText;
   final String? subText;
 
   const CardList({
       super.key,
       required this.onTap,
-      this.icon,
       this.mainText,
       this.subText,
     });
@@ -28,7 +25,6 @@ class _CardListState extends State<CardList> {
       decoration: BoxDecoration(
         color: const Color.fromARGB(255, 234, 232, 232),
         borderRadius: BorderRadius.circular(10.0),
-        // 影を消すために、`boxShadow` プロパティを削除
       ),
       margin: const EdgeInsets.symmetric(
         vertical: 10.0,
@@ -45,11 +41,6 @@ class _CardListState extends State<CardList> {
               height: 10.0,
             ),
             ListTile(
-              leading: Icon(
-                widget.icon,
-                size: 35,
-                color: Colors.black54,
-              ),
               title: widget.mainText != null
               ? Text(
                 widget.mainText!,
