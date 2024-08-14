@@ -7,33 +7,44 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Scrollbar(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Column(
-                    children: [
-                      Text("Hello World",
-                      style:TextStyle(
-                        color: Colors.black,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      )),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+      appBar: AppBar(
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: Colors.green,
+          labelColor: Colors.green,
+          unselectedLabelColor: Colors.black,
+          tabs: const <Widget>[
+            Tab(text: 'おすすめ'),
+            Tab(text: '保存リスト'),
+          ],
         ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: const <Widget>[
+          SizedBox.shrink(),
+          SizedBox.shrink(),
+        ],
       ),
     );
   }
