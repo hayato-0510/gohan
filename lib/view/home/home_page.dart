@@ -16,7 +16,9 @@ class HomePage extends StatelessWidget {
       length: _tab.length,
       child: Scaffold(
         appBar: AppBar(
-          bottom: TabBar(
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(0),
+            child: TabBar(
             splashFactory: NoSplash.splashFactory,
             overlayColor: WidgetStateProperty.resolveWith<Color?>(
               (Set<WidgetState> states) {
@@ -32,6 +34,8 @@ class HomePage extends StatelessWidget {
             labelColor: Colors.green,
             unselectedLabelColor: Colors.black,
           ),
+          ),
+          
         ),
         body: const TabBarView(
           children: <Widget>[
