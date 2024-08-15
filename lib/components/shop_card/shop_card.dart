@@ -33,7 +33,6 @@ class ShopCard extends StatelessWidget {
           const SizedBox(height: 16),
           StarRating(
             rating: rating,
-            position: Alignment.centerLeft,
             starSize: 24,
             filledColor: Colors.yellow,
             unfilledColor: Colors.grey,
