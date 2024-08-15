@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gohan/components/star_evalution/StarRating.dart';
 
+
 class ShopCard extends StatelessWidget {
   final String title;
   final double rating;
@@ -21,7 +22,7 @@ class ShopCard extends StatelessWidget {
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(width: 2.0,color: Colors.black)),
+          border: Border.all(width: 2.0, color: Colors.black)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
