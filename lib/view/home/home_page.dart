@@ -1,50 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:gohan/view/home/recomendation_list/recomendation.dart';
+import 'package:gohan/view/home/saved_list/saved_list.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class HomePage extends StatelessWidget {
+  HomePage({super.key});
 
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+  final _tab = <Tab>[
+    const Tab(text: 'おすすめ'),
+    const Tab(text: '保存リスト'),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: Colors.green,
-          labelColor: Colors.green,
-          unselectedLabelColor: Colors.black,
-          tabs: const <Widget>[
-            Tab(text: 'おすすめ'),
-            Tab(text: '保存リスト'),
+    return DefaultTabController(
+      length: _tab.length,
+      child: Scaffold(
+        appBar: AppBar(
+          bottom: TabBar(
+            splashFactory: NoSplash.splashFactory,
+            overlayColor: WidgetStateProperty.resolveWith<Color?>(
+              (Set<WidgetState> states) {
+                return states.contains(WidgetState.focused) ? null : Colors.transparent;
+              },
+            ),
+            tabs: _tab,
+            indicator: const UnderlineTabIndicator(
+              borderSide: BorderSide(width: 2.5, color: Colors.green),
+              insets: EdgeInsets.symmetric(horizontal: -30),
+
+            ),
+            labelColor: Colors.green,
+            unselectedLabelColor: Colors.black,
+          ),
+        ),
+        body: TabBarView(
+          children: <Widget>[
+            RecomendationListView(),
+            SavedListView(),
           ],
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: const <Widget>[
-          SizedBox.shrink(),
-          SizedBox.shrink(),
-        ],
       ),
     );
   }

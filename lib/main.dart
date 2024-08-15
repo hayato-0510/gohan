@@ -12,7 +12,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: 'NotoSansJP'),
+      theme: ThemeData(
+        fontFamily: 'NotoSansJP',
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        appBarTheme: const AppBarTheme(
+          color: Colors.white,
+        ) 
+      ),
       home: const BottomTabPage(),
     );
   }
