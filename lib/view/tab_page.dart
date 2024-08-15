@@ -14,7 +14,7 @@ class _BottomTabPageState extends State<BottomTabPage> {
   int _currentIndex = 0;
 
   final List<Widget> _pageWidgets = [
-    const HomePage(),
+    HomePage(),
     const SearchPage(),
     const ProfilePage(),
   ];
@@ -45,6 +45,7 @@ class _BottomTabPageState extends State<BottomTabPage> {
         type: BottomNavigationBarType.fixed,
         showSelectedLabels: true,
         showUnselectedLabels: true,
+        backgroundColor: Colors.white,
       ),
     );
   }
