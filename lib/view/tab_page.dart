@@ -24,22 +24,28 @@ class _BottomTabPageState extends State<BottomTabPage> {
     return Scaffold(
       body: _pageWidgets[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home, size: 30.0),
+            icon: _currentIndex == 0 
+                ? const Icon(Icons.home, size: 30.0, color: Colors.black) 
+                : const Icon(Icons.home_outlined, size: 30.0, color: Colors.black),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search, size: 30.0),
+            icon: _currentIndex == 1 
+                ? const Icon(Icons.search_rounded, size: 30.0, color: Colors.black) 
+                : const Icon(Icons.search_outlined, size: 30.0, color: Colors.black),
             label: 'Search',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person, size: 30.0),
+            icon: _currentIndex == 2 
+                ? const Icon(Icons.person, size: 30.0, color: Colors.black) 
+                : const Icon(Icons.person_outline, size: 30.0, color: Colors.black),
             label: 'Profile',
           ),
         ],
         currentIndex: _currentIndex,
-        selectedItemColor: Colors.green,
+        selectedItemColor: Colors.black,
         unselectedItemColor: Colors.black,
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
