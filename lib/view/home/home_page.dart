@@ -1,38 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:gohan/view/home/recomendation_list/recomendation.dart';
+import 'package:gohan/view/home/saved_list/saved_list.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class HomePage extends StatelessWidget {
+  HomePage({super.key});
 
-  @override
-  _HomePageState createState() => _HomePageState();
-}
+  final _tab = <Tab>[
+    const Tab(text: 'おすすめ'),
+    const Tab(text: '保存リスト'),
+  ];
 
-class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Scrollbar(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Column(
-                    children: [
-                      Text("Hello World",
-                      style:TextStyle(
-                        color: Colors.black,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      )),
-                    ],
-                  ),
-                ),
-              ],
+    return DefaultTabController(
+      length: _tab.length,
+      child: Scaffold(
+        appBar: AppBar(
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(0),
+            child: TabBar(
+            splashFactory: NoSplash.splashFactory,
+            overlayColor: WidgetStateProperty.resolveWith<Color?>(
+              (Set<WidgetState> states) {
+                return states.contains(WidgetState.focused) ? null : Colors.transparent;
+              },
             ),
+            tabs: _tab,
+            indicator: const UnderlineTabIndicator(
+              borderSide: BorderSide(width: 2.5, color: Colors.green),
+              insets: EdgeInsets.symmetric(horizontal: -30),
+
+            ),
+            labelColor: Colors.green,
+            unselectedLabelColor: Colors.black,
           ),
+          ),
+          
+        ),
+        body: const TabBarView(
+          children: <Widget>[
+            RecomendationListView(),
+            SavedListView(),
+          ],
         ),
       ),
     );
