@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gohan/view/home/home_page.dart';
+import 'package:gohan/view/search/search_page.dart';
 import 'package:gohan/view/tab_page.dart';
 
 void main() {
@@ -13,14 +15,17 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        fontFamily: 'NotoSansJP',
-        splashColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        appBarTheme: const AppBarTheme(
-          color: Colors.white,
-        ) 
-      ),
+          fontFamily: 'NotoSansJP',
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          appBarTheme: const AppBarTheme(
+            color: Colors.white,
+          )),
       home: const BottomTabPage(),
+      routes: {
+        '/home': (context) => HomePage(),
+        '/search': (context) => SearchPage(),
+      },
     );
   }
 }
