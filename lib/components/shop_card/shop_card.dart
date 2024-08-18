@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:gohan/components/star_evalution/StarRating.dart';
-
+// ignore: unused_import
+import 'package:gohan/components/data_storage/shop_card_storage.dart';
 
 class ShopCard extends StatelessWidget {
+  final int id;
   final String title;
   final double rating;
 
   const ShopCard({
     super.key,
+    required this.id,
     required this.title,
     required this.rating,
   });
@@ -40,5 +43,14 @@ class ShopCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> save() async {
+    await ShopCardStorage.saveShopCard(id as String, title, rating);
+  }
+
+  // データを読み込むメソッド
+  static Future<Map<String, dynamic>> load(String id) async {
+    return await ShopCardStorage.loadShopCard(id);
   }
 }

@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:gohan/components/data_storage/shop_card_storage.dart';
 import 'package:gohan/components/shop_card/shop_card.dart';
 import 'package:gohan/components/check_box/check_box.dart';
 
-class SearchPage extends StatelessWidget {
+class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
+
+  @override
+  _SearchPageState createState() => _SearchPageState();
+}
+
+class _SearchPageState extends State<SearchPage> {
+  Map<String, dynamic>? _shopCard;
 
   @override
   Widget build(BuildContext context) {
@@ -18,17 +26,52 @@ class SearchPage extends StatelessWidget {
           ),
         ),
       ),
-      body: const SafeArea(
+      body: SafeArea(
         child: Column(
           children: [
             Center(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-                child: ShopCard(
-                  title: "Shop",
-                  rating: 4.5,
-                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                child: _shopCard != null
+                    ? ShopCard(
+                        id: 1, // IDを指定
+                        title: _shopCard!['title'],
+                        rating: _shopCard!['rating'],
+                      )
+                    : const Text('No ShopCard loaded'),
               ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                // IDを保存する
+                await ShopCardStorage.saveShopCard('1', 'Shop', 4.5);
+                print('ShopCard saved');
+              },
+              child: Text('Save ShopCard'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                // 保存したIDを読み込む
+                Map<String, dynamic> shopCard =
+                    await ShopCardStorage.loadShopCard('1');
+                setState(() {
+                  _shopCard = shopCard;
+                });
+                print('Loaded ShopCard: $shopCard');
+              },
+              child: Text('Load ShopCard'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                // 保存したIDを削除する
+                await ShopCardStorage.deleteShopCard('1');
+                setState(() {
+                  _shopCard = null;
+                });
+                print('ShopCard deleted');
+              },
+              child: Text('Delete ShopCard'),
             ),
           ],
         ),
@@ -63,7 +106,7 @@ class SearchPage extends StatelessWidget {
         ),
         Container(
           height: 0.5,
-          color: Colors.grey.shade300, 
+          color: Colors.grey.shade300,
         ),
       ],
     );
