@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gohan/view_models/shop_card_viewmodel.dart';
+import 'package:gohan/view_model/shop_card_viewmodel/shop_card_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:gohan/components/shop_card/shop_card.dart';
@@ -16,66 +16,20 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   String? selectedFood;
   String? selectedDistance;
+  late ShopCardViewModel shopCardViewModel; // Declare as late
+
+  @override
+  void initState() {
+    super.initState();
+    // WidgetsBinding to defer the context usage after the build phase
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      shopCardViewModel =
+          Provider.of<ShopCardViewModel>(context, listen: false);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-// <<<<<<< id-Micky
-//     return ChangeNotifierProvider(
-//       create: (_) => ShopCardViewModel(),
-//       child: Scaffold(
-//         backgroundColor: Colors.white,
-//         appBar: AppBar(
-//           bottom: PreferredSize(
-//             preferredSize: const Size.fromHeight(0),
-//             child: Padding(
-//               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-//               child: _setCheckBar(),
-//             ),
-//           ),
-//         ),
-//         body: SafeArea(
-//           child: Consumer<ShopCardViewModel>(
-//             builder: (context, viewModel, child) {
-//               return Column(
-//                 children: [
-//                   Center(
-//                     child: Padding(
-//                       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-//                       child: viewModel.shopCard != null
-//                           ? Text('ShopCard: ${viewModel.shopCard!['title']} - Rating: ${viewModel.shopCard!['rating']} - Liked: ${viewModel.shopCard!['is_like']}')
-//                           : const Text('No ShopCard loaded'),
-//                     ),
-//                   ),
-//                   ElevatedButton(
-//                     onPressed: () async {
-//                       await viewModel.saveShopCard('1', 'Shop', 4.5, true);
-//                     },
-//                     child: const Text('Save ShopCard (is_like: true)'),
-//                   ),
-//                   ElevatedButton(
-//                     onPressed: () async {
-//                       await viewModel.saveShopCard('1', 'Shop', 4.5, false);
-//                     },
-//                     child: const Text('Save ShopCard (is_like: false)'),
-//                   ),
-//                   ElevatedButton(
-//                     onPressed: () async {
-//                       await viewModel.loadShopCard('1');
-//                       await viewModel.loadShopCard('2');
-//                     },
-//                     child: const Text('Load ShopCard'),
-//                   ),
-//                   ElevatedButton(
-//                     onPressed: () async {
-//                       await viewModel.deleteShopCard('1');
-//                     },
-//                     child: const Text('Delete ShopCard'),
-//                   ),
-//                 ],
-//               );
-//             },
-//           ),
-// =======
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -99,22 +53,24 @@ class _SearchPageState extends State<SearchPage> {
                     cardCount: shopCards.length > 20 ? 20 : shopCards.length,
                     cardBuilder: (BuildContext context, int index) {
                       return ShopCard(
+                        id: index,
                         title: shopCards[index].title,
                         rating: shopCards[index].rating,
                       );
                     },
                     maxAngle: 15,
-                    onSwipeEnd: (int previousIndex, int targetIndex, SwiperActivity activity) {
+                    onSwipeEnd: (int previousIndex, int targetIndex,
+                        SwiperActivity activity) async {
                       if (activity is Swipe) {
-                        if (activity.direction == AxisDirection.left) { // 左にスワイプ
-                          print('Swiped left: $previousIndex');
-                        } else if (activity.direction == AxisDirection.right) { // 右にスワイプ
-                          print('Swiped right: $previousIndex');
-                        } else if (activity.direction == AxisDirection.up) { // 上にスワイプ
-                          print('Swiped up: $previousIndex');
-                        } else if (activity.direction == AxisDirection.down) { // 下にスワイプ
-                          print('Swiped down: $previousIndex');
-                        }
+                        final action = activity.direction == AxisDirection.right
+                            ? true
+                            : false;
+                        await shopCardViewModel.saveShopCard(
+                          shopCards[previousIndex].id.toString(),
+                          shopCards[previousIndex].title,
+                          shopCards[previousIndex].rating,
+                          action,
+                        );
                       }
                     },
                     onEnd: () {
@@ -123,7 +79,6 @@ class _SearchPageState extends State<SearchPage> {
                   )),
             ),
           ],
-// >>>>>>> dev-kai
         ),
       ),
     );
@@ -196,25 +151,20 @@ class _SearchPageState extends State<SearchPage> {
 
 // ダミーデータ 実験用
 final List<ShopCard> shopCards = [
-  ShopCard(title: 'Shop 1', rating: 4.2),
-  ShopCard(title: 'Shop 2', rating: 4.05),
-  ShopCard(title: 'Shop 3', rating: 5.0),
-  ShopCard(title: 'Shop 1', rating: 4.5),
-  ShopCard(title: 'Shop 2', rating: 3.5),
-  ShopCard(title: 'Shop 3', rating: 5.0),
-  ShopCard(title: 'Shop 1', rating: 4.5),
-  ShopCard(title: 'Shop 2', rating: 3.5),
-  ShopCard(title: 'Shop 3', rating: 5.0),
-  ShopCard(title: 'Shop 1', rating: 4.5),
-  ShopCard(title: 'Shop 2', rating: 3.5),
-  ShopCard(title: 'Shop 3', rating: 5.0),
-  ShopCard(title: 'Shop 1', rating: 4.5),
-  ShopCard(title: 'Shop 2', rating: 3.5),
-  ShopCard(title: 'Shop 3', rating: 5.0),
-  ShopCard(title: 'Shop 1', rating: 4.5),
-  ShopCard(title: 'Shop 2', rating: 3.5),
-  ShopCard(title: 'Shop 3', rating: 5.0),
-  ShopCard(title: 'Shop 1', rating: 4.5),
-  ShopCard(title: 'Shop 2', rating: 3.5),
-  ShopCard(title: 'Shop 3', rating: 5.0),
+  ShopCard(id: 1, title: 'Shop 1', rating: 4.2),
+  ShopCard(id: 2, title: 'Shop 2', rating: 4.05),
+  ShopCard(id: 3, title: 'Shop 3', rating: 5.0),
+  ShopCard(id: 4, title: 'Shop 1', rating: 4.5),
+  ShopCard(id: 5, title: 'Shop 2', rating: 3.5),
+  ShopCard(id: 6, title: 'Shop 3', rating: 5.0),
+  ShopCard(id: 7, title: 'Shop 1', rating: 4.5),
+  ShopCard(id: 8, title: 'Shop 2', rating: 3.5),
+  ShopCard(id: 9, title: 'Shop 3', rating: 5.0),
+  ShopCard(id: 10, title: 'Shop 1', rating: 4.5),
+  ShopCard(id: 11, title: 'Shop 2', rating: 3.5),
+  ShopCard(id: 12, title: 'Shop 3', rating: 5.0),
+  ShopCard(id: 13, title: 'Shop 1', rating: 4.5),
+  ShopCard(id: 14, title: 'Shop 2', rating: 3.5),
+  ShopCard(id: 15, title: 'Shop 3', rating: 5.0),
+  ShopCard(id: 16, title: 'Shop 1', rating: 4.5),
 ];

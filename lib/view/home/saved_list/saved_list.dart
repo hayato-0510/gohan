@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:gohan/view_models/shop_card_viewmodel.dart';
+import 'package:gohan/view_model/shop_card_viewmodel/shop_card_viewmodel.dart';
 import 'package:gohan/components/shop_card/shop_card.dart';
 import 'package:gohan/components/sample_list/sample_list.dart';
 
