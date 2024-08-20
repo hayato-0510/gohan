@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:gohan/components/shop_card/shop_card.dart';
 import 'package:gohan/components/check_box/check_box.dart';
 import 'package:gohan/components/dropdown_menu/dropdown_menu.dart';
@@ -18,31 +19,74 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+// <<<<<<< swiper-sansan
+      appBar: AppBar(
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(0),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: _setCheckBar(),
+          ),
+        ),
+      ),
       body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 10.0,
-                right: 10.0,
-                top: 10.0,
-                bottom: 1.0,
-              ),
-              child: _setcUserCheckBar(),
-            ),
-            const Divider(),
-            const Expanded(
-              child: Center(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-                  child: ShopCard(
-                    title: "Shop",
-                    rating: 4.5,
-                  ),
-                ),
-              ),
-            ),
-          ],
+        child: AppinioSwiper(
+          cardCount: shopCards.length > 20 ? 20 : shopCards.length,
+          cardBuilder: (BuildContext context, int index) {
+            return ShopCard(
+              title: shopCards[index].title,
+              rating: shopCards[index].rating,
+            );
+          },
+          maxAngle: 15,
+          
+
+          onSwipeEnd: (int previousIndex, int targetIndex, SwiperActivity activity) {
+            switch (activity) {
+              case Swipe():
+                print('Swiped card index: $previousIndex to $targetIndex');
+                break;
+              case Unswipe():
+                print('Unswiped card index: $previousIndex');
+                break;
+              case CancelSwipe():
+                print('Swipe cancelled');
+                break;
+              case DrivenActivity():
+                print('Driven activity');
+                break;
+            }
+          },
+          onEnd: () {
+            print('No more cards');
+          },
+// =======
+//       body: SafeArea(
+//         child: Column(
+//           children: [
+//             Padding(
+//               padding: const EdgeInsets.only(
+//                 left: 10.0,
+//                 right: 10.0,
+//                 top: 10.0,
+//                 bottom: 1.0,
+//               ),
+//               child: _setcUserCheckBar(),
+//             ),
+//             const Divider(),
+//             const Expanded(
+//               child: Center(
+//                 child: Padding(
+//                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+//                   child: ShopCard(
+//                     title: "Shop",
+//                     rating: 4.5,
+//                   ),
+//                 ),
+//               ),
+//             ),
+//           ],
+// >>>>>>> dev-kai
         ),
       ),
     );
@@ -112,3 +156,28 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 }
+
+// ダミーデータ 実験用
+final List<ShopCard> shopCards = [
+  ShopCard(title: 'Shop 1', rating: 4.5),
+  ShopCard(title: 'Shop 2', rating: 3.5),
+  ShopCard(title: 'Shop 3', rating: 5.0),
+  ShopCard(title: 'Shop 1', rating: 4.5),
+  ShopCard(title: 'Shop 2', rating: 3.5),
+  ShopCard(title: 'Shop 3', rating: 5.0),
+  ShopCard(title: 'Shop 1', rating: 4.5),
+  ShopCard(title: 'Shop 2', rating: 3.5),
+  ShopCard(title: 'Shop 3', rating: 5.0),
+  ShopCard(title: 'Shop 1', rating: 4.5),
+  ShopCard(title: 'Shop 2', rating: 3.5),
+  ShopCard(title: 'Shop 3', rating: 5.0),
+  ShopCard(title: 'Shop 1', rating: 4.5),
+  ShopCard(title: 'Shop 2', rating: 3.5),
+  ShopCard(title: 'Shop 3', rating: 5.0),
+  ShopCard(title: 'Shop 1', rating: 4.5),
+  ShopCard(title: 'Shop 2', rating: 3.5),
+  ShopCard(title: 'Shop 3', rating: 5.0),
+  ShopCard(title: 'Shop 1', rating: 4.5),
+  ShopCard(title: 'Shop 2', rating: 3.5),
+  ShopCard(title: 'Shop 3', rating: 5.0),
+];
