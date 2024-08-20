@@ -89,7 +89,7 @@ class SearchPage extends StatelessWidget {
   }
 }
 
-// ダミーデータ
+// ダミーデータ 実験用
 final List<ShopCard> shopCards = [
   ShopCard(title: 'Shop 1', rating: 4.5),
   ShopCard(title: 'Shop 2', rating: 3.5),
@@ -112,15 +112,4 @@ final List<ShopCard> shopCards = [
   ShopCard(title: 'Shop 1', rating: 4.5),
   ShopCard(title: 'Shop 2', rating: 3.5),
   ShopCard(title: 'Shop 3', rating: 5.0),
-
-
-
-
-
-
-
-
-
-
-
 ];
