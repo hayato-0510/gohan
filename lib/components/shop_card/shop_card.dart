@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:gohan/components/StarRating/StarRating.dart';
-
+import 'package:gohan/components/star_rating/star_rating.dart';
 
 class ShopCard extends StatelessWidget {
+  final int id;
   final String title;
   final double rating;
 
   const ShopCard({
     super.key,
+    required this.id,
     required this.title,
     required this.rating,
   });
+  
 
   @override
   Widget build(BuildContext context) {
