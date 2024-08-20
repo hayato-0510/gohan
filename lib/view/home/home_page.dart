@@ -19,28 +19,28 @@ class HomePage extends StatelessWidget {
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(0),
             child: TabBar(
-            splashFactory: NoSplash.splashFactory,
-            overlayColor: WidgetStateProperty.resolveWith<Color?>(
-              (Set<WidgetState> states) {
-                return states.contains(WidgetState.focused) ? null : Colors.transparent;
-              },
+              splashFactory: NoSplash.splashFactory,
+              overlayColor: MaterialStateProperty.resolveWith<Color?>(
+                (Set<MaterialState> states) {
+                  return states.contains(MaterialState.focused)
+                      ? null
+                      : Colors.transparent;
+                },
+              ),
+              tabs: _tab,
+              indicator: const UnderlineTabIndicator(
+                borderSide: BorderSide(width: 2.5, color: Colors.green),
+                insets: EdgeInsets.symmetric(horizontal: -30),
+              ),
+              labelColor: Colors.green,
+              unselectedLabelColor: Colors.black,
             ),
-            tabs: _tab,
-            indicator: const UnderlineTabIndicator(
-              borderSide: BorderSide(width: 2.5, color: Colors.green),
-              insets: EdgeInsets.symmetric(horizontal: -30),
-
-            ),
-            labelColor: Colors.green,
-            unselectedLabelColor: Colors.black,
           ),
-          ),
-          
         ),
         body: const TabBarView(
           children: <Widget>[
             RecomendationListView(),
-            SavedListView(),
+            SavedListView(), // 修正済みのSavedListViewを表示
           ],
         ),
       ),
