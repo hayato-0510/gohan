@@ -26,8 +26,16 @@ class StarRating extends StatelessWidget {
     this.unfilledColor = Colors.grey,
   }) : super(key: key);
 
+  // 評価値を0.5刻みで丸める関数
+  double _roundToHalf(double value) {
+    if (value < 0.3) return 0.0;
+    if (value < 0.8) return 0.5;
+    return 1.0;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final roundedRating = _roundToHalf(rating);
     return Semantics(
       label: '$rating out of $maxRating stars',
       child: Row(
@@ -41,18 +49,24 @@ class StarRating extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: List.generate(maxRating, (index) {
-              return Stack(
-                children: [
-                  Icon(Icons.star, color: unfilledColor, size: starSize),
-                  ClipRect(
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      widthFactor: index < rating ? (rating - index).clamp(0.0, 1.0) : 0.0,
-                      child: Icon(Icons.star, color: filledColor, size: starSize),
+              if (index < roundedRating.floor()) {
+                return Icon(Icons.star, color: filledColor, size: starSize);
+              } else if (index < roundedRating.ceil() && roundedRating % 1 != 0) {
+                return Stack(
+                  children: [
+                    Icon(Icons.star, color: unfilledColor, size: starSize),
+                    ClipRect(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        widthFactor: 0.5,
+                        child: Icon(Icons.star, color: filledColor, size: starSize),
+                      ),
                     ),
-                  ),
-                ],
-              );
+                  ],
+                );
+              } else {
+                return Icon(Icons.star, color: unfilledColor, size: starSize);
+              }
             }),
           ),
         ],
