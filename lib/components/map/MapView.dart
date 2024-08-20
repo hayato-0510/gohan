@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:gohan/components/map/currentlocation.dart'; // 追加
+import 'package:gohan/view_model/map_info/currentlocation.dart'; // 追加
 
 class MapView extends StatefulWidget {
   final double height;
