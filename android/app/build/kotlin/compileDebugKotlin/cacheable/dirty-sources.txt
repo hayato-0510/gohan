@@ -1,0 +1,1 @@
+C:\Users\cadix\Documents\GohanApp\gohan\android\app\src\main\kotlin\com\example\gohan\MainActivity.kt
