@@ -28,9 +28,7 @@ class StarRating extends StatelessWidget {
 
   // 評価値を0.5刻みで丸める関数
   double _roundToHalf(double value) {
-    if (value < 0.3) return 0.0;
-    if (value < 0.8) return 0.5;
-    return 1.0;
+    return (value * 2).round() / 2;
   }
 
   @override
