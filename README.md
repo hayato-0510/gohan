@@ -39,7 +39,7 @@ Example: `feat ログイン機能の実装`
 
 ### 環境変数の追加
 - iosの場合 
-    - ios/Environment.swiftをxcodeで作成する
+    - ios/runner/Environment.swiftをxcodeで作成する
     ```swift
     import Foundation
 
