@@ -50,6 +50,8 @@ Example: `feat ログイン機能の実装`
 - androidの場合
     - android/secret.propertiesを作成する
   　```properties
-    googleMap.apiKey=各自のapikye  //"　"で囲まない
+    googleMap.apiKey=各自のapikye
     ```
+    ＊" "で囲まない
+
     
