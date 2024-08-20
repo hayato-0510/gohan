@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gohan/components/star_evalution/StarRating.dart';
+import 'package:gohan/components/StarRating/StarRating.dart';
 
 class ShopCard extends StatelessWidget {
   final int id;
