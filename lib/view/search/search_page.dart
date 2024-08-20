@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gohan/view_models/data_storage.dart';
+import 'package:gohan/view_models/shop_card_viewmodel.dart';
 import 'package:gohan/components/check_box/check_box.dart';
 import 'package:provider/provider.dart';
 
@@ -50,6 +50,7 @@ class SearchPage extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () async {
                       await viewModel.loadShopCard('1');
+                      await viewModel.loadShopCard('2');
                     },
                     child: const Text('Load ShopCard'),
                   ),

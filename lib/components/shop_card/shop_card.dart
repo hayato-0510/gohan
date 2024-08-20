@@ -3,7 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:gohan/components/star_evalution/StarRating.dart';
-import 'package:gohan/view_models/data_storage.dart';
+import 'package:gohan/view_models/shop_card_viewmodel.dart';
 
 class ShopCard extends StatelessWidget {
   final int id;
