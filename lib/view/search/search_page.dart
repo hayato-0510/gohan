@@ -21,7 +21,7 @@ class SearchPage extends StatelessWidget {
       ),
       body: SafeArea(
         child: AppinioSwiper(
-          cardCount: shopCards.length,
+          cardCount: shopCards.length > 20 ? 20 : shopCards.length,
           cardBuilder: (BuildContext context, int index) {
             return ShopCard(
               title: shopCards[index].title,
@@ -94,4 +94,33 @@ final List<ShopCard> shopCards = [
   ShopCard(title: 'Shop 1', rating: 4.5),
   ShopCard(title: 'Shop 2', rating: 3.5),
   ShopCard(title: 'Shop 3', rating: 5.0),
+  ShopCard(title: 'Shop 1', rating: 4.5),
+  ShopCard(title: 'Shop 2', rating: 3.5),
+  ShopCard(title: 'Shop 3', rating: 5.0),
+  ShopCard(title: 'Shop 1', rating: 4.5),
+  ShopCard(title: 'Shop 2', rating: 3.5),
+  ShopCard(title: 'Shop 3', rating: 5.0),
+  ShopCard(title: 'Shop 1', rating: 4.5),
+  ShopCard(title: 'Shop 2', rating: 3.5),
+  ShopCard(title: 'Shop 3', rating: 5.0),
+  ShopCard(title: 'Shop 1', rating: 4.5),
+  ShopCard(title: 'Shop 2', rating: 3.5),
+  ShopCard(title: 'Shop 3', rating: 5.0),
+  ShopCard(title: 'Shop 1', rating: 4.5),
+  ShopCard(title: 'Shop 2', rating: 3.5),
+  ShopCard(title: 'Shop 3', rating: 5.0),
+  ShopCard(title: 'Shop 1', rating: 4.5),
+  ShopCard(title: 'Shop 2', rating: 3.5),
+  ShopCard(title: 'Shop 3', rating: 5.0),
+
+
+
+
+
+
+
+
+
+
+
 ];
