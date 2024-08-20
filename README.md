@@ -4,15 +4,6 @@
 既存のアプリやgoogle mapでは、ユーザーがレストランを探すにはさがしにくいものになっている。そのため写真から探すようなインターフェースを目指す新たなグルメアプリを目指す
 
 ## Git 命名規則
-
-### ブランチルール
-
-- main
-- dev
-    - 自分の名前
-
-mainからdevブランチを派生、devブランチから自分の名前のブランチを派生させます。
-
 ### コミットルール
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0-beta.4/)　に従います
 
@@ -37,6 +28,22 @@ Example: `feat ログイン機能の実装`
 
 ### インストール
 - リポジトリをクローンしそのディレクトリに行くこと
-    ```sh
+    ```bash
     flutter pub get
+    ```
+- うまくいかないときは基本的に、クリーンすると、うまくいくときがある
+    ```bash
+    flutter clean
+    flutter pub get
+    ```
+
+### 環境変数の追加
+- iosの場合 
+    - ios/Environment.swiftをxcodeで作成する
+    ```swift
+    import Foundation
+
+    struct Env {
+    static let googleMapApiKey = "api key"
+    }
     ```
