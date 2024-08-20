@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:gohan/view/tab_page.dart';
+import 'package:gohan/view_models/shop_card_viewmodel.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,17 +12,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'NotoSansJP',
-        splashColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        appBarTheme: const AppBarTheme(
-          color: Colors.white,
-        ) 
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ShopCardViewModel()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: 'NotoSansJP',
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          appBarTheme: const AppBarTheme(
+            color: Colors.white,
+          ),
+        ),
+        home: const BottomTabPage(),
       ),
-      home: const BottomTabPage(),
     );
   }
 }
