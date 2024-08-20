@@ -28,27 +28,35 @@ class StarRating extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          rating.toStringAsFixed(1),
-          style: TextStyle(fontSize: starSize, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(width: 8),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: List.generate(maxRating, (index) {
-            if (index < rating.floor()) {
-              return Icon(Icons.star, color: filledColor, size: starSize);
-            } else if (index < rating.ceil() && rating % 1 != 0) {
-              return Icon(Icons.star_half, color: filledColor, size: starSize);
-            } else {
-              return Icon(Icons.star_border, color: unfilledColor, size: starSize);
-            }
-          }),
-        ),
-      ],
+    return Semantics(
+      label: '$rating out of $maxRating stars',
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            rating.toStringAsFixed(1),
+            style: TextStyle(fontSize: starSize, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(width: 8),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(maxRating, (index) {
+              return Stack(
+                children: [
+                  Icon(Icons.star, color: unfilledColor, size: starSize),
+                  ClipRect(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      widthFactor: index < rating ? (rating - index).clamp(0.0, 1.0) : 0.0,
+                      child: Icon(Icons.star, color: filledColor, size: starSize),
+                    ),
+                  ),
+                ],
+              );
+            }),
+          ),
+        ],
+      ),
     );
   }
 }
