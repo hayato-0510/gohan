@@ -47,3 +47,9 @@ Example: `feat ログイン機能の実装`
     static let googleMapApiKey = "api key"
     }
     ```
+- androidの場合
+    - android/secret.propertiesを作成する
+  　```properties
+    googleMap.apiKey=各自のapikye  //"　"で囲まない
+    ```
+    
