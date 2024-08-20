@@ -43,12 +43,6 @@ class HomePage extends StatelessWidget {
             SavedListView(), // 修正済みのSavedListViewを表示
           ],
         ),
-        floatingActionButton: ElevatedButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/search');
-          },
-          child: Text('Go to Search Page'),
-        ),
       ),
     );
   }

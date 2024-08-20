@@ -1,7 +1,9 @@
+// ignore_for_file: avoid_print, library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
-import 'package:gohan/components/data_storage/shop_card_storage.dart';
 import 'package:gohan/components/sample_list/sample_list.dart';
 import 'package:gohan/components/shop_card/shop_card.dart';
+import 'package:gohan/view_models/data_storage.dart';
 
 class SavedListView extends StatefulWidget {
   const SavedListView({super.key});
@@ -12,6 +14,8 @@ class SavedListView extends StatefulWidget {
 
 class _SavedListViewState extends State<SavedListView> {
   Map<String, dynamic>? _shopCard;
+  
+  Map<String, dynamic>? shopCard;
 
   @override
   void initState() {
@@ -21,9 +25,11 @@ class _SavedListViewState extends State<SavedListView> {
 
   Future<void> _loadShopCard() async {
     // 保存されたIDを取得してShopCardを読み込む
-    Map<String, dynamic> shopCard = await ShopCardStorage.loadShopCard('1');
+  ShopCardViewModel viewModel = ShopCardViewModel(); // インスタンスを作成
+  await viewModel.loadShopCard('1'); // インスタンスメソッドを呼び出す
+
     setState(() {
-      _shopCard = shopCard;
+      _shopCard = _shopCard;
     });
   }
 
@@ -45,7 +51,7 @@ class _SavedListViewState extends State<SavedListView> {
                       rating: _shopCard!['rating'],
                     )
                   else
-                    Text('No ShopCard loaded'),
+                    const Text('No ShopCard loaded'),
                   ...List.generate(10, (index) {
                     return CardList(
                       onTap: () async {

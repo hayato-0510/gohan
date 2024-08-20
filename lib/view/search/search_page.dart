@@ -1,79 +1,68 @@
 import 'package:flutter/material.dart';
-import 'package:gohan/components/data_storage/shop_card_storage.dart';
-import 'package:gohan/components/shop_card/shop_card.dart';
+import 'package:gohan/view_models/data_storage.dart';
 import 'package:gohan/components/check_box/check_box.dart';
+import 'package:provider/provider.dart';
 
-class SearchPage extends StatefulWidget {
+
+class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
 
   @override
-  _SearchPageState createState() => _SearchPageState();
-}
-
-class _SearchPageState extends State<SearchPage> {
-  Map<String, dynamic>? _shopCard;
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(0),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: _setCheckBar(),
+    return ChangeNotifierProvider(
+      create: (_) => ShopCardViewModel(),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(0),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: _setCheckBar(),
+            ),
           ),
         ),
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Center(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-                child: _shopCard != null
-                    ? ShopCard(
-                        id: 1, // IDを指定
-                        title: _shopCard!['title'],
-                        rating: _shopCard!['rating'],
-                      )
-                    : const Text('No ShopCard loaded'),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                // IDを保存する
-                await ShopCardStorage.saveShopCard('1', 'Shop', 4.5);
-                print('ShopCard saved');
-              },
-              child: Text('Save ShopCard'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                // 保存したIDを読み込む
-                Map<String, dynamic> shopCard =
-                    await ShopCardStorage.loadShopCard('1');
-                setState(() {
-                  _shopCard = shopCard;
-                });
-                print('Loaded ShopCard: $shopCard');
-              },
-              child: Text('Load ShopCard'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                // 保存したIDを削除する
-                await ShopCardStorage.deleteShopCard('1');
-                setState(() {
-                  _shopCard = null;
-                });
-                print('ShopCard deleted');
-              },
-              child: Text('Delete ShopCard'),
-            ),
-          ],
+        body: SafeArea(
+          child: Consumer<ShopCardViewModel>(
+            builder: (context, viewModel, child) {
+              return Column(
+                children: [
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                      child: viewModel.shopCard != null
+                          ? Text('ShopCard: ${viewModel.shopCard!['title']} - Rating: ${viewModel.shopCard!['rating']} - Liked: ${viewModel.shopCard!['is_like']}')
+                          : const Text('No ShopCard loaded'),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await viewModel.saveShopCard('1', 'Shop', 4.5, true);
+                    },
+                    child: const Text('Save ShopCard (is_like: true)'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await viewModel.saveShopCard('1', 'Shop', 4.5, false);
+                    },
+                    child: const Text('Save ShopCard (is_like: false)'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await viewModel.loadShopCard('1');
+                    },
+                    child: const Text('Load ShopCard'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await viewModel.deleteShopCard('1');
+                    },
+                    child: const Text('Delete ShopCard'),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );

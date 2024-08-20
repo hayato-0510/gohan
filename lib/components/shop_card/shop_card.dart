@@ -1,7 +1,9 @@
+
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:gohan/components/star_evalution/StarRating.dart';
-// ignore: unused_import
-import 'package:gohan/components/data_storage/shop_card_storage.dart';
+import 'package:gohan/view_models/data_storage.dart';
 
 class ShopCard extends StatelessWidget {
   final int id;
@@ -14,6 +16,8 @@ class ShopCard extends StatelessWidget {
     required this.title,
     required this.rating,
   });
+  
+  get is_like => null;
 
   @override
   Widget build(BuildContext context) {
@@ -46,11 +50,13 @@ class ShopCard extends StatelessWidget {
   }
 
   Future<void> save() async {
-    await ShopCardStorage.saveShopCard(id as String, title, rating);
+    ShopCardViewModel viewModel = ShopCardViewModel(); // インスタンスを作成
+    await viewModel.saveShopCard('1', 'Shop', 4.5, true); // インスタンスメソッドを呼び出す
   }
 
   // データを読み込むメソッド
   static Future<Map<String, dynamic>> load(String id) async {
-    return await ShopCardStorage.loadShopCard(id);
+    ShopCardViewModel viewModel = ShopCardViewModel(); // インスタンスを作成
+    return await viewModel.loadShopCard(id); // インスタンスメソッドを呼び出す
   }
 }
