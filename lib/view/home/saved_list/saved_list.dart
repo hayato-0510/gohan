@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_to_list_in_spreads
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:gohan/view_model/shop_card_viewmodel/shop_card_viewmodel.dart';
@@ -20,7 +22,7 @@ class _SavedListViewState extends State<SavedListView> {
 
   Future<void> _loadShopCard() async {
     ShopCardViewModel viewModel = Provider.of<ShopCardViewModel>(context, listen: false);
-    await viewModel.loadShopCard('1');
+    await viewModel.loadShopCards();
   }
 
   @override
@@ -36,14 +38,16 @@ class _SavedListViewState extends State<SavedListView> {
                   padding: const EdgeInsets.symmetric(horizontal: 5, vertical:10),
                   child: Column(
                     children: [
-                      if (viewModel.shopCard != null)
-                        ShopCard(
-                          id: 1,
-                          title: viewModel.shopCard!['title'],
-                          rating: viewModel.shopCard!['rating'].toDouble(),
-                        )
+                      if (viewModel.shopCards.isNotEmpty)
+                        ...viewModel.shopCards.map((shopCard) {
+                          return ShopCard(
+                            id: int.parse(shopCard['id']),
+                            title: shopCard['title'],
+                            rating: shopCard['rating'].toDouble(),
+                          );
+                        }).toList()
                       else
-                        const Text('No ShopCard loaded'),
+                        const Text('No ShopCards loaded'),
                       ...List.generate(10, (index) {
                         return CardList(
                           onTap: () async {
