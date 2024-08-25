@@ -5,6 +5,7 @@ import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:gohan/components/shop_card/shop_card.dart';
 import 'package:gohan/components/check_box/check_box.dart';
 import 'package:gohan/components/dropdown_menu/dropdown_menu.dart';
+import 'package:gohan/view_model/browsinghistory_viewmodel/browsinghistory_viewmodel.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -17,6 +18,7 @@ class _SearchPageState extends State<SearchPage> {
   String? selectedFood;
   String? selectedDistance;
   late ShopCardViewModel shopCardViewModel; // Declare as late
+  late BrowsingHistoryViewModel browsingHistoryViewModel; // 遅延初期化
 
   @override
   void initState() {
@@ -25,6 +27,8 @@ class _SearchPageState extends State<SearchPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       shopCardViewModel =
           Provider.of<ShopCardViewModel>(context, listen: false);
+      browsingHistoryViewModel = 
+          Provider.of<BrowsingHistoryViewModel>(context, listen: false); // 初期化
     });
   }
 
@@ -71,6 +75,13 @@ class _SearchPageState extends State<SearchPage> {
                           shopCards[previousIndex].rating,
                           action,
                         );
+                      // 閲覧したShopCardを履歴に保存
+                      await browsingHistoryViewModel.addToBrowsingHistory(
+                        shopCards[previousIndex].id.toString(),
+                        shopCards[previousIndex].title,
+                        shopCards[previousIndex].rating,
+                        action,
+                      );                        
                       }
                     },
                     onEnd: () {
@@ -154,17 +165,17 @@ final List<ShopCard> shopCards = [
   ShopCard(id: 1, title: 'Shop 1', rating: 4.2),
   ShopCard(id: 2, title: 'Shop 2', rating: 4.05),
   ShopCard(id: 3, title: 'Shop 3', rating: 5.0),
-  ShopCard(id: 4, title: 'Shop 1', rating: 4.5),
-  ShopCard(id: 5, title: 'Shop 2', rating: 3.5),
-  ShopCard(id: 6, title: 'Shop 3', rating: 5.0),
-  ShopCard(id: 7, title: 'Shop 1', rating: 4.5),
-  ShopCard(id: 8, title: 'Shop 2', rating: 3.5),
-  ShopCard(id: 9, title: 'Shop 3', rating: 5.0),
-  ShopCard(id: 10, title: 'Shop 1', rating: 4.5),
-  ShopCard(id: 11, title: 'Shop 2', rating: 3.5),
-  ShopCard(id: 12, title: 'Shop 3', rating: 5.0),
-  ShopCard(id: 13, title: 'Shop 1', rating: 4.5),
-  ShopCard(id: 14, title: 'Shop 2', rating: 3.5),
-  ShopCard(id: 15, title: 'Shop 3', rating: 5.0),
-  ShopCard(id: 16, title: 'Shop 1', rating: 4.5),
+  ShopCard(id: 4, title: 'Shop 4', rating: 4.5),
+  ShopCard(id: 5, title: 'Shop 5', rating: 3.5),
+  ShopCard(id: 6, title: 'Shop 6', rating: 5.0),
+  ShopCard(id: 7, title: 'Shop 7', rating: 4.5),
+  ShopCard(id: 8, title: 'Shop 8', rating: 3.5),
+  ShopCard(id: 9, title: 'Shop 9', rating: 5.0),
+  ShopCard(id: 10, title: 'Shop 10', rating: 4.5),
+  ShopCard(id: 11, title: 'Shop 11', rating: 3.5),
+  ShopCard(id: 12, title: 'Shop 12', rating: 5.0),
+  ShopCard(id: 13, title: 'Shop 13', rating: 4.5),
+  ShopCard(id: 14, title: 'Shop 14', rating: 3.5),
+  ShopCard(id: 15, title: 'Shop 15', rating: 5.0),
+  ShopCard(id: 16, title: 'Shop 16', rating: 4.5),
 ];

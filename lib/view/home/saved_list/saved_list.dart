@@ -17,12 +17,12 @@ class _SavedListViewState extends State<SavedListView> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => _loadShopCard());
+    Future.microtask(() => _loadLikedShopCards());
   }
 
-  Future<void> _loadShopCard() async {
+  Future<void> _loadLikedShopCards() async {
     ShopCardViewModel viewModel = Provider.of<ShopCardViewModel>(context, listen: false);
-    await viewModel.loadShopCards();
+    await viewModel.loadLikedShopCards();
   }
 
   @override
@@ -44,6 +44,7 @@ class _SavedListViewState extends State<SavedListView> {
                             id: int.parse(shopCard['id']),
                             title: shopCard['title'],
                             rating: shopCard['rating'].toDouble(),
+
                           );
                         }).toList()
                       else
