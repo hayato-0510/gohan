@@ -45,8 +45,8 @@ class ShopCard extends StatelessWidget {
           ),
         ),
         Positioned(
-          bottom: 16,
-          right: 16,
+          bottom: 24,
+          right: 20,
           child: LocationButton(), 
         ),
       ],
