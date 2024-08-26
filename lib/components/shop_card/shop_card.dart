@@ -11,6 +11,9 @@ class ShopCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<RestaurantCardViewModel>(
       builder: (context, viewModel, child) {
+
+        final baseTextStyle = TextStyle(fontSize: 18);//追加
+
         return Stack(
           children: [
             Container(
@@ -27,14 +30,14 @@ class ShopCard extends StatelessWidget {
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
+                    children: [//フォント設定
                       Text(
                         viewModel.restaurantName,
-                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: baseTextStyle.copyWith(fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                       StarRating(
                         rating: viewModel.rating,
-                        starSize: 24,
+                        starSize: 28,
                         filledColor: Colors.yellow,
                         unfilledColor: Colors.grey,
                       ),
@@ -56,11 +59,11 @@ class ShopCard extends StatelessWidget {
                         : null,
                   ),
                   const SizedBox(height: 16),
-                  const SizedBox(height: 100),
                   ShopInformation(
                     location: viewModel.location,
                     phone: viewModel.phone,
                     hours: viewModel.hours,
+                    textStyle: baseTextStyle,
                   ),
                 ],
               ),

@@ -4,12 +4,14 @@ class ShopInformation extends StatelessWidget {
   final String location;
   final String phone;
   final String hours;
+  final TextStyle? textStyle;//追加
 
   const ShopInformation({
     Key? key,
     required this.location,
     required this.phone,
     required this.hours,
+    this.textStyle,//追加
   }) : super(key: key);
 
   @override
@@ -17,9 +19,9 @@ class ShopInformation extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('場所: $location'),
-        Text('電話: $phone'),
-        Text('営業時間: $hours'),
+        Text('場所: $location', style: textStyle),
+        Text('電話: $phone', style: textStyle),
+        Text('営業時間: $hours', style: textStyle),
         _buildOpenStatus(),
       ],
     );
@@ -40,9 +42,17 @@ class ShopInformation extends StatelessWidget {
       color = Colors.red;
     }
 
+    final statusStyle = textStyle?.copyWith(//追加
+      color: color,
+      fontWeight: FontWeight.bold,
+    ) ?? TextStyle(
+      color: color,
+      fontWeight: FontWeight.bold,
+    );
+
     return Text(
       status,
-      style: TextStyle(color: color, fontWeight: FontWeight.bold),
+      style: statusStyle,
     );
   }
 
