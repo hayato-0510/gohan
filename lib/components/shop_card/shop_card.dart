@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:gohan/components/star_rating/star_rating.dart';
 import 'package:gohan/components/shop_information/shop_information.dart';
 import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
-
+// import LocationButton
 class ShopCard extends StatelessWidget {
   const ShopCard({Key? key}) : super(key: key);
 
@@ -11,57 +11,68 @@ class ShopCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<RestaurantCardViewModel>(
       builder: (context, viewModel, child) {
-        return Container(
-          padding: const EdgeInsets.all(16),
-          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(width: 2.0, color: Colors.black),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return Stack(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(width: 2.0, color: Colors.black),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    viewModel.restaurantName,
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        viewModel.restaurantName,
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      StarRating(
+                        rating: viewModel.rating,
+                        starSize: 24,
+                        filledColor: Colors.yellow,
+                        unfilledColor: Colors.grey,
+                      ),
+                    ],
                   ),
-                  StarRating(
-                    rating: viewModel.rating,
-                    starSize: 24,
-                    filledColor: Colors.yellow,
-                    unfilledColor: Colors.grey,
+                  const SizedBox(height: 16),
+                  Container(
+                    height: 200,
+                    decoration: viewModel.imageUrl.isNotEmpty
+                        ? BoxDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage(viewModel.imageUrl),
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : BoxDecoration(color: Colors.grey[300]),
+                    child: viewModel.imageUrl.isEmpty
+                        ? Center(child: Text('画像'))
+                        : null,
+                  ),
+                  const SizedBox(height: 16),
+                  const SizedBox(height: 100),
+                  ShopInformation(
+                    location: viewModel.location,
+                    phone: viewModel.phone,
+                    hours: viewModel.hours,
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-              Container(
-                height: 200,
-                decoration: viewModel.imageUrl.isNotEmpty
-                    ? BoxDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage(viewModel.imageUrl),
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                    : BoxDecoration(color: Colors.grey[300]),
-                child: viewModel.imageUrl.isEmpty
-                    ? Center(child: Text('画像'))
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              const SizedBox(height: 100),
-              ShopInformation(
-                location: viewModel.location,
-                phone: viewModel.phone,
-                hours: viewModel.hours,
-              ),
-            ],
-          ),
+            ),
+            /*
+            Positioned(
+              right: 24,
+              bottom: 20,
+              child: LocationButton(),
+            ),
+            */
+          ],
         );
       },
     );
