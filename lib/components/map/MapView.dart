@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:gohan/view_model/map_info/currentlocation.dart'; // 追加
+import 'package:gohan/view_model/user_location_viewmodel/user_location_viewmodel.dart'; // 追加
 
 class MapView extends StatefulWidget {
   final double height;
   final double width;
 
-  MapView({
+  const MapView({
+    super.key,
     required this.height,
     required this.width,
   });
@@ -20,8 +21,7 @@ class MapView extends StatefulWidget {
 class _MapViewState extends State<MapView> {
   late GoogleMapController mapController;
 
-  CameraPosition _initialLocation = CameraPosition(target: LatLng(0.0, 0.0));
-  LatLng _currentPosition = LatLng(0.0, 0.0); // 現在地の位置を保持する変数
+  final CameraPosition _initialLocation = const CameraPosition(target: LatLng(0.0, 0.0));
 
   @override
   void initState() {
@@ -29,37 +29,17 @@ class _MapViewState extends State<MapView> {
     _requestPermissionAndGetCurrentLocation();
   }
 
-  _requestPermissionAndGetCurrentLocation() async {
+  Future<void> _requestPermissionAndGetCurrentLocation() async {
     PermissionStatus permission = await Permission.location.request();
 
     if (permission.isGranted) {
-      _getCurrentLocation();
+      context.read<UserLocationViewModel>().getCurrentLocation();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Location permission denied'),
         ),
       );
-    }
-  }
-
-  _getCurrentLocation() async {
-    try {
-      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      setState(() {
-        LocationProvider().updatePosition(position); // 位置情報を保存
-        _currentPosition = LatLng(position.latitude, position.longitude); // 現在地を更新
-        mapController.animateCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(
-              target: _currentPosition,
-              zoom: 18.0,
-            ),
-          ),
-        );
-      });
-    } catch (e) {
-      print(e);
     }
   }
 
@@ -68,27 +48,50 @@ class _MapViewState extends State<MapView> {
     return Container(
       height: widget.height,
       width: widget.width,
-      child: GoogleMap(
-        initialCameraPosition: _initialLocation,
-        myLocationEnabled: true,
-        myLocationButtonEnabled: false,
-        mapType: MapType.normal,
-        zoomGesturesEnabled: true,
-        zoomControlsEnabled: false,
-        onMapCreated: (GoogleMapController controller) {
-          mapController = controller;
+      child: Consumer<UserLocationViewModel>(
+        builder: (context, locationViewModel, child) {
+          if (locationViewModel.currentPosition != null) {
+            mapController.animateCamera(
+              CameraUpdate.newCameraPosition(
+                CameraPosition(
+                  target: LatLng(
+                    locationViewModel.currentPosition!.latitude,
+                    locationViewModel.currentPosition!.longitude,
+                  ),
+                  zoom: 18.0,
+                ),
+              ),
+            );
+          }
+
+          return GoogleMap(
+            initialCameraPosition: _initialLocation,
+            myLocationEnabled: true,
+            myLocationButtonEnabled: false,
+            mapType: MapType.normal,
+            zoomGesturesEnabled: true,
+            zoomControlsEnabled: false,
+            onMapCreated: (GoogleMapController controller) {
+              mapController = controller;
+            },
+            markers: _createMarkers(locationViewModel),
+          );
         },
-        markers: _createMarkers(), // マーカーを表示する
       ),
     );
   }
 
-  Set<Marker> _createMarkers() {
+  Set<Marker> _createMarkers(UserLocationViewModel locationViewModel) {
+    if (locationViewModel.currentPosition == null) return {};
+
     return {
       Marker(
-        markerId: MarkerId('current_location'),
-        position: _currentPosition,
-        infoWindow: InfoWindow(title: '現在地'),
+        markerId: const MarkerId('current_location'),
+        position: LatLng(
+          locationViewModel.currentPosition!.latitude,
+          locationViewModel.currentPosition!.longitude,
+        ),
+        infoWindow: const InfoWindow(title: '現在地'),
       ),
     };
   }
