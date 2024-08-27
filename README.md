@@ -3,6 +3,10 @@
 ## Overview
 既存のアプリやgoogle mapでは、ユーザーがレストランを探すにはさがしにくいものになっている。そのため写真から探すようなインターフェースを目指す新たなグルメアプリを目指す
 
+## flow
+`flow.drawio`から[drawio](https://app.diagrams.net/)で最新版が確認できる
+![alt text](docs/img/image.png)
+
 ## Git 命名規則
 ### コミットルール
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0-beta.4/)　に従います
