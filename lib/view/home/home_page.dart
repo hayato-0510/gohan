@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gohan/view/home/recomendation_list/recomendation.dart';
-import 'package:gohan/view/home/saved_list/saved_list.dart';
+import 'package:gohan/view/home/recomended_list/recomended_list.dart';
+import 'package:gohan/view/home/favorite_list/favorite_list.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -20,9 +20,9 @@ class HomePage extends StatelessWidget {
             preferredSize: const Size.fromHeight(0),
             child: TabBar(
               splashFactory: NoSplash.splashFactory,
-              overlayColor: MaterialStateProperty.resolveWith<Color?>(
-                (Set<MaterialState> states) {
-                  return states.contains(MaterialState.focused)
+              overlayColor: WidgetStateProperty.resolveWith<Color?>(
+                (Set<WidgetState> states) {
+                  return states.contains(WidgetState.focused)
                       ? null
                       : Colors.transparent;
                 },
@@ -40,7 +40,7 @@ class HomePage extends StatelessWidget {
         body: const TabBarView(
           children: <Widget>[
             RecomendationListView(),
-            SavedListView(), // 修正済みのSavedListViewを表示
+            FavoriteListView(),
           ],
         ),
       ),

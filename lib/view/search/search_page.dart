@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:gohan/view_model/shop_card_viewmodel/shop_card_viewmodel.dart';
+import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:appinio_swiper/appinio_swiper.dart';
-import 'package:gohan/components/shop_card/shop_card.dart';
+import 'package:gohan/components/restaurant_card/restaurant_card.dart';
 import 'package:gohan/components/check_box/check_box.dart';
 import 'package:gohan/components/dropdown_menu/dropdown_menu.dart';
+import 'package:gohan/view_model/user_engagement_viewmodel/user_engagement_viewmodel.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -16,16 +17,10 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   String? selectedFood;
   String? selectedDistance;
-  late ShopCardViewModel shopCardViewModel; // Declare as late
 
   @override
   void initState() {
     super.initState();
-    // WidgetsBinding to defer the context usage after the build phase
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      shopCardViewModel =
-          Provider.of<ShopCardViewModel>(context, listen: false);
-    });
   }
 
   @override
@@ -42,41 +37,63 @@ class _SearchPageState extends State<SearchPage> {
                 top: 10.0,
                 bottom: 1.0,
               ),
-              child: _setcUserCheckBar(),
+              child: _setUserCheckBar(),
             ),
             const Divider(),
             Expanded(
               child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-                  child: AppinioSwiper(
-                    cardCount: shopCards.length > 20 ? 20 : shopCards.length,
-                    cardBuilder: (BuildContext context, int index) {
-                      return ShopCard(
-                        id: index,
-                        title: shopCards[index].title,
-                        rating: shopCards[index].rating,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                child: Consumer<RestaurantCardViewModel>(
+                  builder: (context, viewModel, child) {
+                    if (viewModel.restaurants.isEmpty) {
+                      return ElevatedButton(
+                        onPressed: () {
+                          viewModel.fetchRestaurantDetails();
+                        },
+                        child: const Text('Load More Restaurants'),
                       );
-                    },
-                    maxAngle: 15,
-                    onSwipeEnd: (int previousIndex, int targetIndex,
-                        SwiperActivity activity) async {
-                      if (activity is Swipe) {
-                        final action = activity.direction == AxisDirection.right
-                            ? true
-                            : false;
-                        await shopCardViewModel.saveShopCard(
-                          shopCards[previousIndex].id.toString(),
-                          shopCards[previousIndex].title,
-                          shopCards[previousIndex].rating,
-                          action,
-                        );
-                      }
-                    },
-                    onEnd: () {
-                      print('No more cards');
-                    },
-                  )),
+                    }
+
+                    return AppinioSwiper(
+                      cardCount: viewModel.restaurants.length,
+                      cardBuilder: (BuildContext context, int index) {
+                        return RestaurantCard(
+                            restaurant: viewModel.restaurants[index]);
+                      },
+                      maxAngle: 15,
+                      onSwipeEnd: (int previousIndex, int targetIndex,
+                          SwiperActivity activity) async {
+                        if (activity is Swipe) {
+                          // 右にスワイプでtrue,  左にスワイプでfalse
+                          final isLiked =
+                              activity.direction == AxisDirection.right
+                                  ? true
+                                  : false;
+                          // データベースに保存
+                          Provider.of<UserEngagementViewModel>(context,
+                                  listen: false)
+                              .saveToEngagementDB(
+                            viewModel.restaurants[previousIndex].id.toString(),
+                            viewModel.restaurants[previousIndex].restaurantName,
+                            viewModel.restaurants[previousIndex].rating,
+                            isLiked,
+                          );
+                          // 再度表示されないように_restaurantsから削除
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            if (previousIndex < viewModel.restaurants.length) {
+                              viewModel.removeRestaurant(previousIndex);
+                            }
+                          });
+                        }
+                      },
+                      onEnd: () {
+                        print('No more cards');
+                      },
+                    );
+                  },
+                ),
+              ),
             ),
           ],
         ),
@@ -84,20 +101,12 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _setcUserCheckBar() {
+  Widget _setUserCheckBar() {
     CheckBox box1 = CheckBox(
       title: '営業中',
       initialValue: false,
       onChanged: (bool? value) {
         print('チェックボックスの状態: $value');
-      },
-      controlAffinity: ListTileControlAffinity.leading,
-    );
-    CheckBox box2 = CheckBox(
-      title: '営業中2',
-      initialValue: false,
-      onChanged: (bool? value) {
-        print('チェックボックスの状態2: $value');
       },
       controlAffinity: ListTileControlAffinity.leading,
     );
@@ -141,30 +150,9 @@ class _SearchPageState extends State<SearchPage> {
         Row(
           children: [
             Expanded(child: box1),
-            Expanded(child: box2),
           ],
         ),
       ],
     );
   }
 }
-
-// ダミーデータ 実験用
-final List<ShopCard> shopCards = [
-  ShopCard(id: 1, title: 'Shop 1', rating: 4.2),
-  ShopCard(id: 2, title: 'Shop 2', rating: 4.05),
-  ShopCard(id: 3, title: 'Shop 3', rating: 5.0),
-  ShopCard(id: 4, title: 'Shop 1', rating: 4.5),
-  ShopCard(id: 5, title: 'Shop 2', rating: 3.5),
-  ShopCard(id: 6, title: 'Shop 3', rating: 5.0),
-  ShopCard(id: 7, title: 'Shop 1', rating: 4.5),
-  ShopCard(id: 8, title: 'Shop 2', rating: 3.5),
-  ShopCard(id: 9, title: 'Shop 3', rating: 5.0),
-  ShopCard(id: 10, title: 'Shop 1', rating: 4.5),
-  ShopCard(id: 11, title: 'Shop 2', rating: 3.5),
-  ShopCard(id: 12, title: 'Shop 3', rating: 5.0),
-  ShopCard(id: 13, title: 'Shop 1', rating: 4.5),
-  ShopCard(id: 14, title: 'Shop 2', rating: 3.5),
-  ShopCard(id: 15, title: 'Shop 3', rating: 5.0),
-  ShopCard(id: 16, title: 'Shop 1', rating: 4.5),
-];

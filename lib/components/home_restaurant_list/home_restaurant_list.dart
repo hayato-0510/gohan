@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class CardList extends StatefulWidget {
+class HomeRestaurantList extends StatefulWidget {
   final Future<void> Function() onTap;
   final String? mainText;
   final String? subText;
 
-  const CardList({
+  const HomeRestaurantList({
       super.key,
       required this.onTap,
       this.mainText,
@@ -13,10 +13,10 @@ class CardList extends StatefulWidget {
     });
 
   @override
-  State<CardList> createState() => _CardListState();
+  State<HomeRestaurantList> createState() => _HomeRestaurantListState();
 }
 
-class _CardListState extends State<CardList> {
+class _HomeRestaurantListState extends State<HomeRestaurantList> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -37,7 +37,7 @@ class _CardListState extends State<CardList> {
         },
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 10.0,
             ),
             ListTile(
