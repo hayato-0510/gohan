@@ -26,7 +26,7 @@ class LocationButton extends StatelessWidget {
         ),
         child: const Center(
           child: Icon(
-            Icons.navigation,
+            Icons.map,
             color: Colors.white,
           ),
         ),
