@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
+import 'package:uuid/uuid.dart';
 
 class Restaurant {
-  final int id;
+  final String id;
   final String restaurantName;
   final String imageUrl;
   final double rating;
@@ -29,14 +30,16 @@ class RestaurantCardViewModel extends ChangeNotifier {
 
   List<Restaurant> get restaurants => _restaurants;
 
+  // コンストラクタとして、テストデータを初期化
   RestaurantCardViewModel() {
+    print('RestaurantCardViewModel initialized');
     _initializeTestData();
   }
 
   void _initializeTestData() {
     _restaurants = [
       Restaurant(
-        id: 1,
+        id: "aaaa",
         restaurantName: 'Sample1',
         imageUrl: '',
         rating: 4.5,
@@ -45,13 +48,22 @@ class RestaurantCardViewModel extends ChangeNotifier {
         hours: '10:00 - 20:00',
       ),
       Restaurant(
-        id: 2,
+        id: "bbbb",
         restaurantName: 'Sample2 restaurant name',
         imageUrl: '',
         rating: 4.2,
         location: 'Location 2',
         phone: '123-456-7891',
         hours: '09:00 - 18:00',
+      ),
+      Restaurant(
+        id: "cccc",
+        restaurantName: 'Sample3 restaurant name',
+        imageUrl: '',
+        rating: 1.2,
+        location: 'Location 3',
+        phone: '123-456-7891',
+        hours: '00:00 - 01:00',
       ),
     ];
 
@@ -61,12 +73,17 @@ class RestaurantCardViewModel extends ChangeNotifier {
     }
   }
 
+  void removeRestaurant(int index) {
+    _restaurants.removeAt(index);
+    notifyListeners();
+  }
+
   void updateRestaurants(List<Restaurant> restaurants) {
     _restaurants = restaurants;
     notifyListeners();
   }
 
-  void toggleFavorite(int restaurantId) {
+  void toggleFavorite(String restaurantId) {
     final index =
         _restaurants.indexWhere((restaurant) => restaurant.id == restaurantId);
     if (index != -1) {
@@ -75,9 +92,17 @@ class RestaurantCardViewModel extends ChangeNotifier {
     }
   }
 
-  bool isOpenFlag(int restaurantId) {
+  bool isOpenFlag(String restaurantId) {
     final restaurant =
-        _restaurants.firstWhere((restaurant) => restaurant.id == restaurantId);
+        _restaurants.firstWhere((restaurant) => restaurant.id == restaurantId, orElse: () => Restaurant(
+          id: restaurantId,
+          restaurantName: 'Unknown',
+          imageUrl: '',
+          rating: 0.0,
+          location: '',
+          phone: '',
+          hours: '',
+        ));
 
     if (restaurant.hours.isEmpty) return false;
 
@@ -91,6 +116,7 @@ class RestaurantCardViewModel extends ChangeNotifier {
     final closeTime = _parseTime(parts[1]);
 
     if (closeTime < openTime) {
+      // 営業終了時間が深夜をまたぐ場合
       return currentTime >= openTime || currentTime < closeTime;
     } else {
       return currentTime >= openTime && currentTime < closeTime;
@@ -107,14 +133,17 @@ class RestaurantCardViewModel extends ChangeNotifier {
     return hours * 60 + minutes;
   }
 
-  Future<void> fetchRestaurantDetails(int restaurantId) async {
-    // todo:API呼び出しを実装する
+  Future<void> fetchRestaurantDetails() async {
+    const uuid = Uuid();
+    final String restaurantId = uuid.v4();  // UUIDを生成
+
+    // 模擬的なAPI呼び出し（実際にはAPI呼び出しのコードに置き換え）
     await Future.delayed(const Duration(seconds: 1));
 
     final restaurant = Restaurant(
       id: restaurantId,
       restaurantName: 'サンプルレストラン',
-      imageUrl: 'https://example.com/sample.jpg',
+      imageUrl: '',
       rating: 4.5,
       location: '三重県',
       phone: '0000000000000',
