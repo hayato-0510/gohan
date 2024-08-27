@@ -48,7 +48,9 @@ class _SavedListViewState extends State<SavedListView> {
                     Consumer<ShopCardViewModel>(
                       builder: (context, shopViewModel, child) {
                         if (shopViewModel.shopCard != null) {
-                          return ShopCard();
+                          return ShopCard(
+                            restaurant: restaurantViewModel.restaurants[0],
+                          );
                         } else {
                           return const Text('No ShopCard loaded');
                         }

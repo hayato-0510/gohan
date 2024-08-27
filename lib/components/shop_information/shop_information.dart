@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 
 class ShopInformation extends StatelessWidget {
-  final String location;
-  final String phone;
-  final String hours;
-  final TextStyle? textStyle;//追加
+  final String location;    //場所
+  final String phone;       //電話番号
+  final String hours;       //営業時間
+  final bool isOpen;        //営業中かどうか
+  final TextStyle? textStyle;
 
   const ShopInformation({
-    Key? key,
+    super.key,
     required this.location,
     required this.phone,
     required this.hours,
-    this.textStyle,//追加
-  }) : super(key: key);
+    required this.isOpen,
+    this.textStyle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +36,7 @@ class ShopInformation extends StatelessWidget {
     if (hours.isEmpty) {
       status = '営業時間不明';
       color = Colors.grey;
-    } else if (isOpen()) {
+    } else if (isOpen) {
       status = '営業中';
       color = Colors.green;
     } else {
@@ -54,35 +56,5 @@ class ShopInformation extends StatelessWidget {
       status,
       style: statusStyle,
     );
-  }
-
-  bool isOpen() {
-    if (hours.isEmpty) return false;
-
-    final now = DateTime.now();
-    final currentTime = now.hour * 60 + now.minute;
-
-    final parts = hours.split(' - ');
-    if (parts.length != 2) return false;
-
-    final openTime = _parseTime(parts[0]);
-    final closeTime = _parseTime(parts[1]);
-
-    if (closeTime < openTime) {
-      // 営業時間が深夜にまたがる場合
-      return currentTime >= openTime || currentTime < closeTime;
-    } else {
-      return currentTime >= openTime && currentTime < closeTime;
-    }
-  }
-
-  int _parseTime(String timeString) {
-    final parts = timeString.split(':');
-    if (parts.length != 2) return 0;
-
-    final hours = int.tryParse(parts[0]) ?? 0;
-    final minutes = int.tryParse(parts[1]) ?? 0;
-
-    return hours * 60 + minutes;
   }
 }
