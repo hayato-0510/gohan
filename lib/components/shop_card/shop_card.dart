@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:gohan/components/star_rating/star_rating.dart';
 import 'package:gohan/components/shop_information/shop_information.dart';
 import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
-// import LocationButton
+import 'package:gohan/components/LocationButton/LocationButton.dart';
 
 class ShopCard extends StatelessWidget {
   final Restaurant restaurant;
