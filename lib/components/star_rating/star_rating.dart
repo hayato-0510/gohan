@@ -21,7 +21,7 @@ class StarRating extends StatelessWidget {
     Key? key,
     required this.rating,
     this.maxRating = 5,
-    this.starSize = 24,
+    this.starSize = 16,
     this.filledColor = Colors.yellow,
     this.unfilledColor = Colors.grey,
   }) : super(key: key);
@@ -49,7 +49,8 @@ class StarRating extends StatelessWidget {
             children: List.generate(maxRating, (index) {
               if (index < roundedRating.floor()) {
                 return Icon(Icons.star, color: filledColor, size: starSize);
-              } else if (index < roundedRating.ceil() && roundedRating % 1 != 0) {
+              } else if (index < roundedRating.ceil() &&
+                  roundedRating % 1 != 0) {
                 return Stack(
                   children: [
                     Icon(Icons.star, color: unfilledColor, size: starSize),
@@ -57,7 +58,8 @@ class StarRating extends StatelessWidget {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         widthFactor: 0.5,
-                        child: Icon(Icons.star, color: filledColor, size: starSize),
+                        child: Icon(Icons.star,
+                            color: filledColor, size: starSize),
                       ),
                     ),
                   ],

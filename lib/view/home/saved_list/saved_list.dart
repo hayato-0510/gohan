@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:gohan/view_model/shop_card_viewmodel/shop_card_viewmodel.dart';
 import 'package:gohan/components/shop_card/shop_card.dart';
 import 'package:gohan/components/sample_list/sample_list.dart';
+import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
 
 class SavedListView extends StatefulWidget {
   const SavedListView({super.key});
@@ -12,6 +13,9 @@ class SavedListView extends StatefulWidget {
 }
 
 class _SavedListViewState extends State<SavedListView> {
+  late ShopCardViewModel shopCardViewModel;
+  late RestaurantCardViewModel restaurantViewModel;
+
   @override
   void initState() {
     super.initState();
@@ -19,8 +23,10 @@ class _SavedListViewState extends State<SavedListView> {
   }
 
   Future<void> _loadShopCard() async {
-    ShopCardViewModel viewModel = Provider.of<ShopCardViewModel>(context, listen: false);
-    await viewModel.loadShopCard('1');
+    await shopCardViewModel.loadShopCard('1');
+    if (shopCardViewModel.shopCard != null) {
+      await restaurantViewModel.fetchRestaurantDetails(1);
+    }
   }
 
   @override
@@ -28,35 +34,40 @@ class _SavedListViewState extends State<SavedListView> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Consumer<ShopCardViewModel>(
-          builder: (context, viewModel, child) {
-            return Scrollbar(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical:10),
-                  child: Column(
-                    children: [
-                      if (viewModel.shopCard != null)
-                        ShopCard(
-                          id: 1,
-                          title: viewModel.shopCard!['title'],
-                          rating: viewModel.shopCard!['rating'].toDouble(),
-                        )
-                      else
-                        const Text('No ShopCard loaded'),
-                      ...List.generate(10, (index) {
-                        return CardList(
-                          onTap: () async {
-                            print("Card tapped! Index: $index");
-                          },
-                        );
-                      }),
-                    ],
-                  ),
+        child: MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(value: shopCardViewModel),
+            ChangeNotifierProvider.value(value: restaurantViewModel),
+          ],
+          child: Scrollbar(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical:10),
+                child: Column(
+                  children: [
+                    Consumer<ShopCardViewModel>(
+                      builder: (context, shopViewModel, child) {
+                        if (shopViewModel.shopCard != null) {
+                          return ShopCard(
+                            restaurant: restaurantViewModel.restaurants[0],
+                          );
+                        } else {
+                          return const Text('No ShopCard loaded');
+                        }
+                      },
+                    ),
+                    ...List.generate(10, (index) {
+                      return CardList(
+                        onTap: () async {
+                          print("Card tapped! Index: $index");
+                        },
+                      );
+                    }),
+                  ],
                 ),
               ),
-            );
-          },
+            ),
+          ),
         ),
       ),
     );
