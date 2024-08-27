@@ -77,13 +77,11 @@ class ShopCard extends StatelessWidget {
                 ],
               ),
             ),
-            /*
-            Positioned(
+            const Positioned(
               right: 24,
               bottom: 20,
               child: LocationButton(),
             ),
-            */
           ],
         );
       },

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class LocationButton extends StatelessWidget {
-  const LocationButton({Key? key}) : super(key: key);
+  const LocationButton({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class LocationButton extends StatelessWidget {
             ),
           ],
         ),
-        child: Center(
+        child: const Center(
           child: Icon(
             Icons.navigation,
             color: Colors.white,
