@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:gohan/components/star_rating/star_rating.dart';
-import 'package:gohan/components/shop_information/shop_information.dart';
+import 'package:gohan/components/restaurant_information/restaurant_information.dart';
 import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
-import 'package:gohan/components/LocationButton/LocationButton.dart';
+import 'package:gohan/components/location_button/location_button.dart';
 
-class ShopCard extends StatelessWidget {
+class RestaurantCard extends StatelessWidget {
   final Restaurant restaurant;
 
-  const ShopCard({
+  const RestaurantCard({
     super.key, required this.restaurant
   });
 
@@ -16,7 +16,6 @@ class ShopCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<RestaurantCardViewModel>(
       builder: (context, viewModel, child) {
-
         return Stack(
           children: [
             Container(
@@ -68,7 +67,7 @@ class ShopCard extends StatelessWidget {
                         : null,
                   ),
                   const SizedBox(height: 16),
-                  ShopInformation(
+                  RestaurantInformation(
                     location: restaurant.location,
                     phone: restaurant.phone,
                     hours: restaurant.hours,

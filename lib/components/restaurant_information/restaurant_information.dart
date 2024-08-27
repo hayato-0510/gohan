@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class ShopInformation extends StatelessWidget {
+class RestaurantInformation extends StatelessWidget {
   final String location;    //場所
   final String phone;       //電話番号
   final String hours;       //営業時間
   final bool isOpen;        //営業中かどうか
   final TextStyle? textStyle;
 
-  const ShopInformation({
+  const RestaurantInformation({
     super.key,
     required this.location,
     required this.phone,
