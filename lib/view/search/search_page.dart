@@ -6,6 +6,7 @@ import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:gohan/components/shop_card/shop_card.dart';
 import 'package:gohan/components/check_box/check_box.dart';
 import 'package:gohan/components/dropdown_menu/dropdown_menu.dart';
+import 'package:gohan/view_model/browsinghistory_viewmodel/browsinghistory_viewmodel.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -17,12 +18,20 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   String? selectedFood;
   String? selectedDistance;
-  
+  late ShopCardViewModel shopCardViewModel; // Declare as late
+  late BrowsingHistoryViewModel browsingHistoryViewModel; // 遅延初期化
   late RestaurantCardViewModel restaurantCardViewModel;
 
   @override
   void initState() {
     super.initState();
+    // WidgetsBinding to defer the context usage after the build phase
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      shopCardViewModel =
+          Provider.of<ShopCardViewModel>(context, listen: false);
+      browsingHistoryViewModel = 
+          Provider.of<BrowsingHistoryViewModel>(context, listen: false); // 初期化
+    });
     restaurantCardViewModel = RestaurantCardViewModel();
   }
 
@@ -67,11 +76,42 @@ class _SearchPageState extends State<SearchPage> {
                         },
                       );
                     },
-                  ),
-                ),
-              ),
-            ],
-          ),
+// <<<<<<< id-Micky
+//                     maxAngle: 15,
+//                     onSwipeEnd: (int previousIndex, int targetIndex,
+//                         SwiperActivity activity) async {
+//                       if (activity is Swipe) {
+//                         final action = activity.direction == AxisDirection.right
+//                             ? true
+//                             : false;
+//                         await shopCardViewModel.saveShopCard(
+//                           shopCards[previousIndex].id.toString(),
+//                           shopCards[previousIndex].title,
+//                           shopCards[previousIndex].rating,
+//                           action,
+//                         );
+//                       // 閲覧したShopCardを履歴に保存
+//                       await browsingHistoryViewModel.addToBrowsingHistory(
+//                         shopCards[previousIndex].id.toString(),
+//                         shopCards[previousIndex].title,
+//                         shopCards[previousIndex].rating,
+//                         action,
+//                       );                        
+//                       }
+//                     },
+//                     onEnd: () {
+//                       print('No more cards');
+//                     },
+//                   )),
+//             ),
+//           ],
+// =======
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+// >>>>>>> dev-kai
         ),
       ),
     );
@@ -141,4 +181,3 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 }
-
