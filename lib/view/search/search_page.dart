@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gohan/view_model/shop_card_viewmodel/shop_card_viewmodel.dart';
+// import 'package:gohan/view_model/shop_card_viewmodel/shop_card_viewmodel.dart';
+import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:gohan/components/shop_card/shop_card.dart';
@@ -19,6 +20,7 @@ class _SearchPageState extends State<SearchPage> {
   String? selectedDistance;
   late ShopCardViewModel shopCardViewModel; // Declare as late
   late BrowsingHistoryViewModel browsingHistoryViewModel; // 遅延初期化
+  late RestaurantCardViewModel restaurantCardViewModel;
 
   @override
   void initState() {
@@ -30,66 +32,86 @@ class _SearchPageState extends State<SearchPage> {
       browsingHistoryViewModel = 
           Provider.of<BrowsingHistoryViewModel>(context, listen: false); // 初期化
     });
+    restaurantCardViewModel = RestaurantCardViewModel();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 10.0,
-                right: 10.0,
-                top: 10.0,
-                bottom: 1.0,
+    return ChangeNotifierProvider.value(
+      value: restaurantCardViewModel,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 10.0,
+                  right: 10.0,
+                  top: 10.0,
+                  bottom: 1.0,
+                ),
+                child: _setcUserCheckBar(),
               ),
-              child: _setcUserCheckBar(),
-            ),
-            const Divider(),
-            Expanded(
-              child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-                  child: AppinioSwiper(
-                    cardCount: shopCards.length > 20 ? 20 : shopCards.length,
-                    cardBuilder: (BuildContext context, int index) {
-                      return ShopCard(
-                        id: index,
-                        title: shopCards[index].title,
-                        rating: shopCards[index].rating,
+              const Divider(),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                  child: Consumer<RestaurantCardViewModel>(
+                    builder: (context, viewModel, child) {
+                      return AppinioSwiper(
+                        cardCount: viewModel.restaurants.length,
+                        cardBuilder: (BuildContext context, int index) {
+                          return ShopCard(restaurant: restaurantCardViewModel.restaurants[index]);
+                        },
+                        maxAngle: 15,
+                        onSwipeEnd: (int previousIndex, int targetIndex, SwiperActivity activity) async {
+                          if (activity is Swipe) {
+                            viewModel.toggleFavorite(viewModel.restaurants[previousIndex].id);
+                            // Favoriteステータスを永続化する場合の処理
+                          }
+                        },
+                        onEnd: () {
+                          print('No more cards');
+                        },
                       );
                     },
-                    maxAngle: 15,
-                    onSwipeEnd: (int previousIndex, int targetIndex,
-                        SwiperActivity activity) async {
-                      if (activity is Swipe) {
-                        final action = activity.direction == AxisDirection.right
-                            ? true
-                            : false;
-                        await shopCardViewModel.saveShopCard(
-                          shopCards[previousIndex].id.toString(),
-                          shopCards[previousIndex].title,
-                          shopCards[previousIndex].rating,
-                          action,
-                        );
-                      // 閲覧したShopCardを履歴に保存
-                      await browsingHistoryViewModel.addToBrowsingHistory(
-                        shopCards[previousIndex].id.toString(),
-                        shopCards[previousIndex].title,
-                        shopCards[previousIndex].rating,
-                        action,
-                      );                        
-                      }
-                    },
-                    onEnd: () {
-                      print('No more cards');
-                    },
-                  )),
-            ),
-          ],
+// <<<<<<< id-Micky
+//                     maxAngle: 15,
+//                     onSwipeEnd: (int previousIndex, int targetIndex,
+//                         SwiperActivity activity) async {
+//                       if (activity is Swipe) {
+//                         final action = activity.direction == AxisDirection.right
+//                             ? true
+//                             : false;
+//                         await shopCardViewModel.saveShopCard(
+//                           shopCards[previousIndex].id.toString(),
+//                           shopCards[previousIndex].title,
+//                           shopCards[previousIndex].rating,
+//                           action,
+//                         );
+//                       // 閲覧したShopCardを履歴に保存
+//                       await browsingHistoryViewModel.addToBrowsingHistory(
+//                         shopCards[previousIndex].id.toString(),
+//                         shopCards[previousIndex].title,
+//                         shopCards[previousIndex].rating,
+//                         action,
+//                       );                        
+//                       }
+//                     },
+//                     onEnd: () {
+//                       print('No more cards');
+//                     },
+//                   )),
+//             ),
+//           ],
+// =======
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+// >>>>>>> dev-kai
         ),
       ),
     );
@@ -159,23 +181,3 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 }
-
-// ダミーデータ 実験用
-final List<ShopCard> shopCards = [
-  ShopCard(id: 1, title: 'Shop 1', rating: 4.2),
-  ShopCard(id: 2, title: 'Shop 2', rating: 4.05),
-  ShopCard(id: 3, title: 'Shop 3', rating: 5.0),
-  ShopCard(id: 4, title: 'Shop 4', rating: 4.5),
-  ShopCard(id: 5, title: 'Shop 5', rating: 3.5),
-  ShopCard(id: 6, title: 'Shop 6', rating: 5.0),
-  ShopCard(id: 7, title: 'Shop 7', rating: 4.5),
-  ShopCard(id: 8, title: 'Shop 8', rating: 3.5),
-  ShopCard(id: 9, title: 'Shop 9', rating: 5.0),
-  ShopCard(id: 10, title: 'Shop 10', rating: 4.5),
-  ShopCard(id: 11, title: 'Shop 11', rating: 3.5),
-  ShopCard(id: 12, title: 'Shop 12', rating: 5.0),
-  ShopCard(id: 13, title: 'Shop 13', rating: 4.5),
-  ShopCard(id: 14, title: 'Shop 14', rating: 3.5),
-  ShopCard(id: 15, title: 'Shop 15', rating: 5.0),
-  ShopCard(id: 16, title: 'Shop 16', rating: 4.5),
-];
