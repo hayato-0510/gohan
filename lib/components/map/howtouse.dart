@@ -2,7 +2,7 @@
  /*
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:gohan/components/map/MapView.dart';
+import 'package:gohan/components/map/map_view.dart';
 import 'package:gohan/view_model/user_location_viewmodel/user_location_viewmodel.dart';
 
 class ProfilePage extends StatefulWidget {
