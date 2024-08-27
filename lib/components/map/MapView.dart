@@ -1,4 +1,3 @@
-// lib/components/map/MapView.dart
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -22,6 +21,7 @@ class _MapViewState extends State<MapView> {
   late GoogleMapController mapController;
 
   CameraPosition _initialLocation = CameraPosition(target: LatLng(0.0, 0.0));
+  LatLng _currentPosition = LatLng(0.0, 0.0); // 現在地の位置を保持する変数
 
   @override
   void initState() {
@@ -48,13 +48,11 @@ class _MapViewState extends State<MapView> {
       Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       setState(() {
         LocationProvider().updatePosition(position); // 位置情報を保存
+        _currentPosition = LatLng(position.latitude, position.longitude); // 現在地を更新
         mapController.animateCamera(
           CameraUpdate.newCameraPosition(
             CameraPosition(
-              target: LatLng(
-                position.latitude,
-                position.longitude,
-              ),
+              target: _currentPosition,
               zoom: 18.0,
             ),
           ),
@@ -80,7 +78,18 @@ class _MapViewState extends State<MapView> {
         onMapCreated: (GoogleMapController controller) {
           mapController = controller;
         },
+        markers: _createMarkers(), // マーカーを表示する
       ),
     );
+  }
+
+  Set<Marker> _createMarkers() {
+    return {
+      Marker(
+        markerId: MarkerId('current_location'),
+        position: _currentPosition,
+        infoWindow: InfoWindow(title: '現在地'),
+      ),
+    };
   }
 }
