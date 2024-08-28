@@ -31,52 +31,54 @@ class RestaurantCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                        restaurant.restaurantName,
-                        style: const TextStyle(
-                          fontSize: 24, 
-                          fontWeight: FontWeight.bold
-                        ),
-                        softWrap: true,
-                        overflow: TextOverflow.visible,
-                      ),
+                    restaurant.name,
+                    style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold
+                    ),
+                    softWrap: true,
+                    overflow: TextOverflow.visible,
+                  ),
                   Row(
                     children: [
-                    const Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric( horizontal: 8.0, vertical: 4.0),
-                      child: StarRating(
+                      Text(restaurant.category),
+                      const Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                        child: StarRating(
                           rating: restaurant.rating,
                           filledColor: Colors.yellow,
                           unfilledColor: Colors.grey,
                         ),
-                    ),
-                  ]),
-                  
+                      ),
+                      Text('(${restaurant.reviewCount})'),
+                    ],
+                  ),
+                  Text('Price Range: ${restaurant.priceRange}'),
                   Container(
                     height: 200,
-                    decoration: restaurant.imageUrl.isNotEmpty
+                    decoration: restaurant.photos.isNotEmpty
                         ? BoxDecoration(
-                            image: DecorationImage(
-                              image: NetworkImage(restaurant.imageUrl),
-                              fit: BoxFit.cover,
-                            ),
-                          )
+                      image: DecorationImage(
+                        image: NetworkImage(restaurant.photos.first.url),
+                        fit: BoxFit.cover,
+                      ),
+                    )
                         : BoxDecoration(color: Colors.grey[300]),
-                    child: restaurant.imageUrl.isEmpty
-                        ? const Center(child: Text('画像'))
+                    child: restaurant.photos.isEmpty
+                        ? const Center(child: Text('No Image'))
                         : null,
                   ),
                   const SizedBox(height: 16),
                   RestaurantInformation(
-                    location: restaurant.location,
+                    address: restaurant.address,
                     phone: restaurant.phone,
-                    hours: restaurant.hours,
-                    isOpen: restaurant.isOpen,
+                    businessHours: restaurant.businessHours,
                   ),
                 ],
               ),
             ),
-            const Positioned(
+            Positioned(
               right: 24,
               bottom: 20,
               child: LocationButton(),

@@ -75,7 +75,7 @@ class _SearchPageState extends State<SearchPage> {
                                   listen: false)
                               .saveToEngagementDB(
                             viewModel.restaurants[previousIndex].id.toString(),
-                            viewModel.restaurants[previousIndex].restaurantName,
+                            viewModel.restaurants[previousIndex].name,
                             viewModel.restaurants[previousIndex].rating,
                             isLiked,
                           );

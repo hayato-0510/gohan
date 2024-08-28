@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_data/business_hours.dart';
 
 class RestaurantInformation extends StatelessWidget {
-  final String location;    //場所
-  final String phone;       //電話番号
-  final String hours;       //営業時間
-  final bool isOpen;        //営業中かどうか
+  final String address;   // 住所
+  final String phone;      // 電話番号
+  final BusinessHours businessHours;  // 営業時間を BusinessHours オブジェクトに変更
   final TextStyle? textStyle;
 
   const RestaurantInformation({
     super.key,
-    required this.location,
+    required this.address,
     required this.phone,
-    required this.hours,
-    required this.isOpen,
+    required this.businessHours,
     this.textStyle,
   });
 
@@ -21,9 +20,9 @@ class RestaurantInformation extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('場所: $location', style: textStyle),
+        Text('住所: $address', style: textStyle),
         Text('電話: $phone', style: textStyle),
-        Text('営業時間: $hours', style: textStyle),
+        Text('営業時間: ${businessHours.getClosedDaysString()}', style: textStyle),
         _buildOpenStatus(),
       ],
     );
@@ -33,10 +32,10 @@ class RestaurantInformation extends StatelessWidget {
     String status;
     Color color;
 
-    if (hours.isEmpty) {
+    if (businessHours.weeklyHours.isEmpty) {
       status = '営業時間不明';
       color = Colors.grey;
-    } else if (isOpen) {
+    } else if (businessHours.isOpenNow()) {
       status = '営業中';
       color = Colors.green;
     } else {
@@ -44,7 +43,7 @@ class RestaurantInformation extends StatelessWidget {
       color = Colors.red;
     }
 
-    final statusStyle = textStyle?.copyWith(//追加
+    final statusStyle = textStyle?.copyWith(
       color: color,
       fontWeight: FontWeight.bold,
     ) ?? TextStyle(
