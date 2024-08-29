@@ -69,10 +69,12 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-             MapView(
-              height: screenHeight,
-              width: screenWidth,
-              customMarkerPosition: LatLng(35.681236, 139.767125), // 任意の位置を指定
+            const Expanded(
+              child: MapView(
+                height: double.infinity,
+                width: double.infinity,
+                customMarkerPosition: LatLng(35.681236, 139.767125), // 任意の位置を指定
+              ),
             ),
           ],
         ),

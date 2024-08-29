@@ -7,13 +7,13 @@ import 'package:gohan/view_model/user_location_viewmodel/user_location_viewmodel
 class MapView extends StatefulWidget {
   final double height;
   final double width;
-  final LatLng customMarkerPosition; // 追加
+  final LatLng customMarkerPosition;
 
   const MapView({
     super.key,
     required this.height,
     required this.width,
-    required this.customMarkerPosition, // 追加
+    required this.customMarkerPosition,
   });
 
   @override
@@ -21,9 +21,10 @@ class MapView extends StatefulWidget {
 }
 
 class _MapViewState extends State<MapView> {
-  late GoogleMapController mapController;
+  GoogleMapController? mapController;
 
   final CameraPosition _initialLocation = const CameraPosition(target: LatLng(0.0, 0.0));
+  LatLng _currentPosition = LatLng(0.0, 0.0);
 
   @override
   void initState() {
@@ -52,8 +53,8 @@ class _MapViewState extends State<MapView> {
       width: widget.width,
       child: Consumer<UserLocationViewModel>(
         builder: (context, locationViewModel, child) {
-          if (locationViewModel.currentPosition != null) {
-            mapController.animateCamera(
+          if (locationViewModel.currentPosition != null && mapController != null) {
+            mapController!.animateCamera(
               CameraUpdate.newCameraPosition(
                 CameraPosition(
                   target: LatLng(
@@ -97,7 +98,7 @@ class _MapViewState extends State<MapView> {
       ),
       Marker(
         markerId: const MarkerId('custom_marker'),
-        position: widget.customMarkerPosition, // 引数として渡された位置を使用
+        position: widget.customMarkerPosition,
         infoWindow: const InfoWindow(title: 'カスタムマーカー'),
       ),
     };
