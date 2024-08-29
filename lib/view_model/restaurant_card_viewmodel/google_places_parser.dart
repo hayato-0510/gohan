@@ -12,24 +12,52 @@ class GooglePlacesParser {
   static void initialize() {
     _apiKey = dotenv.env['GOOGLE_MAPS_API_KEY'];
   }
-  static Restaurant parseRestaurantDetails(Map<String, dynamic> data, String placeId) {
-    final result = data['result'];
+  static Restaurant parseRestaurantFromNearbySearch(Map<String, dynamic> place) {
+    return Restaurant(
+      id: place['place_id'] ?? '',
+      name: place['name'] ?? '',
+      category: place['types'] != null && place['types'].isNotEmpty ? place['types'][0] : '',
+      priceRange: place['price_level'] != null ? '\$' * place['price_level'] : '',
+      rating: (place['rating'] as num?)?.toDouble() ?? 0.0,
+      reviewCount: place['user_ratings_total'] ?? 0,
+      userReviews: [],
+      mapIconUrl: place['icon'] ?? '',
+      address: place['vicinity'] ?? '',
+      location: LatLng(
+        place['geometry']['location']['lat'],
+        place['geometry']['location']['lng'],
+      ),
+      phone: '',  // Nearby Search doesn't provide phone number
+      websiteUrl: '',  // Nearby Search doesn't provide website URL
+      businessHours: BusinessHours(weeklyHours: {}, closedDays: []),  // Nearby Search doesn't provide business hours
+      businessStatus: place['business_status'] ?? '',
+      photos: place['photos'] != null
+          ? [Photo(url: place['photos'][0]['photo_reference'])]
+          : [],
+      isFavorite: false,
+    );
+  }
+  static Restaurant parseRestaurantDetails(Map<String, dynamic> result, String placeId) {
     return Restaurant(
       id: placeId,
       name: result['name'] ?? '',
-      category: _parseCategory(result['types']),
-      priceRange: _parsePriceRange(result['price_level']),
+      category: result['types'] != null && result['types'].isNotEmpty ? result['types'][0] : '',
+      priceRange: result['price_level'] != null ? '\$' * result['price_level'] : '',
       rating: (result['rating'] as num?)?.toDouble() ?? 0.0,
       reviewCount: result['user_ratings_total'] ?? 0,
-      userReviews: [], // ユーザーレビューの解析は別途必要
-      mapIconUrl: _getPlacePhotoUrl(result['photos']),  //Place Photos APIを使用して場所の写真をアイコンとする（要検討）
+      userReviews: [], // 詳細なレビュー情報が必要な場合は、別途処理が必要です
+      mapIconUrl: result['icon'] ?? '',
       address: result['formatted_address'] ?? '',
-      location: _parseLocation(result['geometry']['location']),
+      location: LatLng(
+        result['geometry']['location']['lat'],
+        result['geometry']['location']['lng'],
+      ),
       phone: result['formatted_phone_number'] ?? '',
       websiteUrl: result['website'] ?? '',
       businessHours: _parseBusinessHours(result['opening_hours']),
       businessStatus: result['business_status'] ?? '',
-      photos: _parsePhotos(result['photos'], data['api_key']),
+      photos: _parsePhotos(result['photos'], placeId),
+      isFavorite: false,
     );
   }
 

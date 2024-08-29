@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:gohan/components/restaurant_card/restaurant_card.dart';
 import 'package:gohan/components/check_box/check_box.dart';
@@ -17,12 +18,56 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   String? selectedFood;
   String? selectedDistance;
-
+  /*
   @override
   void initState() {
     super.initState();
   }
 
+  Future<void> loadNearbyRestaurants() async {
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      
+      await Provider.of<RestaurantCardViewModel>(context, listen: false)
+          .fetchNearbyRestaurants(position.latitude, position.longitude);
+    } catch (e) {
+      print('Error getting location: $e');
+    }
+  }
+  */
+  //テストコード1
+  // 三重県鈴鹿市の緯度経度（おおよその中心位置）
+  final double testLatitude = 34.8823;
+  final double testLongitude = 136.5844;
+
+  @override
+  void initState() {
+    super.initState();
+    // 初期化時にテストデータを読み込む
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeViewModel();
+    });
+  }
+  Future<void> _initializeViewModel() async {
+    final viewModel = Provider.of<RestaurantCardViewModel>(context, listen: false);
+    await viewModel.initialize();
+    loadTestRestaurants();
+  }
+
+  Future<void> loadTestRestaurants() async {
+    try {
+      await Provider.of<RestaurantCardViewModel>(context, listen: false)
+          .fetchNearbyRestaurants(testLatitude, testLongitude);
+    } catch (e) {
+      print('Error loading test restaurants: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load restaurants: $e')),
+      );
+    }
+  }
+  //ここまでテストコード1
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,12 +92,18 @@ class _SearchPageState extends State<SearchPage> {
                 child: Consumer<RestaurantCardViewModel>(
                   builder: (context, viewModel, child) {
                     if (viewModel.restaurants.isEmpty) {
+                      /*
                       return ElevatedButton(
-                        onPressed: () {
-                          viewModel.fetchRestaurantDetails("place_id_here");//ここに位置情報から取得したPlaceIDを
-                        },
-                        child: const Text('Load More Restaurants'),
+                        onPressed: loadNearbyRestaurants,
+                        child: const Text('Load Nearby Restaurants'),
                       );
+                      */
+                      //テストコード2
+                      return ElevatedButton(
+                        onPressed: loadTestRestaurants,
+                        child: const Text('Load Test Restaurants'),
+                      );
+                      //ここまでテストコード2
                     }
 
                     return AppinioSwiper(
