@@ -49,7 +49,7 @@ class _SearchPageState extends State<SearchPage> {
                     if (viewModel.restaurants.isEmpty) {
                       return ElevatedButton(
                         onPressed: () {
-                          viewModel.fetchRestaurantDetails();
+                          viewModel.fetchRestaurantDetails("place_id_here");//ここに位置情報から取得したPlaceIDを
                         },
                         child: const Text('Load More Restaurants'),
                       );

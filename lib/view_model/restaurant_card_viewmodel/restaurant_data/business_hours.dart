@@ -42,6 +42,43 @@ class BusinessHours {
     List<String> days = ['月', '火', '水', '木', '金', '土', '日'];
     return closedDays.map((day) => days[day - 1]).join(', ');
   }
+
+  static BusinessHours parseFromGooglePlaces(Map<String, dynamic>? openingHours) {
+    if (openingHours == null) {
+      return BusinessHours(weeklyHours: {}, closedDays: []);
+    }
+
+    final weeklyHours = <int, DayHours>{};
+    final closedDays = <int>[];
+
+    final periods = openingHours['periods'] as List<dynamic>?;
+    if (periods != null) {
+      for (var period in periods) {
+        final open = period['open'];
+        final close = period['close'];
+        if (open != null && close != null) {
+          final day = open['day'];
+          final openTime = TimeOfDay(hour: int.parse(open['time'].substring(0, 2)), minute: int.parse(open['time'].substring(2)));
+          final closeTime = TimeOfDay(hour: int.parse(close['time'].substring(0, 2)), minute: int.parse(close['time'].substring(2)));
+          
+          if (weeklyHours.containsKey(day)) {
+            weeklyHours[day]!.openRanges.add(TimeRange(start: openTime, end: closeTime));
+          } else {
+            weeklyHours[day] = DayHours(openRanges: [TimeRange(start: openTime, end: closeTime)]);
+          }
+        }
+      }
+    }
+
+    // 閉店日を特定
+    for (int i = 0; i < 7; i++) {
+      if (!weeklyHours.containsKey(i)) {
+        closedDays.add(i);
+      }
+    }
+
+    return BusinessHours(weeklyHours: weeklyHours, closedDays: closedDays);
+  }
 }
 
 class DayHours {

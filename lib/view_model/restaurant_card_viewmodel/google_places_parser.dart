@@ -1,0 +1,125 @@
+
+import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'restaurant.dart';
+import 'restaurant_data/business_hours.dart';
+import 'restaurant_data/photo.dart';
+import 'restaurant_data/lat_lng.dart';
+
+class GooglePlacesParser {
+  static String? _apiKey;
+
+  static void initialize() {
+    _apiKey = dotenv.env['GOOGLE_MAPS_API_KEY'];
+  }
+  static Restaurant parseRestaurantDetails(Map<String, dynamic> data, String placeId) {
+    final result = data['result'];
+    return Restaurant(
+      id: placeId,
+      name: result['name'] ?? '',
+      category: _parseCategory(result['types']),
+      priceRange: _parsePriceRange(result['price_level']),
+      rating: (result['rating'] as num?)?.toDouble() ?? 0.0,
+      reviewCount: result['user_ratings_total'] ?? 0,
+      userReviews: [], // ユーザーレビューの解析は別途必要
+      mapIconUrl: _getPlacePhotoUrl(result['photos']),  //Place Photos APIを使用して場所の写真をアイコンとする（要検討）
+      address: result['formatted_address'] ?? '',
+      location: _parseLocation(result['geometry']['location']),
+      phone: result['formatted_phone_number'] ?? '',
+      websiteUrl: result['website'] ?? '',
+      businessHours: _parseBusinessHours(result['opening_hours']),
+      businessStatus: result['business_status'] ?? '',
+      photos: _parsePhotos(result['photos'], data['api_key']),
+    );
+  }
+
+  static String _getPlacePhotoUrl(List<dynamic>? photos) {
+    if (_apiKey == null) {
+      throw Exception('API key is not initialized');
+    }
+
+    if (photos == null || photos.isEmpty) {
+      return ''; // デフォルトのアイコンURLを返すか、空文字列を返す
+    }
+
+    final photoReference = photos[0]['photo_reference'];
+    return 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=100&photoreference=$photoReference&key=$_apiKey';//小さめの画像を取得
+  }
+
+  static String _parseCategory(List<dynamic>? types) {
+    if (types == null || types.isEmpty) return 'Unknown';
+    return types[0];
+  }
+
+  static String _parsePriceRange(int? priceLevel) {
+    if (priceLevel == null) return '';
+    return '\$' * priceLevel;
+  }
+
+  static LatLng _parseLocation(Map<String, dynamic>? location) {
+    if (location == null) return LatLng(0, 0);
+    return LatLng(
+      location['lat'] as double,
+      location['lng'] as double,
+    );
+  }
+
+  static BusinessHours _parseBusinessHours(Map<String, dynamic>? openingHours) {
+    if (openingHours == null) {
+      return BusinessHours(weeklyHours: {}, closedDays: []);
+    }
+
+    final weeklyHours = <int, DayHours>{};
+    final closedDays = <int>[];
+
+    final periods = openingHours['periods'] as List<dynamic>?;
+    if (periods != null) {
+      for (var period in periods) {
+        final open = period['open'];
+        final close = period['close'];
+        if (open != null && close != null) {
+          final day = open['day'] as int;
+          final openTime = _parseTimeOfDay(open['time']);
+          final closeTime = _parseTimeOfDay(close['time']);
+          
+          if (weeklyHours.containsKey(day)) {
+            weeklyHours[day]!.openRanges.add(TimeRange(start: openTime, end: closeTime));
+          } else {
+            weeklyHours[day] = DayHours(openRanges: [TimeRange(start: openTime, end: closeTime)]);
+          }
+        }
+      }
+    }
+
+    for (int i = 0; i < 7; i++) {
+      if (!weeklyHours.containsKey(i)) {
+        closedDays.add(i);
+      }
+    }
+
+    return BusinessHours(weeklyHours: weeklyHours, closedDays: closedDays);
+  }
+
+  static TimeOfDay _parseTimeOfDay(String time) {
+    final hour = int.parse(time.substring(0, 2));
+    final minute = int.parse(time.substring(2));
+    return TimeOfDay(hour: hour, minute: minute);
+  }
+
+  static List<Photo> _parsePhotos(List<dynamic>? photoReferences, String apiKey) {
+    if (photoReferences == null) return [];
+
+    return photoReferences.map((photo) {
+      final photoReference = photo['photo_reference'];
+      final photoUrl = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey';
+      return Photo(
+        url: photoUrl,
+        attributes: {
+          'height': photo['height'],
+          'width': photo['width'],
+          'html_attributions': photo['html_attributions'],
+        },
+      );
+    }).toList();
+  }
+}
