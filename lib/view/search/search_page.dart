@@ -77,6 +77,10 @@ class _SearchPageState extends State<SearchPage> {
                             viewModel.restaurants[previousIndex].id.toString(),
                             viewModel.restaurants[previousIndex].restaurantName,
                             viewModel.restaurants[previousIndex].rating,
+                            viewModel.restaurants[previousIndex].location, // 追加
+                            viewModel.restaurants[previousIndex].phone, // 追加
+                            viewModel.restaurants[previousIndex].hours, // 追加
+                            viewModel.restaurants[previousIndex].isOpen, // 追加
                             isLiked,
                           );
                           // 再度表示されないように_restaurantsから削除

@@ -52,20 +52,20 @@ class RestaurantCard extends StatelessWidget {
                     ),
                   ]),
                   
-                  Container(
-                    height: 200,
-                    decoration: restaurant.imageUrl.isNotEmpty
-                        ? BoxDecoration(
-                            image: DecorationImage(
-                              image: NetworkImage(restaurant.imageUrl),
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : BoxDecoration(color: Colors.grey[300]),
-                    child: restaurant.imageUrl.isEmpty
-                        ? const Center(child: Text('画像'))
-                        : null,
-                  ),
+                  // //*Container(
+                  //   height: 200,
+                  //   decoration: restaurant.imageUrl.isNotEmpty
+                  //       ? BoxDecoration(
+                  //           image: DecorationImage(
+                  //             image: NetworkImage(restaurant.imageUrl),
+                  //             fit: BoxFit.cover,
+                  //           ),
+                  //         )
+                  //       : BoxDecoration(color: Colors.grey[300]),
+                  //   child: restaurant.imageUrl.isEmpty
+                  //       ? const Center(child: Text('画像'))
+                  //       : null,
+                  // ),
                   const SizedBox(height: 16),
                   RestaurantInformation(
                     location: restaurant.location,
