@@ -32,33 +32,40 @@ class GooglePlacesParser {
       businessHours: BusinessHours(weeklyHours: {}, closedDays: []),  // Nearby Search doesn't provide business hours
       businessStatus: place['business_status'] ?? '',
       photos: place['photos'] != null
-          ? [Photo(url: place['photos'][0]['photo_reference'])]
-          : [],
+        ? [Photo(url: _getPlacePhotoUrl(place['photos']))]
+        : [],
       isFavorite: false,
     );
   }
   static Restaurant parseRestaurantDetails(Map<String, dynamic> result, String placeId) {
-    return Restaurant(
-      id: placeId,
-      name: result['name'] ?? '',
-      category: result['types'] != null && result['types'].isNotEmpty ? result['types'][0] : '',
-      priceRange: result['price_level'] != null ? '\$' * result['price_level'] : '',
-      rating: (result['rating'] as num?)?.toDouble() ?? 0.0,
-      reviewCount: result['user_ratings_total'] ?? 0,
-      userReviews: [], // 詳細なレビュー情報が必要な場合は、別途処理が必要です
-      mapIconUrl: result['icon'] ?? '',
-      address: result['formatted_address'] ?? '',
-      location: LatLng(
-        result['geometry']['location']['lat'],
-        result['geometry']['location']['lng'],
-      ),
-      phone: result['formatted_phone_number'] ?? '',
-      websiteUrl: result['website'] ?? '',
-      businessHours: _parseBusinessHours(result['opening_hours']),
-      businessStatus: result['business_status'] ?? '',
-      photos: _parsePhotos(result['photos'], placeId),
-      isFavorite: false,
-    );
+    try {
+      final photos = _parsePhotos(result['photos'], placeId);
+      return Restaurant(
+        id: placeId,
+        name: result['name'] ?? '',
+        category: result['types'] != null && result['types'].isNotEmpty ? result['types'][0] : '',
+        priceRange: result['price_level'] != null ? '\$' * result['price_level'] : '',
+        rating: (result['rating'] as num?)?.toDouble() ?? 0.0,
+        reviewCount: result['user_ratings_total'] ?? 0,
+        userReviews: [], // 詳細なレビュー情報が必要な場合は、別途処理が必要です
+        mapIconUrl: result['icon'] ?? '',
+        address: result['formatted_address'] ?? '',
+        location: LatLng(
+          result['geometry']['location']['lat'],
+          result['geometry']['location']['lng'],
+        ),
+        phone: result['formatted_phone_number'] ?? '',
+        websiteUrl: result['website'] ?? '',
+        businessHours: _parseBusinessHours(result['opening_hours']),
+        businessStatus: result['business_status'] ?? '',
+        //photos: _parsePhotos(result['photos'], placeId),
+        photos: photos,
+        isFavorite: false,
+      );
+    } catch (e) {
+      print('Error parsing restaurant details: $e');
+      rethrow;
+    }
   }
 
   static String _getPlacePhotoUrl(List<dynamic>? photos) {
@@ -71,7 +78,7 @@ class GooglePlacesParser {
     }
 
     final photoReference = photos[0]['photo_reference'];
-    return 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=100&photoreference=$photoReference&key=$_apiKey';//小さめの画像を取得
+    return 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$_apiKey';
   }
 
   static String _parseCategory(List<dynamic>? types) {
@@ -137,17 +144,23 @@ class GooglePlacesParser {
   static List<Photo> _parsePhotos(List<dynamic>? photoReferences, String apiKey) {
     if (photoReferences == null) return [];
 
-    return photoReferences.map((photo) {
-      final photoReference = photo['photo_reference'];
-      final photoUrl = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey';
-      return Photo(
-        url: photoUrl,
-        attributes: {
-          'height': photo['height'],
-          'width': photo['width'],
-          'html_attributions': photo['html_attributions'],
-        },
-      );
-    }).toList();
+    try {
+      return photoReferences.map((photo) {
+        final photoReference = photo['photo_reference'];
+        final photoUrl = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey';
+        print('Generated photo URL: $photoUrl'); // URLをログに出力
+        return Photo(
+          url: photoUrl,
+          attributes: {
+            'height': photo['height'],
+            'width': photo['width'],
+            'html_attributions': photo['html_attributions'],
+          },
+        );
+      }).toList();
+    } catch (e) {
+      print('Error parsing photos: $e');
+      return [];
+    }
   }
 }

@@ -137,7 +137,9 @@ class RestaurantCardViewModel extends ChangeNotifier {
         final result = data['result'];
 
         final restaurant = GooglePlacesParser.parseRestaurantDetails(result, placeId);
+        print('Fetched restaurant details: ${json.encode(restaurant.toJson())}'); // レストラン情報をログに出力
 
+        //重複チェック
         final index = _restaurants.indexWhere((r) => r.id == placeId);
         if (index != -1) {
           _restaurants[index] = restaurant;

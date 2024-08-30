@@ -51,4 +51,25 @@ class Restaurant {
   bool get isOpen => businessHours.isOpenNow();  // 現在営業中かどうか
   
   String get closedDays => businessHours.getClosedDaysString();  // 定休日の文字列を返す
+  // toJson メソッド
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'category': category,
+      'priceRange': priceRange,
+      'rating': rating,
+      'reviewCount': reviewCount,
+      'userReviews': userReviews.map((review) => review.toJson()).toList(),
+      'mapIconUrl': mapIconUrl,
+      'address': address,
+      'location': {'lat': location.latitude, 'lng': location.longitude},
+      'phone': phone,
+      'websiteUrl': websiteUrl,
+      'businessHours': businessHours.toJson(),
+      'businessStatus': businessStatus,
+      'photos': photos.map((photo) => photo.toJson()).toList(),
+      'isFavorite': isFavorite,
+    };
+  }
 }

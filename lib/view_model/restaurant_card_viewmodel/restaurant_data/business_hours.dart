@@ -79,6 +79,13 @@ class BusinessHours {
 
     return BusinessHours(weeklyHours: weeklyHours, closedDays: closedDays);
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'weeklyHours': weeklyHours.map((key, value) => MapEntry(key.toString(), value.toJson())),
+      'closedDays': closedDays,
+    };
+  }
 }
 
 class DayHours {
@@ -91,6 +98,11 @@ class DayHours {
       if (range.contains(time)) return true;
     }
     return false;
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'openRanges': openRanges.map((range) => range.toJson()).toList(),
+    };
   }
 }
 
@@ -111,6 +123,12 @@ class TimeRange {
       // 深夜をまたぐ場合
       return timeMinutes >= startMinutes || timeMinutes < endMinutes;
     }
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'start': '${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')}',
+      'end': '${end.hour.toString().padLeft(2, '0')}:${end.minute.toString().padLeft(2, '0')}',
+    };
   }
 }
 

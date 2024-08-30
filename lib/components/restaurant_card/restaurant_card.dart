@@ -57,17 +57,30 @@ class RestaurantCard extends StatelessWidget {
                   Text('Price Range: ${restaurant.priceRange}'),
                   Container(
                     height: 200,
-                    decoration: restaurant.photos.isNotEmpty
-                        ? BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage(restaurant.photos.first.url),
-                        fit: BoxFit.cover,
-                      ),
+                    child: restaurant.photos.isNotEmpty
+                        ? Image.network(
+                      restaurant.photos.first.url,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        print('Error loading image: $error');
+                        print('Attempted image URL: ${restaurant.photos.first.url}');
+                        return Center(child: Text('Error loading image'));
+                      },
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        );
+                      },
                     )
-                        : BoxDecoration(color: Colors.grey[300]),
-                    child: restaurant.photos.isEmpty
-                        ? const Center(child: Text('No Image'))
-                        : null,
+                        : Container(
+                      color: Colors.grey[300],
+                      child: Center(child: Text('No Image')),
+                    ),
                   ),
                   const SizedBox(height: 16),
                   RestaurantInformation(

@@ -5,4 +5,10 @@ class LatLng {
   final double longitude;
 
   LatLng(this.latitude, this.longitude);
+  Map<String, dynamic> toJson() {
+    return {
+      'latitude': latitude,
+      'longitude': longitude,
+    };
+  }
 }

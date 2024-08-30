@@ -10,4 +10,12 @@ class Review {
     required this.rating,
     required this.timestamp,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'rating': rating,
+      'text': text,
+      'time': timestamp.toIso8601String(),
+    };
+  }
 }
