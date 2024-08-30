@@ -17,6 +17,8 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   late TextEditingController _foodController;
+  bool _showUserCheckBar = true; // User Check Bar の表示/非表示を管理するフラグ
+  bool _isExpanded = false; // 矢印の向きを管理
 
   @override
   void initState() {
@@ -36,6 +38,14 @@ class _SearchPageState extends State<SearchPage> {
     super.dispose();
   }
 
+    // チェックバーの表示/非表示と矢印の向きを切り替えるメソッド
+  void _toggleUserCheckBar() {
+    setState(() {
+      _showUserCheckBar = !_showUserCheckBar;
+      _isExpanded = !_isExpanded;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,9 +60,38 @@ class _SearchPageState extends State<SearchPage> {
                 top: 10.0,
                 bottom: 1.0,
               ),
-              child: _setUserCheckBar(context),
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: _toggleUserCheckBar,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(_showUserCheckBar ? 'Hide Filters' : 'Show Filters'),
+                        Icon(
+                          _isExpanded ? Icons.arrow_drop_down : Icons.arrow_right,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Visibility(
+                    visible: _showUserCheckBar,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                      padding: const EdgeInsets.all(10.0),
+                      child: _setUserCheckBar(context),
+                    ),
+                  ),
+                ],       
             ),
-            const Divider(),
+            ),
+            const Divider(
+              color: Colors.grey, // 線の色
+              thickness: 1.0, // 線の太さ
+              indent: 0.0, // 左側のインデント
+              endIndent: 0.0, // 右側のインデント
+            ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
