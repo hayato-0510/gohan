@@ -22,7 +22,7 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     super.initState();
     final userSearchSettings = Provider.of<UserSearchSettingsViewModel>(context, listen: false);
-    _foodController = TextEditingController(text: userSearchSettings.restaurantName);
+    _foodController = TextEditingController(text: userSearchSettings.name);
 
     // Listenerを追加して、TextEditingControllerが変更されたらViewModelも更新するようにします
     _foodController.addListener(() {
@@ -77,18 +77,17 @@ class _SearchPageState extends State<SearchPage> {
                       onSwipeEnd: (int previousIndex, int targetIndex,
                           SwiperActivity activity) async {
                         if (activity is Swipe) {
-                          final isLiked =
+                          final isFavorite =
                               activity.direction == AxisDirection.right;
                           Provider.of<UserEngagementViewModel>(context, listen: false)
                               .saveToEngagementDB(
-                            viewModel.restaurants[previousIndex].id.toString(),
-                            viewModel.restaurants[previousIndex].restaurantName,
-                            viewModel.restaurants[previousIndex].rating,
-                            viewModel.restaurants[previousIndex].location, // 追加
-                            viewModel.restaurants[previousIndex].phone, // 追加
-                            viewModel.restaurants[previousIndex].hours, // 追加
-                            viewModel.restaurants[previousIndex].isOpen, // 追加
-                            isLiked,
+                              id: viewModel.restaurants[previousIndex].id.toString(),
+                              name: viewModel.restaurants[previousIndex].name,
+                              rating: viewModel.restaurants[previousIndex].rating,
+                              location: viewModel.restaurants[previousIndex].location,
+                              phone: viewModel.restaurants[previousIndex].phone,
+                              hours: viewModel.restaurants[previousIndex].hours,
+                              isFavorite: isFavorite,
                           );
                           WidgetsBinding.instance.addPostFrameCallback((_) {
                             if (previousIndex < viewModel.restaurants.length) {
@@ -121,7 +120,7 @@ class _SearchPageState extends State<SearchPage> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5),
               child: CustomDropdownMenu(
-                value: userSearchSettings.restaurantName,
+                value: userSearchSettings.name,
                 hint: const Text('料理名を入力'),
                 onChanged: (value) {
                   userSearchSettings.updateRestaurantName(value ?? '');

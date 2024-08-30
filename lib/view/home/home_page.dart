@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gohan/view/home/recomended_list/recomended_list.dart';
-import 'package:gohan/view/home/favorite_list/favorite_list.dart';
+import 'package:gohan/view/home/list/recomended_list/recomended_list.dart';
+import 'package:gohan/view/home/list/favorite_list/favorite_list.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});

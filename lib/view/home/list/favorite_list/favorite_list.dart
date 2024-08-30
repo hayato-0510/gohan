@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:gohan/view_model/user_engagement_viewmodel/user_engagement_viewmodel.dart';
 import 'package:gohan/components/home_restaurant_list/home_restaurant_list.dart';
-import 'package:gohan/view_model/restrant_details_viewmodel/restaurant_details_viewmodel.dart';
+import 'package:gohan/view/home/list/restaurat_detail_bottom_sheet.dart';
 
 class FavoriteListView extends StatefulWidget {
   const FavoriteListView({super.key});
@@ -42,34 +42,37 @@ class _FavoriteListViewState extends State<FavoriteListView> {
                       if (engagementViewModel.likedShopCards.isNotEmpty) {
                         return Column(
                           children: engagementViewModel.likedShopCards
-                              .map((historyItem) {
+                              .map((fovliteItem) {
                             return HomeRestaurantList(
                               onTap: () async {
-                                print('Tapped ${historyItem["id"]}');
                                 try {
-                                  final restaurantDetails = await engagementViewModel.getRestaurantById(historyItem["id"]);
-                                  if (restaurantDetails != null) {
-                                    final restaurantDetailsViewModel = Provider.of<RestaurantDetailsViewModel>(context, listen: false);
-                                    print('Showing details for ${restaurantDetails["title"]}');
-                                    print('Details: $restaurantDetails');
-                                    restaurantDetailsViewModel.showRestaurantDetails(
-                                      context,
-                                      restaurantDetails['title'] ?? 'Unknown',
-                                      restaurantDetails['rating'] ?? 0.0,
-                                      restaurantDetails['location'] ?? 'Unknown',
-                                      restaurantDetails['phone'] ?? 'Unknown',
-                                      restaurantDetails['hours'] ?? 'Unknown',
-                                      restaurantDetails['is_open']==1,
+                                  final restaurantDetails = await engagementViewModel.getRestaurantById(fovliteItem);
+                                  debugPrint('Fetched restaurant details: $restaurantDetails');
+
+                                  if (restaurantDetails != null && mounted) {
+                                    // モーダルボトムシートを表示
+                                    showModalBottomSheet(
+                                      context: context,
+                                      builder: (context) {
+                                        return RestaurantDetailsBottomSheet(
+                                          name: restaurantDetails['name'] ?? 'Unknown',
+                                          rating: restaurantDetails['rating'] ?? 0.0,
+                                          location: restaurantDetails['location'] ?? 'Unknown',
+                                          phone: restaurantDetails['phone'] ?? 'Unknown',
+                                          hours: restaurantDetails['hours'] ?? 'Unknown',
+                                          isOpen: restaurantDetails['is_open'] == 1,
+                                        );
+                                      },
                                     );
                                   } else {
-                                    print('Restaurant details not found for ID: ${historyItem["id"]}');
+                                    debugPrint('Restaurant details not found for ID: ${fovliteItem["id"]}');
                                   }
                                 } catch (e) {
-                                  print('Error fetching restaurant details: $e');
+                                  debugPrint('Error fetching restaurant details: $e');
                                 }
                               },
-                              mainText: historyItem['title'],
-                              subText: historyItem['rating'].toString(),
+                              mainText: fovliteItem['name'],
+                              subText: fovliteItem['rating'].toString(),
                             );
                           }).toList(),
                         );

@@ -17,7 +17,7 @@ class RestaurantCardViewModel extends ChangeNotifier {
     _restaurants = [
       RestaurantModel(
         id: "aaaa",
-        restaurantName: 'Sample1',
+        name: 'Sample1',
         imageUrl: '',
         rating: 4.5,
         location: 'Location 1',
@@ -26,7 +26,7 @@ class RestaurantCardViewModel extends ChangeNotifier {
       ),
       RestaurantModel(
         id: "bbbb",
-        restaurantName: 'Sample2 restaurant name',
+        name: 'Sample2 restaurant name',
         imageUrl: '',
         rating: 4.2,
         location: 'Location 2',
@@ -35,7 +35,7 @@ class RestaurantCardViewModel extends ChangeNotifier {
       ),
       RestaurantModel(
         id: "cccc",
-        restaurantName: 'Sample3 restaurant name',
+        name: 'Sample3 restaurant name',
         imageUrl: '',
         rating: 1.2,
         location: 'Location 3',
@@ -79,7 +79,7 @@ class RestaurantCardViewModel extends ChangeNotifier {
 
     final restaurant = RestaurantModel(
       id: restaurantId,
-      restaurantName: 'サンプルレストラン',
+      name: 'サンプルレストラン',
       imageUrl: '',
       rating: 4.5,
       location: '三重県',

@@ -1,10 +1,10 @@
 class UserSearchSettingsModel {
-  final String restaurantName;
+  final String name;
   final String selectedDistance;
   final bool isOpen;
 
   UserSearchSettingsModel({
-    required this.restaurantName,
+    required this.name,
     required this.selectedDistance,
     required this.isOpen,
   });

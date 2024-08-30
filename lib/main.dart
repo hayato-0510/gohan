@@ -4,7 +4,6 @@ import 'package:gohan/view/tab_page.dart';
 import 'package:gohan/view_model/user_engagement_viewmodel/user_engagement_viewmodel.dart';
 import 'package:gohan/view_model/user_location_viewmodel/user_location_viewmodel.dart';
 import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
-import 'package:gohan/view_model/restrant_details_viewmodel/restaurant_details_viewmodel.dart';
 import 'package:gohan/view_model/user_search_settings_viewmodel/user_search_settings_viewmodel.dart';
 
 void main() {
@@ -21,7 +20,6 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => UserLocationViewModel()),
         ChangeNotifierProvider(create: (_) => UserEngagementViewModel()),
         ChangeNotifierProvider(create: (_) => RestaurantCardViewModel()),
-        Provider(create: (_) => RestaurantDetailsViewModel()),
         ChangeNotifierProvider(create: (_) => UserSearchSettingsViewModel()),
       ],
       child: MaterialApp(

@@ -19,8 +19,11 @@ class UserEngagementModel {
         await db.execute('''
           CREATE TABLE user_engagement(
             id TEXT PRIMARY KEY,
-            title TEXT,
+            name TEXT,
             rating REAL,
+            location TEXT,
+            phone TEXT,
+            hours TEXT,
             is_liked BOOLEAN
           );
         ''');
@@ -30,12 +33,27 @@ class UserEngagementModel {
   }
 
   Future<void> saveToEngagementDB(
-      String id, String title, double rating, bool isLiked) async {
+      String id, 
+      String name,
+      double rating, 
+      bool isFavorite,
+      String location,
+      String phone,
+      String hours,
+  ) async {
     await _initDatabase();
 
     await _database?.insert(
       'user_engagement',
-      {'id': id, 'title': title, 'rating': rating, 'is_liked': isLiked ? 1 : 0},
+      {
+        'id': id, 
+        'name': name, 
+        'rating': rating, 
+        'location': location,
+        'phone': phone,
+        'hours': hours,
+        'is_liked': isFavorite ? 1 : 0
+        },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
@@ -62,5 +80,28 @@ class UserEngagementModel {
     );
 
     return maps;
+  }
+
+  Future<void> loadAndAppendDetails(Map<String, dynamic> shopCard) async {
+    await _initDatabase();
+
+    if (shopCard['id'] == null) {
+        print("shopCard['id'] is null");
+      }
+    final List<Map<String, dynamic>> maps = await _database!.query(
+      'user_engagement',
+      where: 'id = ?',
+      whereArgs: [shopCard['id']],
+    );
+
+    if (maps.isNotEmpty) {
+      final details = maps.first;
+      shopCard.addAll({
+        'location': details['location'],
+        'phone': details['phone'],
+        'hours': details['hours'],
+        'rating': details['rating'],
+      });
+    }
   }
 }

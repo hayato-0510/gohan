@@ -1,48 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:gohan/components/restaurant_information/restaurant_information.dart';
 
-class RestaurantDetailsViewModel {
-  void showRestaurantDetails(
-    BuildContext context,
-    String restaurantName,
-    double rating,
-    String location,
-    String phone,
-    String hours,
-    bool isOpen,
-  ) {
-    print('showRestaurantDetails called for $restaurantName');
-     print('Rating: $rating, Location: $location, Phone: $phone, Hours: $hours, Is Open: $isOpen');
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      enableDrag: true,
-      barrierColor: Colors.black.withOpacity(0.5),
-      builder: (BuildContext context) {
-        return _RestaurantDetailsBottomSheet(
-          restaurantName: restaurantName,
-          rating: rating,
-          location: location,
-          phone: phone,
-          hours: hours,
-          isOpen: isOpen,
-        );
-      },
-    );
-  }
-}
-
-class _RestaurantDetailsBottomSheet extends StatelessWidget {
-  final String restaurantName;
+class RestaurantDetailsBottomSheet extends StatelessWidget {
+  final String name;
   final double rating;
   final String location;
   final String phone;
   final String hours;
   final bool isOpen;
 
-  const _RestaurantDetailsBottomSheet({
-    required this.restaurantName,
+  const RestaurantDetailsBottomSheet({
+    required this.name,
     required this.rating,
     required this.location,
     required this.phone,
@@ -52,7 +20,6 @@ class _RestaurantDetailsBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Building bottom sheet for $restaurantName');
     return Container(
       height: 350, // 高さを調整
       decoration: const BoxDecoration(
@@ -68,7 +35,7 @@ class _RestaurantDetailsBottomSheet extends StatelessWidget {
           children: <Widget>[
             ListTile(
               leading: Icon(Icons.restaurant),
-              title: Text(restaurantName),
+              title: Text(name),
               subtitle: Text('Rating: $rating'),
             ),
             RestaurantInformation(

@@ -31,7 +31,7 @@ class RestaurantCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    restaurant.restaurantName,
+                    restaurant.name,
                     style: const TextStyle(
                         fontSize: 24, fontWeight: FontWeight.bold),
                     softWrap: true,
