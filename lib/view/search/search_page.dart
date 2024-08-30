@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:gohan/components/restaurant_card/restaurant_card.dart';
 import 'package:gohan/components/check_box/check_box.dart';
 import 'package:gohan/components/dropdown_menu/dropdown_menu.dart';
+import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
 import 'package:gohan/view_model/user_engagement_viewmodel/user_engagement_viewmodel.dart';
+import 'package:gohan/view_model/user_search_settings_viewmodel/user_search_settings_viewmodel.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -15,12 +16,24 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  String? selectedFood;
-  String? selectedDistance;
+  late TextEditingController _foodController;
 
   @override
   void initState() {
     super.initState();
+    final userSearchSettings = Provider.of<UserSearchSettingsViewModel>(context, listen: false);
+    _foodController = TextEditingController(text: userSearchSettings.restaurantName);
+
+    // Listenerを追加して、TextEditingControllerが変更されたらViewModelも更新するようにします
+    _foodController.addListener(() {
+      userSearchSettings.updateRestaurantName(_foodController.text);
+    });
+  }
+
+  @override
+  void dispose() {
+    _foodController.dispose();
+    super.dispose();
   }
 
   @override
@@ -37,13 +50,12 @@ class _SearchPageState extends State<SearchPage> {
                 top: 10.0,
                 bottom: 1.0,
               ),
-              child: _setUserCheckBar(),
+              child: _setUserCheckBar(context),
             ),
             const Divider(),
             Expanded(
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
                 child: Consumer<RestaurantCardViewModel>(
                   builder: (context, viewModel, child) {
                     if (viewModel.restaurants.isEmpty) {
@@ -65,14 +77,9 @@ class _SearchPageState extends State<SearchPage> {
                       onSwipeEnd: (int previousIndex, int targetIndex,
                           SwiperActivity activity) async {
                         if (activity is Swipe) {
-                          // 右にスワイプでtrue,  左にスワイプでfalse
                           final isLiked =
-                              activity.direction == AxisDirection.right
-                                  ? true
-                                  : false;
-                          // データベースに保存
-                          Provider.of<UserEngagementViewModel>(context,
-                                  listen: false)
+                              activity.direction == AxisDirection.right;
+                          Provider.of<UserEngagementViewModel>(context, listen: false)
                               .saveToEngagementDB(
                             viewModel.restaurants[previousIndex].id.toString(),
                             viewModel.restaurants[previousIndex].restaurantName,
@@ -83,7 +90,6 @@ class _SearchPageState extends State<SearchPage> {
                             viewModel.restaurants[previousIndex].isOpen, // 追加
                             isLiked,
                           );
-                          // 再度表示されないように_restaurantsから削除
                           WidgetsBinding.instance.addPostFrameCallback((_) {
                             if (previousIndex < viewModel.restaurants.length) {
                               viewModel.removeRestaurant(previousIndex);
@@ -105,55 +111,53 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _setUserCheckBar() {
-    CheckBox box1 = CheckBox(
-      title: '営業中',
-      initialValue: false,
-      onChanged: (bool? value) {
-        print('チェックボックスの状態: $value');
-      },
-      controlAffinity: ListTileControlAffinity.leading,
-    );
-
-    CustomDropdownMenu dishes = CustomDropdownMenu(
-      value: selectedFood,
-      items: const ['ラーメン', '寿司', 'カレー', 'ピザ'],
-      hint: const Text('ラーメン'),
-      onChanged: (value) {
-        setState(() {
-          selectedFood = value;
-        });
-      },
-    );
-
-    CustomDropdownMenu distance = CustomDropdownMenu(
-      value: selectedDistance,
-      items: const ['1km以内', '3km以内', '5km以内', '10km以内'],
-      hint: const Text('3km以内'),
-      onChanged: (value) {
-        setState(() {
-          selectedDistance = value;
-        });
-      },
-    );
+  Widget _setUserCheckBar(BuildContext context) {
+    final userSearchSettings = Provider.of<UserSearchSettingsViewModel>(context);
 
     return Column(
       children: [
         Row(children: [
           Expanded(
             child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: dishes),
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: CustomDropdownMenu(
+                value: userSearchSettings.restaurantName,
+                hint: const Text('料理名を入力'),
+                onChanged: (value) {
+                  userSearchSettings.updateRestaurantName(value ?? '');
+                },
+                isSearchable: true,
+                controller: _foodController,
+              ),
+            ),
           ),
           Expanded(
             child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: distance),
+              padding: const EdgeInsets.symmetric(horizontal: 5),
+              child: CustomDropdownMenu(
+                value: userSearchSettings.selectedDistance,
+                items: const ['1km', '3km', '5km', '10km'],
+                hint: const Text('距離を選択'),
+                onChanged: (value) {
+                  userSearchSettings.updateSelectedDistance(value ?? '5km');
+                },
+                isSearchable: false,
+              ),
+            ),
           ),
         ]),
         Row(
           children: [
-            Expanded(child: box1),
+            Expanded(
+              child: CheckBox(
+                title: '営業中',
+                initialValue: userSearchSettings.isOpen,
+                onChanged: (bool? value) {
+                  userSearchSettings.toggleIsOpen();
+                },
+                controlAffinity: ListTileControlAffinity.leading,
+              ),
+            ),
           ],
         ),
       ],
