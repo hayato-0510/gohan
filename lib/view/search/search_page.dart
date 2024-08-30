@@ -6,7 +6,7 @@ import 'package:gohan/components/check_box/check_box.dart';
 import 'package:gohan/components/dropdown_menu/dropdown_menu.dart';
 import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
 import 'package:gohan/view_model/user_engagement_viewmodel/user_engagement_viewmodel.dart';
-import 'package:gohan/view_model/user_search_viewmodel/user_search_viewmodel.dart';
+import 'package:gohan/view_model/user_search_settings_viewmodel/user_search_settings_viewmodel.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -16,18 +16,17 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  String? selectedDistance;
   late TextEditingController _foodController;
 
   @override
   void initState() {
     super.initState();
-    final searchViewModel =
-        Provider.of<SearchViewModel>(context, listen: false);
-    _foodController = TextEditingController(text: searchViewModel.selectedFood);
+    final userSearchSettings = Provider.of<UserSearchSettingsViewModel>(context, listen: false);
+    _foodController = TextEditingController(text: userSearchSettings.restaurantName);
 
+    // Listenerを追加して、TextEditingControllerが変更されたらViewModelも更新するようにします
     _foodController.addListener(() {
-      searchViewModel.updateSelectedFood(_foodController.text);
+      userSearchSettings.updateRestaurantName(_foodController.text);
     });
   }
 
@@ -39,8 +38,6 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    final searchViewModel = Provider.of<SearchViewModel>(context);
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -53,13 +50,12 @@ class _SearchPageState extends State<SearchPage> {
                 top: 10.0,
                 bottom: 1.0,
               ),
-              child: _setUserCheckBar(),
+              child: _setUserCheckBar(context),
             ),
             const Divider(),
             Expanded(
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
                 child: Consumer<RestaurantCardViewModel>(
                   builder: (context, viewModel, child) {
                     if (viewModel.restaurants.isEmpty) {
@@ -82,11 +78,8 @@ class _SearchPageState extends State<SearchPage> {
                           SwiperActivity activity) async {
                         if (activity is Swipe) {
                           final isLiked =
-                              activity.direction == AxisDirection.right
-                                  ? true
-                                  : false;
-                          Provider.of<UserEngagementViewModel>(context,
-                                  listen: false)
+                              activity.direction == AxisDirection.right;
+                          Provider.of<UserEngagementViewModel>(context, listen: false)
                               .saveToEngagementDB(
                             viewModel.restaurants[previousIndex].id.toString(),
                             viewModel.restaurants[previousIndex].restaurantName,
@@ -114,17 +107,8 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _setUserCheckBar() {
-    final searchViewModel = Provider.of<SearchViewModel>(context);
-
-    CheckBox box1 = CheckBox(
-      title: '営業中',
-      initialValue: false,
-      onChanged: (bool? value) {
-        print('チェックボックスの状態: $value');
-      },
-      controlAffinity: ListTileControlAffinity.leading,
-    );
+  Widget _setUserCheckBar(BuildContext context) {
+    final userSearchSettings = Provider.of<UserSearchSettingsViewModel>(context);
 
     return Column(
       children: [
@@ -133,10 +117,10 @@ class _SearchPageState extends State<SearchPage> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5),
               child: CustomDropdownMenu(
-                value: searchViewModel.selectedFood,
+                value: userSearchSettings.restaurantName,
                 hint: const Text('料理名を入力'),
                 onChanged: (value) {
-                  searchViewModel.updateSelectedFood(value ?? '');
+                  userSearchSettings.updateRestaurantName(value ?? '');
                 },
                 isSearchable: true,
                 controller: _foodController,
@@ -147,13 +131,11 @@ class _SearchPageState extends State<SearchPage> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5),
               child: CustomDropdownMenu(
-                value: selectedDistance,
-                items: const ['1km以内', '3km以内', '5km以内', '10km以内'],
+                value: userSearchSettings.selectedDistance,
+                items: const ['1km', '3km', '5km', '10km'],
                 hint: const Text('距離を選択'),
                 onChanged: (value) {
-                  setState(() {
-                    selectedDistance = value;
-                  });
+                  userSearchSettings.updateSelectedDistance(value ?? '5km');
                 },
                 isSearchable: false,
               ),
@@ -162,7 +144,16 @@ class _SearchPageState extends State<SearchPage> {
         ]),
         Row(
           children: [
-            Expanded(child: box1),
+            Expanded(
+              child: CheckBox(
+                title: '営業中',
+                initialValue: userSearchSettings.isOpen,
+                onChanged: (bool? value) {
+                  userSearchSettings.toggleIsOpen();
+                },
+                controlAffinity: ListTileControlAffinity.leading,
+              ),
+            ),
           ],
         ),
       ],

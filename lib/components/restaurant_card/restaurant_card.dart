@@ -4,13 +4,13 @@ import 'package:gohan/components/star_rating/star_rating.dart';
 import 'package:gohan/components/restaurant_information/restaurant_information.dart';
 import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
 import 'package:gohan/components/location_button/location_button.dart';
+import 'package:gohan/model/restaurant_model.dart';
+
 
 class RestaurantCard extends StatelessWidget {
-  final Restaurant restaurant;
+  final RestaurantModel restaurant;
 
-  const RestaurantCard({
-    super.key, required this.restaurant
-  });
+  const RestaurantCard({super.key, required this.restaurant});
 
   @override
   Widget build(BuildContext context) {
@@ -31,27 +31,24 @@ class RestaurantCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                        restaurant.restaurantName,
-                        style: const TextStyle(
-                          fontSize: 24, 
-                          fontWeight: FontWeight.bold
-                        ),
-                        softWrap: true,
-                        overflow: TextOverflow.visible,
-                      ),
-                  Row(
-                    children: [
+                    restaurant.restaurantName,
+                    style: const TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.bold),
+                    softWrap: true,
+                    overflow: TextOverflow.visible,
+                  ),
+                  Row(children: [
                     const Spacer(),
                     Padding(
-                      padding: const EdgeInsets.symmetric( horizontal: 8.0, vertical: 4.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 4.0),
                       child: StarRating(
-                          rating: restaurant.rating,
-                          filledColor: Colors.yellow,
-                          unfilledColor: Colors.grey,
-                        ),
+                        rating: restaurant.rating,
+                        filledColor: Colors.yellow,
+                        unfilledColor: Colors.grey,
+                      ),
                     ),
                   ]),
-                  
                   Container(
                     height: 200,
                     decoration: restaurant.imageUrl.isNotEmpty
