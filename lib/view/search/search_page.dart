@@ -8,6 +8,8 @@ import 'package:gohan/components/check_box/check_box.dart';
 import 'package:gohan/components/dropdown_menu/dropdown_menu.dart';
 import 'package:gohan/view_model/user_engagement_viewmodel/user_engagement_viewmodel.dart';
 
+import 'dart:io' show Platform;
+
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
 
@@ -18,27 +20,65 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   String? selectedFood;
   String? selectedDistance;
-  /*
+
   @override
   void initState() {
     super.initState();
   }
 
+
   Future<void> loadNearbyRestaurants() async {
+    // シミュレータ用のデフォルト位置（例：東京都庁）
+    const defaultLatitude = 35.6762;
+    const defaultLongitude = 139.6503;
+
     try {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
+      Position position;
       
+      if (Platform.isAndroid || Platform.isIOS) {
+        // 実機の場合は位置情報の取得を試みる
+        LocationSettings locationSettings = const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          distanceFilter: 100,
+        );
+
+        position = await Geolocator.getCurrentPosition(
+          locationSettings: locationSettings,
+        );
+      } else {
+        // シミュレータまたはその他の環境の場合はデフォルト位置を使用
+        position = Position(
+          latitude: defaultLatitude,
+          longitude: defaultLongitude,
+          timestamp: DateTime.now(),
+          accuracy: 0,
+          altitude: 0,
+          heading: 0,
+          speed: 0,
+          speedAccuracy: 0,
+          altitudeAccuracy: 0,  // 新しく追加
+          headingAccuracy: 0,   // 新しく追加
+        );
+        print('Using default location for simulator: ${position.latitude}, ${position.longitude}');
+      }
+
       await Provider.of<RestaurantCardViewModel>(context, listen: false)
           .fetchNearbyRestaurants(position.latitude, position.longitude);
     } catch (e) {
       print('Error getting location: $e');
+      // エラーが発生した場合もデフォルト位置を使用
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('位置情報の取得に失敗しました。デフォルトの位置情報を使用します。')),
+      );
+
+      await Provider.of<RestaurantCardViewModel>(context, listen: false)
+          .fetchNearbyRestaurants(defaultLatitude, defaultLongitude);
     }
   }
-  */
-  //テストコード1
+
+  //テストコード（下にもう一か所）
   // 三重県鈴鹿市の緯度経度（おおよその中心位置）
+  /*
   final double testLatitude = 34.8823;
   final double testLongitude = 136.5844;
 
@@ -67,7 +107,7 @@ class _SearchPageState extends State<SearchPage> {
       );
     }
   }
-  //ここまでテストコード1
+  */
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,18 +132,18 @@ class _SearchPageState extends State<SearchPage> {
                 child: Consumer<RestaurantCardViewModel>(
                   builder: (context, viewModel, child) {
                     if (viewModel.restaurants.isEmpty) {
-                      /*
+                      
                       return ElevatedButton(
                         onPressed: loadNearbyRestaurants,
                         child: const Text('Load Nearby Restaurants'),
                       );
-                      */
-                      //テストコード2
+                      //テストコード
+                      /*
                       return ElevatedButton(
                         onPressed: loadTestRestaurants,
                         child: const Text('Load Test Restaurants'),
                       );
-                      //ここまでテストコード2
+                      */
                     }
 
                     return AppinioSwiper(
