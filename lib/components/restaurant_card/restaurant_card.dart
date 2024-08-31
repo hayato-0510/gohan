@@ -62,8 +62,6 @@ class RestaurantCard extends StatelessWidget {
                       restaurant.photos.first.url,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
-                        print('Error loading image: $error');
-                        print('Attempted image URL: ${restaurant.photos.first.url}');
                         return Center(child: Text('Error loading image'));
                       },
                       loadingBuilder: (context, child, loadingProgress) {

@@ -33,7 +33,6 @@ class RestaurantCardViewModel extends ChangeNotifier {
       if (_apiKey == null || _apiKey.isEmpty) {
         throw Exception('API key not found in .env file');
       }
-      print('API Key loaded successfully: $_apiKey');
     } catch (e) {
       print('Error loading API key: $e');
       rethrow;  // エラーを上位に伝播させる
@@ -79,6 +78,9 @@ class RestaurantCardViewModel extends ChangeNotifier {
         }
       } else {
         throw Exception('Failed to load nearby restaurants');
+      }
+      for (var restaurant in _restaurants) {
+        await fetchRestaurantDetails(restaurant.id);
       }
     } catch (e) {
       print('Error fetching nearby restaurants: $e');
@@ -137,7 +139,6 @@ class RestaurantCardViewModel extends ChangeNotifier {
         final result = data['result'];
 
         final restaurant = GooglePlacesParser.parseRestaurantDetails(result, placeId);
-        print('Fetched restaurant details: ${json.encode(restaurant.toJson())}'); // レストラン情報をログに出力
 
         //重複チェック
         final index = _restaurants.indexWhere((r) => r.id == placeId);

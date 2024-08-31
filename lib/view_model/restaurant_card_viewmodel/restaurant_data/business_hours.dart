@@ -43,6 +43,35 @@ class BusinessHours {
     return closedDays.map((day) => days[day - 1]).join(', ');
   }
 
+  String getFormattedHours() {
+    if (weeklyHours.isEmpty) {
+      return "営業時間情報なし";
+    }
+
+    List<String> formattedHours = [];
+    List<String> daysOfWeek = ['月', '火', '水', '木', '金', '土', '日'];
+
+    for (int i = 0; i < 7; i++) {
+      if (closedDays.contains(i)) {
+        formattedHours.add("${daysOfWeek[i]}: 休業");
+      } else if (weeklyHours.containsKey(i)) {
+        String dayHours = weeklyHours[i]!.openRanges.map((range) {
+          return "${_formatTime(range.start)}-${_formatTime(range.end)}";
+        }).join(", ");
+        formattedHours.add("${daysOfWeek[i]}: $dayHours");
+      } else {
+        formattedHours.add("${daysOfWeek[i]}: 情報なし");
+      }
+    }
+
+    return formattedHours.join("\n");
+  }
+
+  String _formatTime(TimeOfDay time) {
+    return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
+  }
+
+
   static BusinessHours parseFromGooglePlaces(Map<String, dynamic>? openingHours) {
     if (openingHours == null) {
       return BusinessHours(weeklyHours: {}, closedDays: []);

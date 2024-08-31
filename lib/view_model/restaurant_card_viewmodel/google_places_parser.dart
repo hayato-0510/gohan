@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'restaurant.dart';
@@ -12,11 +11,12 @@ class GooglePlacesParser {
   static void initialize() {
     _apiKey = dotenv.env['GOOGLE_MAPS_API_KEY'];
   }
+  //簡易的なレストラン情報を取得するメソッド
   static Restaurant parseRestaurantFromNearbySearch(Map<String, dynamic> place) {
     return Restaurant(
       id: place['place_id'] ?? '',
       name: place['name'] ?? '',
-      category: place['types'] != null && place['types'].isNotEmpty ? place['types'][0] : '',
+      category: place['types']?.isNotEmpty == true ? place['types'][0] : '',
       priceRange: place['price_level'] != null ? '\$' * place['price_level'] : '',
       rating: (place['rating'] as num?)?.toDouble() ?? 0.0,
       reviewCount: place['user_ratings_total'] ?? 0,
@@ -27,9 +27,9 @@ class GooglePlacesParser {
         place['geometry']['location']['lat'],
         place['geometry']['location']['lng'],
       ),
-      phone: '',  // Nearby Search doesn't provide phone number
-      websiteUrl: '',  // Nearby Search doesn't provide website URL
-      businessHours: BusinessHours(weeklyHours: {}, closedDays: []),  // Nearby Search doesn't provide business hours
+      phone: '',
+      websiteUrl: '',
+      businessHours: BusinessHours(weeklyHours: {}, closedDays: []),
       businessStatus: place['business_status'] ?? '',
       photos: place['photos'] != null
         ? [Photo(url: _getPlacePhotoUrl(place['photos']))]
@@ -37,72 +37,42 @@ class GooglePlacesParser {
       isFavorite: false,
     );
   }
+  //詳細情報を取得するメソッド
   static Restaurant parseRestaurantDetails(Map<String, dynamic> result, String placeId) {
-    try {
-      final photos = _parsePhotos(result['photos'], placeId);
-      return Restaurant(
-        id: placeId,
-        name: result['name'] ?? '',
-        category: result['types'] != null && result['types'].isNotEmpty ? result['types'][0] : '',
-        priceRange: result['price_level'] != null ? '\$' * result['price_level'] : '',
-        rating: (result['rating'] as num?)?.toDouble() ?? 0.0,
-        reviewCount: result['user_ratings_total'] ?? 0,
-        userReviews: [], // 詳細なレビュー情報が必要な場合は、別途処理が必要です
-        mapIconUrl: result['icon'] ?? '',
-        address: result['formatted_address'] ?? '',
-        location: LatLng(
-          result['geometry']['location']['lat'],
-          result['geometry']['location']['lng'],
-        ),
-        phone: result['formatted_phone_number'] ?? '',
-        websiteUrl: result['website'] ?? '',
-        businessHours: _parseBusinessHours(result['opening_hours']),
-        businessStatus: result['business_status'] ?? '',
-        //photos: _parsePhotos(result['photos'], placeId),
-        photos: photos,
-        isFavorite: false,
-      );
-    } catch (e) {
-      print('Error parsing restaurant details: $e');
-      rethrow;
-    }
-  }
+    final photos = _parsePhotos(result['photos'], _apiKey);
+    final businessHours = _parseBusinessHours(result['opening_hours']);
 
-  static String _getPlacePhotoUrl(List<dynamic>? photos) {
-    if (_apiKey == null) {
-      throw Exception('API key is not initialized');
-    }
-
-    if (photos == null || photos.isEmpty) {
-      return ''; // デフォルトのアイコンURLを返すか、空文字列を返す
-    }
-
-    final photoReference = photos[0]['photo_reference'];
-    return 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$_apiKey';
-  }
-
-  static String _parseCategory(List<dynamic>? types) {
-    if (types == null || types.isEmpty) return 'Unknown';
-    return types[0];
-  }
-
-  static String _parsePriceRange(int? priceLevel) {
-    if (priceLevel == null) return '';
-    return '\$' * priceLevel;
-  }
-
-  static LatLng _parseLocation(Map<String, dynamic>? location) {
-    if (location == null) return LatLng(0, 0);
-    return LatLng(
-      location['lat'] as double,
-      location['lng'] as double,
+    return Restaurant(
+      id: placeId,
+      name: result['name'] ?? '',
+      category: result['types']?.isNotEmpty == true ? result['types'][0] : '',
+      priceRange: result['price_level'] != null ? '\$' * result['price_level'] : '',
+      rating: (result['rating'] as num?)?.toDouble() ?? 0.0,
+      reviewCount: result['user_ratings_total'] ?? 0,
+      userReviews: [],
+      mapIconUrl: result['icon'] ?? '',
+      address: result['formatted_address'] ?? '',
+      location: LatLng(
+        result['geometry']['location']['lat'],
+        result['geometry']['location']['lng'],
+      ),
+      phone: result['formatted_phone_number'] ?? '',
+      websiteUrl: result['website'] ?? '',
+      businessHours: businessHours,
+      businessStatus: result['business_status'] ?? '',
+      photos: photos,
+      isFavorite: false,
     );
   }
 
+  static String _getPlacePhotoUrl(List<dynamic>? photos) {
+    if (photos == null || photos.isEmpty) return '';
+    final photoReference = photos[0]['photo_reference'];
+    return 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$_apiKey';
+  }
+  
   static BusinessHours _parseBusinessHours(Map<String, dynamic>? openingHours) {
-    if (openingHours == null) {
-      return BusinessHours(weeklyHours: {}, closedDays: []);
-    }
+    if (openingHours == null) return BusinessHours(weeklyHours: {}, closedDays: []);
 
     final weeklyHours = <int, DayHours>{};
     final closedDays = <int>[];
@@ -116,7 +86,6 @@ class GooglePlacesParser {
           final day = open['day'] as int;
           final openTime = _parseTimeOfDay(open['time']);
           final closeTime = _parseTimeOfDay(close['time']);
-          
           if (weeklyHours.containsKey(day)) {
             weeklyHours[day]!.openRanges.add(TimeRange(start: openTime, end: closeTime));
           } else {
@@ -141,26 +110,20 @@ class GooglePlacesParser {
     return TimeOfDay(hour: hour, minute: minute);
   }
 
-  static List<Photo> _parsePhotos(List<dynamic>? photoReferences, String apiKey) {
+  static List<Photo> _parsePhotos(List<dynamic>? photoReferences, String? apiKey) {
     if (photoReferences == null) return [];
 
-    try {
-      return photoReferences.map((photo) {
-        final photoReference = photo['photo_reference'];
-        final photoUrl = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey';
-        print('Generated photo URL: $photoUrl'); // URLをログに出力
-        return Photo(
-          url: photoUrl,
-          attributes: {
-            'height': photo['height'],
-            'width': photo['width'],
-            'html_attributions': photo['html_attributions'],
-          },
-        );
-      }).toList();
-    } catch (e) {
-      print('Error parsing photos: $e');
-      return [];
-    }
+    return photoReferences.map((photo) {
+      final photoReference = photo['photo_reference'];
+      final photoUrl = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey';
+      return Photo(
+        url: photoUrl,
+        attributes: {
+          'height': photo['height'],
+          'width': photo['width'],
+          'html_attributions': photo['html_attributions'],
+        },
+      );
+    }).toList();
   }
 }

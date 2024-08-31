@@ -22,7 +22,7 @@ class RestaurantInformation extends StatelessWidget {
       children: [
         Text('住所: $address', style: textStyle),
         Text('電話: $phone', style: textStyle),
-        Text('営業時間: ${businessHours.getClosedDaysString()}', style: textStyle),
+        Text('営業時間: ${businessHours.getFormattedHours()}', style: textStyle),
         _buildOpenStatus(),
       ],
     );
