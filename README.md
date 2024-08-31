@@ -42,6 +42,21 @@ Example: `feat ログイン機能の実装`
     ```
 
 ### 環境変数の追加
+- レストランデータ取得用(kairi)
+    - ルートディレクトリに`.env`を追加
+    ```
+    GOOGLE_MAPS_API_KEY=`APIキー`
+    ```
+    - .envの変更が認識されていないことを確認する(`.gitignore`に指定してあることを確認)
+    ```
+    .
+    └── gohan/
+        ├── android/
+        ├── ios/
+        ├── lib/
+        ├── .env
+        └── .gitignore
+    ```
 - iosの場合 
     - ios/runner/Environment.swiftをxcodeで作成する
     ```swift
