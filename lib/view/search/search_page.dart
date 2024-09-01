@@ -7,6 +7,7 @@ import 'package:gohan/components/dropdown_menu/dropdown_menu.dart';
 import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
 import 'package:gohan/view_model/user_engagement_viewmodel/user_engagement_viewmodel.dart';
 import 'package:gohan/view_model/user_search_settings_viewmodel/user_search_settings_viewmodel.dart';
+import 'package:gohan/components/toggle_button/toggle_button.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -17,6 +18,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   late TextEditingController _foodController;
+  bool _isPhotoSelected = true;
 
   @override
   void initState() {
@@ -24,7 +26,6 @@ class _SearchPageState extends State<SearchPage> {
     final userSearchSettings = Provider.of<UserSearchSettingsViewModel>(context, listen: false);
     _foodController = TextEditingController(text: userSearchSettings.name);
 
-    // Listenerを追加して、TextEditingControllerが変更されたらViewModelも更新するようにします
     _foodController.addListener(() {
       userSearchSettings.updateRestaurantName(_foodController.text);
     });
@@ -43,6 +44,19 @@ class _SearchPageState extends State<SearchPage> {
       body: SafeArea(
         child: Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Center( // 中央揃え
+                child: ToggleButton(
+                  isPhotoSelected: _isPhotoSelected,
+                  onToggle: (isSelected) {
+                    setState(() {
+                      _isPhotoSelected = isSelected;
+                    });
+                  },
+                ),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.only(
                 left: 10.0,
