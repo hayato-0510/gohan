@@ -23,7 +23,8 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
-    final userSearchSettings = Provider.of<UserSearchSettingsViewModel>(context, listen: false);
+    final userSearchSettings =
+        Provider.of<UserSearchSettingsViewModel>(context, listen: false);
     _foodController = TextEditingController(text: userSearchSettings.name);
 
     // Listenerを追加して、TextEditingControllerが変更されたらViewModelも更新するようにします
@@ -38,7 +39,7 @@ class _SearchPageState extends State<SearchPage> {
     super.dispose();
   }
 
-    // チェックバーの表示/非表示と矢印の向きを切り替えるメソッド
+  // チェックバーの表示/非表示と矢印の向きを切り替えるメソッド
   void _toggleUserCheckBar() {
     setState(() {
       _showUserCheckBar = !_showUserCheckBar;
@@ -48,101 +49,158 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final topPosition = screenHeight * 0; // 画面高さの20%
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 10.0,
-                right: 10.0,
-                top: 10.0,
-                bottom: 1.0,
-              ),
-              child: Column(
-                children: [
-                  GestureDetector(
-                    onTap: _toggleUserCheckBar,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(_showUserCheckBar ? 'Hide Filters' : 'Show Filters'),
-                        Icon(
-                          _isExpanded ? Icons.arrow_drop_down : Icons.arrow_right,
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 10.0,
+                    right: 10.0,
+                    top: 10.0,
+                    bottom: 1.0,
+                  ),
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onTap: _toggleUserCheckBar,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(_showUserCheckBar
+                                ? 'Hide Filters'
+                                : 'Show Filters'),
+                            Icon(
+                              _isExpanded
+                                  ? Icons.arrow_drop_down
+                                  : Icons.arrow_right,
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
+                      const Divider(
+                        color: Colors.grey, // 線の色
+                        thickness: 1.0, // 線の太さ
+                        indent: 0.0, // 左側のインデント
+                        endIndent: 0.0, // 右側のインデント
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 15, vertical: 20),
+                    child: Consumer<RestaurantCardViewModel>(
+                      builder: (context, viewModel, child) {
+                        if (viewModel.restaurants.isEmpty) {
+                          return ElevatedButton(
+                            onPressed: () {
+                              viewModel.fetchRestaurantDetails();
+                            },
+                            child: const Text('Load More Restaurants'),
+                          );
+                        }
+
+                        return AppinioSwiper(
+                          cardCount: viewModel.restaurants.length,
+                          cardBuilder: (BuildContext context, int index) {
+                            return RestaurantCard(
+                                restaurant: viewModel.restaurants[index]);
+                          },
+                          maxAngle: 15,
+                          onSwipeEnd: (int previousIndex, int targetIndex,
+                              SwiperActivity activity) async {
+                            if (activity is Swipe) {
+                              final isFavorite =
+                                  activity.direction == AxisDirection.right;
+                              Provider.of<UserEngagementViewModel>(context,
+                                      listen: false)
+                                  .saveToEngagementDB(
+                                id: viewModel.restaurants[previousIndex].id
+                                    .toString(),
+                                name: viewModel.restaurants[previousIndex].name,
+                                rating:
+                                    viewModel.restaurants[previousIndex].rating,
+                                location: viewModel
+                                    .restaurants[previousIndex].location,
+                                phone:
+                                    viewModel.restaurants[previousIndex].phone,
+                                hours:
+                                    viewModel.restaurants[previousIndex].hours,
+                                isFavorite: isFavorite,
+                              );
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                if (previousIndex <
+                                    viewModel.restaurants.length) {
+                                  viewModel.removeRestaurant(previousIndex);
+                                }
+                              });
+                            }
+                          },
+                          onEnd: () {
+                            print('No more cards');
+                          },
+                        );
+                      },
                     ),
                   ),
-                  Visibility(
-                    visible: _showUserCheckBar,
+                ),
+              ],
+            ),
+            if (_showUserCheckBar)
+              Stack(
+                children: [
+                  ModalBarrier(
+                    color: Colors.black.withOpacity(0.5),
+                    dismissible: false,
+                  ),
+                  Positioned(
+                    top: topPosition,
+                    left: 0,
+                    right: 0,
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
                       curve: Curves.easeInOut,
                       padding: const EdgeInsets.all(10.0),
-                      child: _setUserCheckBar(context),
+                      color: Colors.white, // 背景色を追加
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                            onTap: _toggleUserCheckBar,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(_showUserCheckBar
+                                    ? 'Hide Filters'
+                                    : 'Show Filters'),
+                                Icon(
+                                  _isExpanded
+                                      ? Icons.arrow_drop_down
+                                      : Icons.arrow_right,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Divider(
+                            color: Colors.grey, // 線の色
+                            thickness: 1.0, // 線の太さ
+                            indent: 0.0, // 左側のインデント
+                            endIndent: 0.0, // 右側のインデント
+                          ),
+                          _setUserCheckBar(context),
+                        ],
+                      ),
                     ),
                   ),
-                ],       
-            ),
-            ),
-            const Divider(
-              color: Colors.grey, // 線の色
-              thickness: 1.0, // 線の太さ
-              indent: 0.0, // 左側のインデント
-              endIndent: 0.0, // 右側のインデント
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-                child: Consumer<RestaurantCardViewModel>(
-                  builder: (context, viewModel, child) {
-                    if (viewModel.restaurants.isEmpty) {
-                      return ElevatedButton(
-                        onPressed: () {
-                          viewModel.fetchRestaurantDetails();
-                        },
-                        child: const Text('Load More Restaurants'),
-                      );
-                    }
-
-                    return AppinioSwiper(
-                      cardCount: viewModel.restaurants.length,
-                      cardBuilder: (BuildContext context, int index) {
-                        return RestaurantCard(
-                            restaurant: viewModel.restaurants[index]);
-                      },
-                      maxAngle: 15,
-                      onSwipeEnd: (int previousIndex, int targetIndex,
-                          SwiperActivity activity) async {
-                        if (activity is Swipe) {
-                          final isFavorite =
-                              activity.direction == AxisDirection.right;
-                          Provider.of<UserEngagementViewModel>(context, listen: false)
-                              .saveToEngagementDB(
-                              id: viewModel.restaurants[previousIndex].id.toString(),
-                              name: viewModel.restaurants[previousIndex].name,
-                              rating: viewModel.restaurants[previousIndex].rating,
-                              location: viewModel.restaurants[previousIndex].location,
-                              phone: viewModel.restaurants[previousIndex].phone,
-                              hours: viewModel.restaurants[previousIndex].hours,
-                              isFavorite: isFavorite,
-                          );
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            if (previousIndex < viewModel.restaurants.length) {
-                              viewModel.removeRestaurant(previousIndex);
-                            }
-                          });
-                        }
-                      },
-                      onEnd: () {
-                        print('No more cards');
-                      },
-                    );
-                  },
-                ),
+                ],
               ),
-            ),
           ],
         ),
       ),
@@ -150,7 +208,8 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _setUserCheckBar(BuildContext context) {
-    final userSearchSettings = Provider.of<UserSearchSettingsViewModel>(context);
+    final userSearchSettings =
+        Provider.of<UserSearchSettingsViewModel>(context);
 
     return Column(
       children: [
