@@ -5,6 +5,7 @@ import 'package:gohan/view_model/user_engagement_viewmodel/user_engagement_viewm
 import 'package:gohan/view_model/user_location_viewmodel/user_location_viewmodel.dart';
 import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
 import 'package:gohan/view_model/user_search_settings_viewmodel/user_search_settings_viewmodel.dart';
+import 'package:gohan/components/error_overlay/error_listener.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,7 +33,9 @@ class MyApp extends StatelessWidget {
             color: Colors.white,
           ),
         ),
-        home: const BottomTabPage(),
+        home: ErrorListener(
+          child: const BottomTabPage(),
+        ),
       ),
     );
   }
