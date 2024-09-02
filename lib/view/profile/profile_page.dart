@@ -16,7 +16,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void _showTestError() {
     ErrorHandler().handleError(AppError(
       message: 'これはプロフィールページのテストエラーです。',
-      type: ErrorType.unknown,
+      type: ErrorType.validation,
       action: () {
         print('プロフィールページのエラーアクションが実行されました');
       },
