@@ -68,9 +68,9 @@ class _SwipeCardViewState extends State<SwipeCardView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (restaurant.imageUrl.isNotEmpty)
+                    if (restaurant.mapIconUrl.isNotEmpty)
                       Image.network(
-                        restaurant.imageUrl,
+                        restaurant.mapIconUrl,
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: 120,
@@ -87,7 +87,7 @@ class _SwipeCardViewState extends State<SwipeCardView> {
                     SizedBox(height: 4),
                     Text('Phone: ${restaurant.phone}'),
                     SizedBox(height: 4),
-                    Text('Hours: ${restaurant.hours}'),
+                    Text('Hours: ${restaurant.businessHours}'),
                   ],
                 ),
               ),
