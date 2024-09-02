@@ -5,6 +5,7 @@ import 'package:gohan/view/tab_page.dart';
 import 'package:gohan/view_model/user_engagement_viewmodel/user_engagement_viewmodel.dart';
 import 'package:gohan/view_model/user_location_viewmodel/user_location_viewmodel.dart';
 import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
+import 'package:gohan/view_model/user_search_settings_viewmodel/user_search_settings_viewmodel.dart';
 
 void main() async {
   // Flutter Widgetバインディングを確実に初期化
@@ -32,7 +33,11 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => UserLocationViewModel()),
         ChangeNotifierProvider(create: (_) => UserEngagementViewModel()),
+// <<<<<<< restaurant_data-kairi
         ChangeNotifierProvider.value(value: restaurantCardViewModel),
+// =======
+//         ChangeNotifierProvider(create: (_) => RestaurantCardViewModel()),
+        ChangeNotifierProvider(create: (_) => UserSearchSettingsViewModel()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

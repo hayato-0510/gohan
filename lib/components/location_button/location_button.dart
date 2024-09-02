@@ -9,6 +9,10 @@ class LocationButton extends StatelessWidget {
       onTap: () {
         // ボタンが押されたときの処理
         print('Button pressed');
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => RestaurantPage2()),
+        );
       },
       child: Container(
         width: 50,
@@ -30,6 +34,16 @@ class LocationButton extends StatelessWidget {
             color: Colors.white,
           ),
         ),
+      ),
+    );
+  }
+}
+
+class RestaurantPage2 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
       ),
     );
   }

@@ -9,13 +9,17 @@ import 'restaurant.dart';
 import 'google_places_parser.dart';
 
 export 'restaurant.dart';
+import 'package:uuid/uuid.dart';
+import 'package:gohan/model/restaurant_model.dart';
 
 class RestaurantCardViewModel extends ChangeNotifier {
-  List<Restaurant> _restaurants = [];
+//   List<Restaurant> _restaurants = [];
   late String _apiKey;
   String? _nextPageToken;
 
-  List<Restaurant> get restaurants => _restaurants;
+  List<RestaurantModel> _restaurants = [];
+
+  List<RestaurantModel> get restaurants => _restaurants;
 
   RestaurantCardViewModel() {
     _loadApiKey().then((_) {
@@ -36,6 +40,43 @@ class RestaurantCardViewModel extends ChangeNotifier {
     } catch (e) {
       print('Error loading API key: $e');
       rethrow;  // エラーを上位に伝播させる
+    _initializeTestData();
+  }
+
+  void _initializeTestData() {
+    _restaurants = [
+      RestaurantModel(
+        id: "aaaa",
+        name: 'Sample1',
+        imageUrl: '',
+        rating: 4.5,
+        location: 'Location 1',
+        phone: '123-456-7890',
+        hours: '10:00 - 20:00',
+      ),
+      RestaurantModel(
+        id: "bbbb",
+        name: 'Sample2 restaurant name',
+        imageUrl: '',
+        rating: 4.2,
+        location: 'Location 2',
+        phone: '123-456-7891',
+        hours: '09:00 - 18:00',
+      ),
+      RestaurantModel(
+        id: "cccc",
+        name: 'Sample3 restaurant name',
+        imageUrl: '',
+        rating: 1.2,
+        location: 'Location 3',
+        phone: '123-456-7891',
+        hours: '00:00 - 01:00',
+      ),
+    ];
+
+    // それぞれのレストランのisOpenを計算する
+    for (var restaurant in _restaurants) {
+      restaurant.isOpen = isOpenFlag(restaurant.hours);
     }
   }
 
@@ -44,7 +85,7 @@ class RestaurantCardViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateRestaurants(List<Restaurant> restaurants) {
+  void updateRestaurants(List<RestaurantModel> restaurants) {
     _restaurants = restaurants;
     notifyListeners();
   }
@@ -57,6 +98,7 @@ class RestaurantCardViewModel extends ChangeNotifier {
     }
   }
 
+// <<<<<<< restaurant_data-kairi
   Future<void> fetchNearbyRestaurants(double lat, double lng) async {
     final url = Uri.parse(
         'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$lat,$lng&radius=1500&type=restaurant&key=$_apiKey');
@@ -85,6 +127,46 @@ class RestaurantCardViewModel extends ChangeNotifier {
     } catch (e) {
       print('Error fetching nearby restaurants: $e');
       rethrow;
+// =======
+//   Future<void> fetchRestaurantDetails() async {
+//     // UUIDを生成して、レストランIDとする
+//     const uuid = Uuid();
+//     final String restaurantId = uuid.v4();
+
+//     // 模擬的なAPI呼び出し（実際にはAPI呼び出しのコードに置き換え）
+//     await Future.delayed(const Duration(seconds: 1));
+
+//     final restaurant = RestaurantModel(
+//       id: restaurantId,
+//       name: 'サンプルレストラン',
+//       imageUrl: '',
+//       rating: 4.5,
+//       location: '三重県',
+//       phone: '0000000000000',
+//       hours: '10:00 - 20:00',
+//       isOpen: isOpenFlag('10:00 - 20:00'),
+//     );
+
+//     updateRestaurants([..._restaurants, restaurant]);
+//   }
+
+//    bool isOpenFlag(String hours) {
+//     if (hours.isEmpty) return false;
+
+//     final now = DateTime.now();
+//     final currentTime = now.hour * 60 + now.minute;
+
+//     final parts = hours.split(' - ');
+//     if (parts.length != 2) return false;
+
+//     final openTime = _parseTime(parts[0]);
+//     final closeTime = _parseTime(parts[1]);
+
+//     if (closeTime < openTime) {
+//       return currentTime >= openTime || currentTime < closeTime;
+//     } else {
+//       return currentTime >= openTime && currentTime < closeTime;
+// >>>>>>> dev-kai-merge
     }
   }
 
@@ -121,6 +203,7 @@ class RestaurantCardViewModel extends ChangeNotifier {
       rethrow;
     }
   }
+// <<<<<<< restaurant_data-kairi
 
   Future<void> fetchRestaurantDetails(String placeId) async {
     if (_apiKey.isEmpty) {
@@ -157,4 +240,5 @@ class RestaurantCardViewModel extends ChangeNotifier {
       rethrow;
     }
   }
+}
 }
