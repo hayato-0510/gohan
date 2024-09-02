@@ -8,7 +8,11 @@ class AppError {
   final ErrorType type;
   final Function? action;
 
-  AppError({required this.message, required this.type, this.action});
+  AppError({
+    this.message = "不明なエラーが発生しました",
+    this.type = ErrorType.unknown, 
+    this.action
+  });
 }
 
 class ErrorHandler {
