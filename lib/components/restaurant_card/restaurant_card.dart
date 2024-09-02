@@ -4,7 +4,7 @@ import 'package:gohan/components/star_rating/star_rating.dart';
 import 'package:gohan/components/restaurant_information/restaurant_information.dart';
 import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
 import 'package:gohan/components/location_button/location_button.dart';
-import 'package:gohan/model/restaurant_model.dart';
+import 'package:gohan/model/restaurnt/restaurant_model.dart';
 
 
 class RestaurantCard extends StatelessWidget {

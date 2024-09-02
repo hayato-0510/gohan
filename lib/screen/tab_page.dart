@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gohan/view/home/home_page.dart';
-import 'package:gohan/view/profile/profile_page.dart';
-import 'package:gohan/view/search/search_page.dart';
+import 'package:gohan/screen/home/home_page.dart';
+import 'package:gohan/screen/profile/profile_page.dart';
+import 'package:gohan/screen/search/search_page.dart';
 
 class BottomTabPage extends StatefulWidget {
   const BottomTabPage({super.key});

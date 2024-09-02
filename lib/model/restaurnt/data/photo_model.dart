@@ -1,10 +1,11 @@
-export 'photo.dart';
-
-class Photo {
+class PhotoModel {
   final String url;
   final Map<String, dynamic>? attributes;
 
-  Photo({required this.url, this.attributes});
+  PhotoModel({
+    required this.url, 
+    this.attributes
+    });
 
   Map<String, dynamic> toJson() {
     return {

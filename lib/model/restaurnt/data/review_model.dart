@@ -1,15 +1,14 @@
-export 'review.dart';
-
-class Review {
+class ReviewModel {
   final String text;
   final double rating;
   final DateTime timestamp;
 
-  Review({
+  ReviewModel({
     required this.text,
     required this.rating,
     required this.timestamp,
   });
+
 
   Map<String, dynamic> toJson() {
     return {

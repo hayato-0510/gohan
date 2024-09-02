@@ -1,11 +1,13 @@
-export 'lat_lng.dart';
-
-class LatLng {
+class LatLngModel {
   final double latitude;
   final double longitude;
 
-  LatLng(this.latitude, this.longitude);
-  Map<String, dynamic> toJson() {
+  LatLngModel(
+    this.latitude, 
+    this.longitude
+  );
+
+  Map<String, dynamic> toMap() {
     return {
       'latitude': latitude,
       'longitude': longitude,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:gohan/view/tab_page.dart';
+import 'package:gohan/screen/tab_page.dart';
 import 'package:gohan/view_model/user_engagement_viewmodel/user_engagement_viewmodel.dart';
 import 'package:gohan/view_model/user_location_viewmodel/user_location_viewmodel.dart';
 import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';

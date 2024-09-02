@@ -1,83 +1,29 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+// apikey model
+import 'package:gohan/model/api_key_model.dart';
 
-import 'restaurant.dart';
-import 'google_places_parser.dart';
+// resutanrant model(レストランの情報,保持するのはviewmodel)
+import 'package:gohan/model/restaurnt/restaurant_model.dart';
 
-export 'restaurant.dart';
-import 'package:uuid/uuid.dart';
-import 'package:gohan/model/restaurant_model.dart';
+// restaurant search model(レストランの情報をapiから取得するモデル)
+import 'package:gohan/model/restaurnt_search/restaurnt_search_model.dart';
+
 
 class RestaurantCardViewModel extends ChangeNotifier {
-//   List<Restaurant> _restaurants = [];
   late String _apiKey;
-  String? _nextPageToken;
 
   List<RestaurantModel> _restaurants = [];
-
   List<RestaurantModel> get restaurants => _restaurants;
 
   RestaurantCardViewModel() {
-    _loadApiKey().then((_) {
-      GooglePlacesParser.initialize();
-    });
-  }
-  Future<void> initialize() async {
-    await _loadApiKey();
-    GooglePlacesParser.initialize();
-  }
-  Future<void> _loadApiKey() async {
-    try {
-      await dotenv.load(fileName: ".env");
-      _apiKey = dotenv.env['GOOGLE_MAPS_API_KEY']??'';
-      if (_apiKey == null || _apiKey.isEmpty) {
-        throw Exception('API key not found in .env file');
+    ApiKeyModel().loadApiKey().then((apiKey) {
+      _apiKey = apiKey;
+      if (_apiKey.isEmpty) {
+        debugPrint('API key not found');
       }
-    } catch (e) {
-      print('Error loading API key: $e');
-      rethrow;  // エラーを上位に伝播させる
-    _initializeTestData();
-  }
-
-  void _initializeTestData() {
-    _restaurants = [
-      RestaurantModel(
-        id: "aaaa",
-        name: 'Sample1',
-        imageUrl: '',
-        rating: 4.5,
-        location: 'Location 1',
-        phone: '123-456-7890',
-        hours: '10:00 - 20:00',
-      ),
-      RestaurantModel(
-        id: "bbbb",
-        name: 'Sample2 restaurant name',
-        imageUrl: '',
-        rating: 4.2,
-        location: 'Location 2',
-        phone: '123-456-7891',
-        hours: '09:00 - 18:00',
-      ),
-      RestaurantModel(
-        id: "cccc",
-        name: 'Sample3 restaurant name',
-        imageUrl: '',
-        rating: 1.2,
-        location: 'Location 3',
-        phone: '123-456-7891',
-        hours: '00:00 - 01:00',
-      ),
-    ];
-
-    // それぞれのレストランのisOpenを計算する
-    for (var restaurant in _restaurants) {
-      restaurant.isOpen = isOpenFlag(restaurant.hours);
-    }
+    });
   }
 
   void removeRestaurant(int index) {
@@ -98,147 +44,41 @@ class RestaurantCardViewModel extends ChangeNotifier {
     }
   }
 
-// <<<<<<< restaurant_data-kairi
   Future<void> fetchNearbyRestaurants(double lat, double lng) async {
-    final url = Uri.parse(
-        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$lat,$lng&radius=1500&type=restaurant&key=$_apiKey');
-
-    try {
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final results = data['results'] as List;
-        _nextPageToken = data['next_page_token'];
-
-        _restaurants = results.map((place) => GooglePlacesParser.parseRestaurantFromNearbySearch(place)).toList();
-        notifyListeners();
-
-        if (_restaurants.length < 20 && _nextPageToken != null) {
-          await Future.delayed(Duration(seconds: 2));
-          await fetchMoreRestaurants();
-        }
-      } else {
-        throw Exception('Failed to load nearby restaurants');
-      }
-      for (var restaurant in _restaurants) {
-        await fetchRestaurantDetails(restaurant.id);
-      }
-    } catch (e) {
-      print('Error fetching nearby restaurants: $e');
-      rethrow;
-// =======
-//   Future<void> fetchRestaurantDetails() async {
-//     // UUIDを生成して、レストランIDとする
-//     const uuid = Uuid();
-//     final String restaurantId = uuid.v4();
-
-//     // 模擬的なAPI呼び出し（実際にはAPI呼び出しのコードに置き換え）
-//     await Future.delayed(const Duration(seconds: 1));
-
-//     final restaurant = RestaurantModel(
-//       id: restaurantId,
-//       name: 'サンプルレストラン',
-//       imageUrl: '',
-//       rating: 4.5,
-//       location: '三重県',
-//       phone: '0000000000000',
-//       hours: '10:00 - 20:00',
-//       isOpen: isOpenFlag('10:00 - 20:00'),
-//     );
-
-//     updateRestaurants([..._restaurants, restaurant]);
-//   }
-
-//    bool isOpenFlag(String hours) {
-//     if (hours.isEmpty) return false;
-
-//     final now = DateTime.now();
-//     final currentTime = now.hour * 60 + now.minute;
-
-//     final parts = hours.split(' - ');
-//     if (parts.length != 2) return false;
-
-//     final openTime = _parseTime(parts[0]);
-//     final closeTime = _parseTime(parts[1]);
-
-//     if (closeTime < openTime) {
-//       return currentTime >= openTime || currentTime < closeTime;
-//     } else {
-//       return currentTime >= openTime && currentTime < closeTime;
-// >>>>>>> dev-kai-merge
-    }
-  }
-
-  Future<void> fetchMoreRestaurants() async {
-    if (_nextPageToken == null) {
+    if (_apiKey.isEmpty) {
+      debugPrint('APIキーが設定されていません');
       return;
     }
-
-    final url = Uri.parse(
-        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?pagetoken=$_nextPageToken&key=$_apiKey');
-
-    try {
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final results = data['results'] as List;
-        _nextPageToken = data['next_page_token'];
-
-        final newRestaurants = results.map((place) => GooglePlacesParser.parseRestaurantFromNearbySearch(place)).toList();
-        _restaurants.addAll(newRestaurants);
-        notifyListeners();
-
-        // If we still don't have 20 restaurants and there's another page, fetch more
-        if (_restaurants.length < 20 && _nextPageToken != null) {
-          await Future.delayed(Duration(seconds: 2));
-          await fetchMoreRestaurants();
-        }
-      } else {
-        throw Exception('Failed to load more restaurants');
-      }
-    } catch (e) {
-      print('Error fetching more restaurants: $e');
+    try{
+      List<RestaurantModel> resultRestaurants = await RestaurantSearchModel().fetchNearbyRestaurants(lat, lng, _apiKey);
+      _restaurants.addAll(resultRestaurants);
+      notifyListeners();
+    } catch(e){
+      debugPrint('Error fetching nearby restaurants: $e');
       rethrow;
     }
   }
-// <<<<<<< restaurant_data-kairi
 
   Future<void> fetchRestaurantDetails(String placeId) async {
     if (_apiKey.isEmpty) {
-      print('APIキーが設定されていません');
+      debugPrint('APIキーが設定されていません');
       return;
     }
-
-    final url = Uri.parse(
-        'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&fields=name,rating,user_ratings_total,formatted_address,geometry,formatted_phone_number,website,opening_hours,price_level,photos,types&key=$_apiKey');
-
-    try {
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final result = data['result'];
-
-        final restaurant = GooglePlacesParser.parseRestaurantDetails(result, placeId);
-
-        //重複チェック
-        final index = _restaurants.indexWhere((r) => r.id == placeId);
-        if (index != -1) {
-          _restaurants[index] = restaurant;
-        } else {
-          _restaurants.add(restaurant);
-        }
-
-        notifyListeners();
+    try{
+       RestaurantModel restaurant = await RestaurantSearchModel().fetchRestaurantDetails(placeId, _apiKey);
+      int index = _restaurants.indexWhere((r) => r.id == placeId);
+      if (index != -1) {
+        _restaurants[index] = restaurant;
       } else {
-        throw Exception('Failed to load restaurant details');
+        _restaurants.add(restaurant);
       }
-    } catch (e) {
-      print('Error fetching restaurant details: $e');
+      notifyListeners();
+       
+    } catch(e){
+      debugPrint('Error fetching restaurant details: $e');
       rethrow;
     }
   }
-}
+
+  initialize() {}
 }

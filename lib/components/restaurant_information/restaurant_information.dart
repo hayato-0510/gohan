@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_data/business_hours.dart';
+import 'package:gohan/model/restaurnt/data/business_hours_model.dart';
 
 class RestaurantInformation extends StatelessWidget {
   final String address;   // 住所
   final String phone;      // 電話番号
-  final BusinessHours businessHours;  // 営業時間を BusinessHours オブジェクトに変更
+  final BusinessHoursModel businessHours;  // 営業時間を BusinessHours オブジェクトに変更
   final TextStyle? textStyle;
 
   const RestaurantInformation({

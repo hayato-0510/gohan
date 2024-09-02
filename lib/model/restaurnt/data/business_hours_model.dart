@@ -1,14 +1,12 @@
-export 'business_hours.dart';
-
 import 'package:flutter/material.dart';
 
 
-class BusinessHours {
+class BusinessHoursModel {
   final Map<int, DayHours> weeklyHours;
-  final List<int> closedDays; // 定休日（1 = 月曜日, 7 = 日曜日）
+  final List<int> closedDays;
   final List<SpecialDate> specialDates;
 
-  BusinessHours({
+  BusinessHoursModel({
     required this.weeklyHours,
     this.closedDays = const [],
     this.specialDates = const [],
@@ -37,7 +35,6 @@ class BusinessHours {
 
     return dayHours.isOpenAt(TimeOfDay.fromDateTime(now));
   }
-
   String getClosedDaysString() {
     List<String> days = ['月', '火', '水', '木', '金', '土', '日'];
     return closedDays.map((day) => days[day - 1]).join(', ');
@@ -72,9 +69,9 @@ class BusinessHours {
   }
 
 
-  static BusinessHours parseFromGooglePlaces(Map<String, dynamic>? openingHours) {
+  static BusinessHoursModel parseFromGooglePlaces(Map<String, dynamic>? openingHours) {
     if (openingHours == null) {
-      return BusinessHours(weeklyHours: {}, closedDays: []);
+      return BusinessHoursModel(weeklyHours: {}, closedDays: []);
     }
 
     final weeklyHours = <int, DayHours>{};
@@ -106,7 +103,7 @@ class BusinessHours {
       }
     }
 
-    return BusinessHours(weeklyHours: weeklyHours, closedDays: closedDays);
+    return BusinessHoursModel(weeklyHours: weeklyHours, closedDays: closedDays);
   }
 
   Map<String, dynamic> toJson() {

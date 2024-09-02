@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gohan/components/restaurant_information/restaurant_information.dart';
+import 'package:gohan/model/restaurnt/data/business_hours_model.dart';
 
 class RestaurantDetailsBottomSheet extends StatelessWidget {
   final String name;
@@ -8,6 +9,7 @@ class RestaurantDetailsBottomSheet extends StatelessWidget {
   final String phone;
   final String hours;
   final bool isOpen;
+  final BusinessHoursModel businessHours;
 
   const RestaurantDetailsBottomSheet({
     required this.name,
@@ -16,6 +18,7 @@ class RestaurantDetailsBottomSheet extends StatelessWidget {
     required this.phone,
     required this.hours,
     required this.isOpen,
+    required this.businessHours,
   });
 
   @override
@@ -39,10 +42,12 @@ class RestaurantDetailsBottomSheet extends StatelessWidget {
               subtitle: Text('Rating: $rating'),
             ),
             RestaurantInformation(
-              location: location,
+              // location: location,
               phone: phone,
-              hours: hours,
-              isOpen: isOpen,
+              address: location,
+              businessHours: businessHours,
+              // hours: hours,
+              // isOpen: isOpen,
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(context),

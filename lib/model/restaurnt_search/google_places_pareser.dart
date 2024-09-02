@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'restaurant.dart';
-import 'restaurant_data/business_hours.dart';
-import 'restaurant_data/photo.dart';
-import 'restaurant_data/lat_lng.dart';
+
+// 型を合わせるためのmodel import(あくまでもmodelの保持はしていない)
+import 'package:gohan/model/restaurnt/restaurant_model.dart';
+import 'package:gohan/model/restaurnt/data/lat_lng_model.dart';
+import 'package:gohan/model/restaurnt/data/business_hours_model.dart';
+import 'package:gohan/model/restaurnt/data/photo_model.dart';
 
 class GooglePlacesParser {
   static String? _apiKey;
@@ -11,48 +13,54 @@ class GooglePlacesParser {
   static void initialize() {
     _apiKey = dotenv.env['GOOGLE_MAPS_API_KEY'];
   }
+
   //簡易的なレストラン情報を取得するメソッド
-  static Restaurant parseRestaurantFromNearbySearch(Map<String, dynamic> place) {
-    return Restaurant(
+  static RestaurantModel parseRestaurantFromNearbySearch(
+      Map<String, dynamic> place) {
+    return RestaurantModel(
       id: place['place_id'] ?? '',
       name: place['name'] ?? '',
       category: place['types']?.isNotEmpty == true ? place['types'][0] : '',
-      priceRange: place['price_level'] != null ? '\$' * place['price_level'] : '',
+      priceRange:
+          place['price_level'] != null ? '\$' * place['price_level'] : '',
       rating: (place['rating'] as num?)?.toDouble() ?? 0.0,
       reviewCount: place['user_ratings_total'] ?? 0,
       userReviews: [],
       mapIconUrl: place['icon'] ?? '',
       address: place['vicinity'] ?? '',
-      location: LatLng(
+      location: LatLngModel(
         place['geometry']['location']['lat'],
         place['geometry']['location']['lng'],
       ),
       phone: '',
       websiteUrl: '',
-      businessHours: BusinessHours(weeklyHours: {}, closedDays: []),
+      businessHours: BusinessHoursModel(weeklyHours: {}, closedDays: []),
       businessStatus: place['business_status'] ?? '',
       photos: place['photos'] != null
-        ? [Photo(url: _getPlacePhotoUrl(place['photos']))]
-        : [],
+          ? [PhotoModel(url: _getPlacePhotoUrl(place['photos']))]
+          : [],
       isFavorite: false,
     );
   }
+
   //詳細情報を取得するメソッド
-  static Restaurant parseRestaurantDetails(Map<String, dynamic> result, String placeId) {
+  static RestaurantModel parseRestaurantDetails(
+      Map<String, dynamic> result, String placeId) {
     final photos = _parsePhotos(result['photos'], _apiKey);
     final businessHours = _parseBusinessHours(result['opening_hours']);
 
-    return Restaurant(
+    return RestaurantModel(
       id: placeId,
       name: result['name'] ?? '',
       category: result['types']?.isNotEmpty == true ? result['types'][0] : '',
-      priceRange: result['price_level'] != null ? '\$' * result['price_level'] : '',
+      priceRange:
+          result['price_level'] != null ? '\$' * result['price_level'] : '',
       rating: (result['rating'] as num?)?.toDouble() ?? 0.0,
       reviewCount: result['user_ratings_total'] ?? 0,
       userReviews: [],
       mapIconUrl: result['icon'] ?? '',
       address: result['formatted_address'] ?? '',
-      location: LatLng(
+      location: LatLngModel(
         result['geometry']['location']['lat'],
         result['geometry']['location']['lng'],
       ),
@@ -70,9 +78,10 @@ class GooglePlacesParser {
     final photoReference = photos[0]['photo_reference'];
     return 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$_apiKey';
   }
-  
-  static BusinessHours _parseBusinessHours(Map<String, dynamic>? openingHours) {
-    if (openingHours == null) return BusinessHours(weeklyHours: {}, closedDays: []);
+
+  static BusinessHoursModel _parseBusinessHours(Map<String, dynamic>? openingHours) {
+    if (openingHours == null)
+      return BusinessHoursModel(weeklyHours: {}, closedDays: []);
 
     final weeklyHours = <int, DayHours>{};
     final closedDays = <int>[];
@@ -87,9 +96,12 @@ class GooglePlacesParser {
           final openTime = _parseTimeOfDay(open['time']);
           final closeTime = _parseTimeOfDay(close['time']);
           if (weeklyHours.containsKey(day)) {
-            weeklyHours[day]!.openRanges.add(TimeRange(start: openTime, end: closeTime));
+            weeklyHours[day]!
+                .openRanges
+                .add(TimeRange(start: openTime, end: closeTime));
           } else {
-            weeklyHours[day] = DayHours(openRanges: [TimeRange(start: openTime, end: closeTime)]);
+            weeklyHours[day] = DayHours(
+                openRanges: [TimeRange(start: openTime, end: closeTime)]);
           }
         }
       }
@@ -101,7 +113,7 @@ class GooglePlacesParser {
       }
     }
 
-    return BusinessHours(weeklyHours: weeklyHours, closedDays: closedDays);
+    return BusinessHoursModel(weeklyHours: weeklyHours, closedDays: closedDays);
   }
 
   static TimeOfDay _parseTimeOfDay(String time) {
@@ -110,13 +122,15 @@ class GooglePlacesParser {
     return TimeOfDay(hour: hour, minute: minute);
   }
 
-  static List<Photo> _parsePhotos(List<dynamic>? photoReferences, String? apiKey) {
+  static List<PhotoModel> _parsePhotos(
+      List<dynamic>? photoReferences, String? apiKey) {
     if (photoReferences == null) return [];
 
     return photoReferences.map((photo) {
       final photoReference = photo['photo_reference'];
-      final photoUrl = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey';
-      return Photo(
+      final photoUrl =
+          'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$apiKey';
+      return PhotoModel(
         url: photoUrl,
         attributes: {
           'height': photo['height'],
