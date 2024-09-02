@@ -49,8 +49,9 @@ class _SearchPageState extends State<SearchPage> {
               padding: const EdgeInsets.all(10.0),
               child: Center(
                 child: ToggleButton(
-                  isPhotoSelected: _isPhotoSelected,
-                  onToggle: (isSelected) {
+                  toggleText: const ['写真', '地図'],
+                  isSelected: _isPhotoSelected,
+                  onToggle: (isSelected) { // 表で状態を管理するためのコールバック
                     setState(() {
                       _isPhotoSelected = isSelected;
                     });

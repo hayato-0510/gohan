@@ -1,50 +1,44 @@
 import 'package:flutter/material.dart';
 
 class ToggleButton extends StatefulWidget {
-  final bool isPhotoSelected;
+  final bool isSelected;
+  final List<String> toggleText;
   final Function(bool) onToggle;
 
   const ToggleButton({
-    Key? key,
-    required this.isPhotoSelected,
+    super.key,
+    required this.toggleText,
+    required this.isSelected,
     required this.onToggle,
-  }) : super(key: key);
+  });
 
   @override
   _ToggleButtonState createState() => _ToggleButtonState();
 }
 
 class _ToggleButtonState extends State<ToggleButton> {
-  bool _isPhotoSelected = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _isPhotoSelected = widget.isPhotoSelected;
-  }
-
-  void _toggleSelection(bool isPhoto) {
+  void _toggleSelection(bool isSelected) {
     setState(() {
-      _isPhotoSelected = isPhoto;
-      widget.onToggle(isPhoto);
+      widget.onToggle(isSelected);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+    double widthAdjustment = screenWidth * 0.6;
 
     return GestureDetector(
       onTapUp: (details) {
-        if (details.localPosition.dx < (screenWidth * 0.5) / 2) {
+        if (details.localPosition.dx < (widthAdjustment / 2)) {
           _toggleSelection(true);
         } else {
           _toggleSelection(false);
         }
       },
       child: Container(
-        width: screenWidth * 0.5, // 横幅を画面の50%に設定
-        height: 40, // 固定高さを設定
+        width: widthAdjustment,
+        height: 40,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -53,10 +47,11 @@ class _ToggleButtonState extends State<ToggleButton> {
         child: Stack(
           children: [
             AnimatedAlign(
-              duration: Duration(milliseconds: 300),
-              alignment: _isPhotoSelected ? Alignment.centerLeft : Alignment.centerRight,
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              alignment: widget.isSelected ? Alignment.centerLeft : Alignment.centerRight,
               child: Container(
-                width: (screenWidth * 0.5) / 2, // 半分の幅
+                width: (widthAdjustment) / 2, // 半分の幅
                 height: 40,
                 decoration: BoxDecoration(
                   color: Colors.black,
@@ -70,10 +65,11 @@ class _ToggleButtonState extends State<ToggleButton> {
                 Expanded(
                   child: Center(
                     child: Text(
-                      '写真',
+                      widget.toggleText[0],
                       style: TextStyle(
-                        fontSize: 20, // フォントサイズを大きく
-                        color: _isPhotoSelected ? Colors.white : Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold, 
+                        color: widget.isSelected ? Colors.white : Colors.black,
                       ),
                     ),
                   ),
@@ -81,10 +77,11 @@ class _ToggleButtonState extends State<ToggleButton> {
                 Expanded(
                   child: Center(
                     child: Text(
-                      'マップ',
+                      widget.toggleText[1],
                       style: TextStyle(
-                        fontSize: 20, // フォントサイズを大きく
-                        color: _isPhotoSelected ? Colors.black : Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold, 
+                        color: widget.isSelected ? Colors.black : Colors.white,
                       ),
                     ),
                   ),
