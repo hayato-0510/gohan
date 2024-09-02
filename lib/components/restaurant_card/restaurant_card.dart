@@ -33,48 +33,97 @@ class RestaurantCard extends StatelessWidget {
                   Text(
                     restaurant.name,
                     style: const TextStyle(
-                        fontSize: 24, fontWeight: FontWeight.bold),
+// <<<<<<< restaurant_data-kairi
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold
+                    ),
                     softWrap: true,
                     overflow: TextOverflow.visible,
                   ),
-                  Row(children: [
-                    const Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0, vertical: 4.0),
-                      child: StarRating(
-                        rating: restaurant.rating,
-                        filledColor: Colors.yellow,
-                        unfilledColor: Colors.grey,
+                  Row(
+                    children: [
+                      Text(restaurant.category),
+                      const Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                        child: StarRating(
+                          rating: restaurant.rating,
+                          filledColor: Colors.yellow,
+                          unfilledColor: Colors.grey,
+                        ),
                       ),
+                      Text('(${restaurant.reviewCount})'),
+                    ],
+                  ),
+                  Text('Price Range: ${restaurant.priceRange}'),
+                  Container(
+                    height: 200,
+                    child: restaurant.photos.isNotEmpty
+                        ? Image.network(
+                      restaurant.photos.first.url,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Center(child: Text('Error loading image'));
+                      },
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        );
+                      },
+                    )
+                        : Container(
+                      color: Colors.grey[300],
+                      child: Center(child: Text('No Image')),
                     ),
-                  ]),                  
-                  // //*Container(
-                  //   height: 200,
-                  //   decoration: restaurant.imageUrl.isNotEmpty
-                  //       ? BoxDecoration(
-                  //           image: DecorationImage(
-                  //             image: NetworkImage(restaurant.imageUrl),
-                  //             fit: BoxFit.cover,
-                  //           ),
-                  //         )
-                  //       : BoxDecoration(color: Colors.grey[300]),
-                  //   child: restaurant.imageUrl.isEmpty
-                  //       ? const Center(child: Text('画像'))
-                  //       : null,
-                  // ),
+                  ),
+// =======
+//                         fontSize: 24, fontWeight: FontWeight.bold),
+//                     softWrap: true,
+//                     overflow: TextOverflow.visible,
+//                   ),
+//                   Row(children: [
+//                     const Spacer(),
+//                     Padding(
+//                       padding: const EdgeInsets.symmetric(
+//                           horizontal: 8.0, vertical: 4.0),
+//                       child: StarRating(
+//                         rating: restaurant.rating,
+//                         filledColor: Colors.yellow,
+//                         unfilledColor: Colors.grey,
+//                       ),
+//                     ),
+//                   ]),                  
+//                   // //*Container(
+//                   //   height: 200,
+//                   //   decoration: restaurant.imageUrl.isNotEmpty
+//                   //       ? BoxDecoration(
+//                   //           image: DecorationImage(
+//                   //             image: NetworkImage(restaurant.imageUrl),
+//                   //             fit: BoxFit.cover,
+//                   //           ),
+//                   //         )
+//                   //       : BoxDecoration(color: Colors.grey[300]),
+//                   //   child: restaurant.imageUrl.isEmpty
+//                   //       ? const Center(child: Text('画像'))
+//                   //       : null,
+//                   // ),
 
+// >>>>>>> dev-kai-merge
                   const SizedBox(height: 16),
                   RestaurantInformation(
-                    location: restaurant.location,
+                    address: restaurant.address,
                     phone: restaurant.phone,
-                    hours: restaurant.hours,
-                    isOpen: restaurant.isOpen,
+                    businessHours: restaurant.businessHours,
                   ),
                 ],
               ),
             ),
-            const Positioned(
+            Positioned(
               right: 24,
               bottom: 20,
               child: LocationButton(),

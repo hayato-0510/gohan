@@ -1,15 +1,45 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'restaurant.dart';
+import 'google_places_parser.dart';
+
+export 'restaurant.dart';
 import 'package:uuid/uuid.dart';
 import 'package:gohan/model/restaurant_model.dart';
+
 class RestaurantCardViewModel extends ChangeNotifier {
-  
+//   List<Restaurant> _restaurants = [];
+  late String _apiKey;
+  String? _nextPageToken;
 
   List<RestaurantModel> _restaurants = [];
 
   List<RestaurantModel> get restaurants => _restaurants;
 
-  // コンストラクタとして、テストデータを初期化
   RestaurantCardViewModel() {
+    _loadApiKey().then((_) {
+      GooglePlacesParser.initialize();
+    });
+  }
+  Future<void> initialize() async {
+    await _loadApiKey();
+    GooglePlacesParser.initialize();
+  }
+  Future<void> _loadApiKey() async {
+    try {
+      await dotenv.load(fileName: ".env");
+      _apiKey = dotenv.env['GOOGLE_MAPS_API_KEY']??'';
+      if (_apiKey == null || _apiKey.isEmpty) {
+        throw Exception('API key not found in .env file');
+      }
+    } catch (e) {
+      print('Error loading API key: $e');
+      rethrow;  // エラーを上位に伝播させる
     _initializeTestData();
   }
 
@@ -61,65 +91,154 @@ class RestaurantCardViewModel extends ChangeNotifier {
   }
 
   void toggleFavorite(String restaurantId) {
-    final index =
-        _restaurants.indexWhere((restaurant) => restaurant.id == restaurantId);
+    final index = _restaurants.indexWhere((restaurant) => restaurant.id == restaurantId);
     if (index != -1) {
       _restaurants[index].isFavorite = !_restaurants[index].isFavorite;
       notifyListeners();
     }
   }
 
-  Future<void> fetchRestaurantDetails() async {
-    // UUIDを生成して、レストランIDとする
-    const uuid = Uuid();
-    final String restaurantId = uuid.v4();
+// <<<<<<< restaurant_data-kairi
+  Future<void> fetchNearbyRestaurants(double lat, double lng) async {
+    final url = Uri.parse(
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$lat,$lng&radius=1500&type=restaurant&key=$_apiKey');
 
-    // 模擬的なAPI呼び出し（実際にはAPI呼び出しのコードに置き換え）
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final response = await http.get(url);
 
-    final restaurant = RestaurantModel(
-      id: restaurantId,
-      name: 'サンプルレストラン',
-      imageUrl: '',
-      rating: 4.5,
-      location: '三重県',
-      phone: '0000000000000',
-      hours: '10:00 - 20:00',
-      isOpen: isOpenFlag('10:00 - 20:00'),
-    );
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final results = data['results'] as List;
+        _nextPageToken = data['next_page_token'];
 
-    updateRestaurants([..._restaurants, restaurant]);
-  }
+        _restaurants = results.map((place) => GooglePlacesParser.parseRestaurantFromNearbySearch(place)).toList();
+        notifyListeners();
 
-   bool isOpenFlag(String hours) {
-    if (hours.isEmpty) return false;
+        if (_restaurants.length < 20 && _nextPageToken != null) {
+          await Future.delayed(Duration(seconds: 2));
+          await fetchMoreRestaurants();
+        }
+      } else {
+        throw Exception('Failed to load nearby restaurants');
+      }
+      for (var restaurant in _restaurants) {
+        await fetchRestaurantDetails(restaurant.id);
+      }
+    } catch (e) {
+      print('Error fetching nearby restaurants: $e');
+      rethrow;
+// =======
+//   Future<void> fetchRestaurantDetails() async {
+//     // UUIDを生成して、レストランIDとする
+//     const uuid = Uuid();
+//     final String restaurantId = uuid.v4();
 
-    final now = DateTime.now();
-    final currentTime = now.hour * 60 + now.minute;
+//     // 模擬的なAPI呼び出し（実際にはAPI呼び出しのコードに置き換え）
+//     await Future.delayed(const Duration(seconds: 1));
 
-    final parts = hours.split(' - ');
-    if (parts.length != 2) return false;
+//     final restaurant = RestaurantModel(
+//       id: restaurantId,
+//       name: 'サンプルレストラン',
+//       imageUrl: '',
+//       rating: 4.5,
+//       location: '三重県',
+//       phone: '0000000000000',
+//       hours: '10:00 - 20:00',
+//       isOpen: isOpenFlag('10:00 - 20:00'),
+//     );
 
-    final openTime = _parseTime(parts[0]);
-    final closeTime = _parseTime(parts[1]);
+//     updateRestaurants([..._restaurants, restaurant]);
+//   }
 
-    if (closeTime < openTime) {
-      return currentTime >= openTime || currentTime < closeTime;
-    } else {
-      return currentTime >= openTime && currentTime < closeTime;
+//    bool isOpenFlag(String hours) {
+//     if (hours.isEmpty) return false;
+
+//     final now = DateTime.now();
+//     final currentTime = now.hour * 60 + now.minute;
+
+//     final parts = hours.split(' - ');
+//     if (parts.length != 2) return false;
+
+//     final openTime = _parseTime(parts[0]);
+//     final closeTime = _parseTime(parts[1]);
+
+//     if (closeTime < openTime) {
+//       return currentTime >= openTime || currentTime < closeTime;
+//     } else {
+//       return currentTime >= openTime && currentTime < closeTime;
+// >>>>>>> dev-kai-merge
     }
   }
 
-  int _parseTime(String timeString) {
-    final parts = timeString.split(':');
-    if (parts.length != 2) return 0;
+  Future<void> fetchMoreRestaurants() async {
+    if (_nextPageToken == null) {
+      return;
+    }
 
-    final hours = int.tryParse(parts[0]) ?? 0;
-    final minutes = int.tryParse(parts[1]) ?? 0;
+    final url = Uri.parse(
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?pagetoken=$_nextPageToken&key=$_apiKey');
 
-    return hours * 60 + minutes;
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final results = data['results'] as List;
+        _nextPageToken = data['next_page_token'];
+
+        final newRestaurants = results.map((place) => GooglePlacesParser.parseRestaurantFromNearbySearch(place)).toList();
+        _restaurants.addAll(newRestaurants);
+        notifyListeners();
+
+        // If we still don't have 20 restaurants and there's another page, fetch more
+        if (_restaurants.length < 20 && _nextPageToken != null) {
+          await Future.delayed(Duration(seconds: 2));
+          await fetchMoreRestaurants();
+        }
+      } else {
+        throw Exception('Failed to load more restaurants');
+      }
+    } catch (e) {
+      print('Error fetching more restaurants: $e');
+      rethrow;
+    }
   }
-  // Future<void> search(String restaurantName, String selectedDistance, bool isOpen) async {
-  //  search ロジックを実装
-  // }
+// <<<<<<< restaurant_data-kairi
+
+  Future<void> fetchRestaurantDetails(String placeId) async {
+    if (_apiKey.isEmpty) {
+      print('APIキーが設定されていません');
+      return;
+    }
+
+    final url = Uri.parse(
+        'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&fields=name,rating,user_ratings_total,formatted_address,geometry,formatted_phone_number,website,opening_hours,price_level,photos,types&key=$_apiKey');
+
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final result = data['result'];
+
+        final restaurant = GooglePlacesParser.parseRestaurantDetails(result, placeId);
+
+        //重複チェック
+        final index = _restaurants.indexWhere((r) => r.id == placeId);
+        if (index != -1) {
+          _restaurants[index] = restaurant;
+        } else {
+          _restaurants.add(restaurant);
+        }
+
+        notifyListeners();
+      } else {
+        throw Exception('Failed to load restaurant details');
+      }
+    } catch (e) {
+      print('Error fetching restaurant details: $e');
+      rethrow;
+    }
+  }
+}
 }
