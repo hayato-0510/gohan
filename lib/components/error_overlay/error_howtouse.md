@@ -36,7 +36,7 @@ void someFunction() {
 enum ErrorType { network, validation, unknown, customError }
 ```
 
-`error_overlay.dart` ファイル内の`_getTitleForErrorType`に追加したエラーのタイトルを追加
+`error_styles.dart` ファイル内の`_getTitleForErrorType`に追加したエラーのタイトルを追加
 ```dart
   String _getTitleForErrorType(ErrorType type) {
     switch (type) {
