@@ -49,17 +49,23 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
+    // buildメソッドをオーバーライドしてウィジェットを構築
+    final screenHeight = MediaQuery.of(context).size.height; // 画面の高さを取得
     final topPosition = screenHeight * 0; // 画面高さの20%
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      // Scaffoldウィジェットを返す
+      backgroundColor: Colors.white, // 背景色を白に設定
       body: SafeArea(
+        // SafeAreaウィジェットで画面の安全領域を確保
         child: Stack(
+          // Stackウィジェットで重ね合わせを実現
           children: [
             Column(
+              // 縦にウィジェットを並べる
               children: [
                 Padding(
+                  // パディングを追加
                   padding: const EdgeInsets.only(
                     left: 10.0,
                     right: 10.0,
@@ -67,24 +73,31 @@ class _SearchPageState extends State<SearchPage> {
                     bottom: 1.0,
                   ),
                   child: Column(
+                    // コラムウィジェットで縦にウィジェットを並べる
                     children: [
                       GestureDetector(
-                        onTap: _toggleUserCheckBar,
+                        // タップを検出するウィジェット
+                        onTap:
+                            _toggleUserCheckBar, // タップ時に_toggleUserCheckBarメソッドを呼び出す
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          // 横にウィジェットを並べる
+                          mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween, // 両端に配置
                           children: [
                             Text(_showUserCheckBar
                                 ? 'Hide Filters'
-                                : 'Show Filters'),
+                                : 'Show Filters'), // テキストを表示
                             Icon(
+                              // アイコンを表示
                               _isExpanded
                                   ? Icons.arrow_drop_down
-                                  : Icons.arrow_right,
+                                  : Icons.arrow_right, // アイコンの種類を切り替え
                             ),
                           ],
                         ),
                       ),
                       const Divider(
+                        // 区切り線を表示
                         color: Colors.grey, // 線の色
                         thickness: 1.0, // 線の太さ
                         indent: 0.0, // 左側のインデント
@@ -94,35 +107,47 @@ class _SearchPageState extends State<SearchPage> {
                   ),
                 ),
                 Expanded(
+                  // 残りのスペースを埋める
                   child: Padding(
+                    // パディングを追加
                     padding: const EdgeInsets.symmetric(
                         horizontal: 15, vertical: 20),
                     child: Consumer<RestaurantCardViewModel>(
+                      // ConsumerウィジェットでViewModelを取得
                       builder: (context, viewModel, child) {
                         if (viewModel.restaurants.isEmpty) {
+                          // レストランが空の場合
                           return ElevatedButton(
+                            // ボタンを表示
                             onPressed: () {
-                              viewModel.fetchRestaurantDetails();
+                              viewModel
+                                  .fetchRestaurantDetails(); // ボタン押下時にレストラン情報を取得
                             },
-                            child: const Text('Load More Restaurants'),
+                            child:
+                                const Text('Load More Restaurants'), // ボタンのテキスト
                           );
                         }
 
                         return AppinioSwiper(
-                          cardCount: viewModel.restaurants.length,
+                          // スワイプウィジェットを表示
+                          cardCount: viewModel.restaurants.length, // カードの数
                           cardBuilder: (BuildContext context, int index) {
                             return RestaurantCard(
-                                restaurant: viewModel.restaurants[index]);
+                                restaurant: viewModel
+                                    .restaurants[index]); // レストランカードを表示
                           },
-                          maxAngle: 15,
+                          maxAngle: 15, // スワイプの最大角度
                           onSwipeEnd: (int previousIndex, int targetIndex,
                               SwiperActivity activity) async {
+                            // スワイプ終了時の処理
                             if (activity is Swipe) {
-                              final isFavorite =
-                                  activity.direction == AxisDirection.right;
+                              // スワイプアクティビティの場合
+                              final isFavorite = activity.direction ==
+                                  AxisDirection.right; // 右スワイプでお気に入り
                               Provider.of<UserEngagementViewModel>(context,
                                       listen: false)
                                   .saveToEngagementDB(
+                                // データベースに保存
                                 id: viewModel.restaurants[previousIndex].id
                                     .toString(),
                                 name: viewModel.restaurants[previousIndex].name,
@@ -137,14 +162,17 @@ class _SearchPageState extends State<SearchPage> {
                                 isFavorite: isFavorite,
                               );
                               WidgetsBinding.instance.addPostFrameCallback((_) {
+                                // フレームコールバックを追加
                                 if (previousIndex <
                                     viewModel.restaurants.length) {
-                                  viewModel.removeRestaurant(previousIndex);
+                                  viewModel.removeRestaurant(
+                                      previousIndex); // レストランをリストから削除
                                 }
                               });
                             }
                           },
                           onEnd: () {
+                            // カードがなくなった時の処理
                             print('No more cards');
                           },
                         );
@@ -155,52 +183,64 @@ class _SearchPageState extends State<SearchPage> {
               ],
             ),
             if (_showUserCheckBar)
-              Stack(
-                children: [
-                  ModalBarrier(
-                    color: Colors.black.withOpacity(0.5),
-                    dismissible: false,
-                  ),
-                  Positioned(
-                    top: topPosition,
-                    left: 0,
-                    right: 0,
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                      padding: const EdgeInsets.all(10.0),
-                      color: Colors.white, // 背景色を追加
-                      child: Column(
-                        children: [
-                          GestureDetector(
-                            onTap: _toggleUserCheckBar,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(_showUserCheckBar
-                                    ? 'Hide Filters'
-                                    : 'Show Filters'),
-                                Icon(
-                                  _isExpanded
-                                      ? Icons.arrow_drop_down
-                                      : Icons.arrow_right,
-                                ),
-                              ],
+              GestureDetector(
+                onTap: _toggleUserCheckBar, // タップ時にフィルターバーを非表示にする
+                child: Stack(
+                  children: [
+                    ModalBarrier(
+                      color: Colors.black.withOpacity(0.5), // 半透明の黒
+                      dismissible: true, // バリアを解除できるようにする
+                      onDismiss: _toggleUserCheckBar, // バリアが解除されたときに呼び出すメソッド
+                    ),
+                    Positioned(
+                      top: topPosition, // 上からの位置
+                      left: 0,
+                      right: 0,
+                      child: AnimatedContainer(
+                        // アニメーション付きコンテナ
+                        duration:
+                            const Duration(milliseconds: 300), // アニメーションの時間
+                        curve: Curves.easeInOut, // アニメーションのカーブ
+                        padding: const EdgeInsets.all(10.0), // パディング
+                        color: Colors.white, // 背景色を白に設定
+                        child: Column(
+                          // コラムウィジェットで縦にウィジェットを並べる
+                          children: [
+                            GestureDetector(
+                              onTap:
+                                  _toggleUserCheckBar, // タップ時に_toggleUserCheckBarメソッドを呼び出す
+                              child: Row(
+                                // 横にウィジェットを並べる
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween, // 両端に配置
+                                children: [
+                                  Text(_showUserCheckBar
+                                      ? 'Hide Filters'
+                                      : 'Show Filters'), // テキストを表示
+                                  Icon(
+                                    // アイコンを表示
+                                    _isExpanded
+                                        ? Icons.arrow_drop_down
+                                        : Icons.arrow_right, // アイコンの種類を切り替え
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          const Divider(
-                            color: Colors.grey, // 線の色
-                            thickness: 1.0, // 線の太さ
-                            indent: 0.0, // 左側のインデント
-                            endIndent: 0.0, // 右側のインデント
-                          ),
-                          _setUserCheckBar(context),
-                        ],
+                            const Divider(
+                              // 区切り線を表示
+                              color: Colors.grey, // 線の色
+                              thickness: 1.0, // 線の太さ
+                              indent: 0.0, // 左側のインデント
+                              endIndent: 0.0, // 右側のインデント
+                            ),
+                            _setUserCheckBar(context), // フィルターバーの設定
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              )
           ],
         ),
       ),
