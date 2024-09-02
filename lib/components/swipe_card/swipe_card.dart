@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:card_swiper/card_swiper.dart';
-import 'package:gohan/model/restaurant/restaurant_model.dart';
+import 'package:gohan/model/restaurant_model.dart';
 
 class SwipeCardViewController {
   SwiperController? _swiperController;
@@ -68,9 +68,9 @@ class _SwipeCardViewState extends State<SwipeCardView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (restaurant.mapIconUrl.isNotEmpty)
+                    if (restaurant.imageUrl.isNotEmpty)
                       Image.network(
-                        restaurant.mapIconUrl,
+                        restaurant.imageUrl,
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: 120,
@@ -87,7 +87,7 @@ class _SwipeCardViewState extends State<SwipeCardView> {
                     SizedBox(height: 4),
                     Text('Phone: ${restaurant.phone}'),
                     SizedBox(height: 4),
-                    Text('Hours: ${restaurant.businessHours}'),
+                    Text('Hours: ${restaurant.hours}'),
                   ],
                 ),
               ),

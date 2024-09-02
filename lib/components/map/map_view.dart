@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:gohan/model/restaurant/restaurant_model.dart';
+import 'package:gohan/model/restaurant_model.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:gohan/view_model/user_viewmodel/user_location_viewmodel.dart';
@@ -43,7 +43,6 @@ class _MapViewState extends State<MapView> {
   void initState() {
     super.initState();
     _requestPermissionAndGetCurrentLocation();
-    _loadCustomIcons(); // カスタムアイコンの読み込み
   }
 
   Future<void> _loadCustomIcons() async {
@@ -146,11 +145,11 @@ class _MapViewState extends State<MapView> {
   Set<Marker> _createMarkers() {
     return widget.restaurantModelArray.map((restaurant) {
       return Marker(
-        markerId: MarkerId(restaurant.id),
-        position: LatLng(restaurant.location.latitude, restaurant.location.longitude),
+        markerId: MarkerId('${restaurant.latitude}_${restaurant.longitude}'),
+        position: LatLng(restaurant.latitude, restaurant.longitude),
         icon: widget.highlightedRestaurant != null &&
-                widget.highlightedRestaurant!.location.latitude == restaurant.location.latitude &&
-                widget.highlightedRestaurant!.location.longitude == restaurant.location.longitude
+                widget.highlightedRestaurant!.latitude == restaurant.latitude &&
+                widget.highlightedRestaurant!.longitude == restaurant.longitude
             ? highlightedIcon ?? customIcon ?? BitmapDescriptor.defaultMarker
             : customIcon ?? BitmapDescriptor.defaultMarker,
         onTap: () {
@@ -165,11 +164,11 @@ class _MapViewState extends State<MapView> {
   }
 
   void _moveCameraToMarker(RestaurantModel restaurant) {
-    if (mapController != null && restaurant.location.latitude != 0.0 && restaurant.location.longitude != 0.0) {
+    if (mapController != null && restaurant.latitude != 0.0 && restaurant.longitude != 0.0) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         mapController!.animateCamera(
           CameraUpdate.newLatLng(
-            LatLng(restaurant.location.latitude, restaurant.location.longitude),
+            LatLng(restaurant.latitude, restaurant.longitude),
           ),
         );
       });
