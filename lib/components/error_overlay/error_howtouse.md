@@ -24,12 +24,26 @@ void someFunction() {
 
 ## エラータイプの定義
 
-error_handler.dart ファイル内の ErrorType enumを拡張して、新しいエラータイプを追加
+`error_handler.dart` ファイル内の `ErrorType enum`を拡張して、新しいエラータイプを追加
 
 ```dart
 enum ErrorType { network, validation, unknown, customError }
 ```
 
+`error_overlay.dart` ファイル内の`_getTitleForErrorType`に追加したエラーのタイトルを追加
+```dart
+  String _getTitleForErrorType(ErrorType type) {
+    switch (type) {
+      case ErrorType.network:
+        return 'ネットワークエラー';
+      case ErrorType.validation:
+        return '入力エラー';
+      case ErrorType.unknown:
+      default:
+        return 'エラー';
+    }
+  }
+```
 .
 └── front/
     ├── lib/
