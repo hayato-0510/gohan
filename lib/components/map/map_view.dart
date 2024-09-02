@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:gohan/view_model/user_location_viewmodel/user_location_viewmodel.dart';
+import 'package:gohan/view_model/user_viewmodel/user_location_viewmodel.dart';
 
 class MapView extends StatefulWidget {
   final double height;

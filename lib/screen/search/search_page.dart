@@ -13,8 +13,8 @@ import 'package:gohan/components/map_card/map_card.dart';
 
 //  viewmodelのインポート
 import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
-import 'package:gohan/view_model/user_engagement_viewmodel/user_engagement_viewmodel.dart';
-import 'package:gohan/view_model/user_search_settings_viewmodel/user_search_settings_viewmodel.dart';
+import 'package:gohan/view_model/user_viewmodel/user_engagement_viewmodel.dart';
+import 'package:gohan/view_model/user_viewmodel/user_search_settings_viewmodel.dart';
 
 // widgetのインポート
 import './widget/search_header.dart';

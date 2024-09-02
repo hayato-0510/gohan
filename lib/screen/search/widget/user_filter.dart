@@ -6,7 +6,7 @@ import 'package:gohan/components/check_box_list_tile/check_box_list_tile.dart';
 import 'package:gohan/components/dropdown_menu/dropdown_menu.dart';
 
 // viewmodelのインポート
-import 'package:gohan/view_model/user_search_settings_viewmodel/user_search_settings_viewmodel.dart';
+import 'package:gohan/view_model/user_viewmodel/user_search_settings_viewmodel.dart';
 
 class UserFilter extends StatefulWidget {
   const UserFilter({Key? key}) : super(key: key);

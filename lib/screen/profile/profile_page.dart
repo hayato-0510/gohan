@@ -1,8 +1,7 @@
 // lib/view/profile/profile_page.dart
 import 'package:flutter/material.dart';
-import 'package:gohan/components/map/map_view.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:gohan/components/error_overlay/error_handler.dart';
+import 'package:provider/provider.dart';
+import 'package:gohan/view_model/user_viewmodel/user_auth_viewmodel.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -12,34 +11,114 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  
-  void _showTestError() {
-    ErrorHandler().handleError(AppError(
-      message: 'これはプロフィールページのテストエラーです。',
-      type: ErrorType.validation,
-      action: () {
-        print('プロフィールページのエラーアクションが実行されました');
-      },
-    ));
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final userAuthViewModel = context.read<AuthViewModel>();
+      if (userAuthViewModel.currentUser == null) {
+        userAuthViewModel.reloadUser();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final userAuthViewModel = Provider.of<AuthViewModel>(context);
+    final user = userAuthViewModel.currentUser;
+
     return Scaffold(
-      backgroundColor: Colors.yellow[700],
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
-              onPressed: _showTestError,
-              child: Text('テストエラーを表示'),
-            ),
+            if (user != null) ...[
+              CircleAvatar(
+                radius: 50,
+                backgroundImage: user.photoURL != null
+                    ? NetworkImage(user.photoURL!)
+                    : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                user.displayName ?? 'No Name',
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                user.email ?? 'No Email',
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+            ] ,
+            _signOutButton(context),
           ],
         ),
       ),
     );
   }
+
+  Widget _signOutButton(BuildContext context) {
+
+    return ElevatedButton(
+      onPressed: () async {
+        final userInfoViewModel = context.read<AuthViewModel>();
+        await userInfoViewModel.signOut();
+      },
+      child: const Text('Sign Out'),
+    );
+  }
 }
+
+
+
+// // lib/view/profile/profile_page.dart
+// import 'package:flutter/material.dart';
+// import 'package:gohan/components/map/map_view.dart';
+// import 'package:google_maps_flutter/google_maps_flutter.dart';
+// import 'package:gohan/components/error_overlay/error_handler.dart';
+
+// class ProfilePage extends StatefulWidget {
+//   const ProfilePage({super.key});
+
+//   @override
+//   _ProfilePageState createState() => _ProfilePageState();
+// }
+
+// class _ProfilePageState extends State<ProfilePage> {
+  
+//   void _showTestError() {
+//     ErrorHandler().handleError(AppError(
+//       message: 'これはプロフィールページのテストエラーです。',
+//       type: ErrorType.validation,
+//       action: () {
+//         print('プロフィールページのエラーアクションが実行されました');
+//       },
+//     ));
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.yellow[700],
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             ElevatedButton(
+//               onPressed: _showTestError,
+//               child: Text('テストエラーを表示'),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 
