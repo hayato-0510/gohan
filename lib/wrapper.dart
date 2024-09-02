@@ -14,6 +14,8 @@ class AuthWrapper extends StatelessWidget {
 
     if (user == null) {
       return const LoginPage();
+      // デバッグのときうざかったらこっちを使う
+      // return const BottomTabPage();
     } else {
       debugPrint('User is signed in');
       return const BottomTabPage();
