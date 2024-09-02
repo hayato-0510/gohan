@@ -46,7 +46,7 @@ class _SigninPage extends State<SigninPage> {
         }
       },
       icon: Image.asset(
-        'assets/images/google_icon.png',
+        'assets/logo/google_icon.png',
         height: 24.0,
         width: 24.0,
       ),
