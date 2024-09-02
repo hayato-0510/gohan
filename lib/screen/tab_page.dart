@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gohan/screen/home/home_page.dart';
 import 'package:gohan/screen/profile/profile_page.dart';
 import 'package:gohan/screen/search/search_page.dart';
+import 'package:gohan/screen/test/test_page.dart';
 
 class BottomTabPage extends StatefulWidget {
   const BottomTabPage({super.key});
@@ -17,6 +18,7 @@ class _BottomTabPageState extends State<BottomTabPage> {
     HomePage(),
     const SearchPage(),
     const ProfilePage(),
+    const TestPage(),
   ];
 
   @override
@@ -49,6 +51,12 @@ class _BottomTabPageState extends State<BottomTabPage> {
                     ? const Icon(Icons.person, size: 30.0, color: Colors.black) 
                     : const Icon(Icons.person_outline, size: 30.0, color: Colors.black),
                 label: 'Profile',
+              ),
+              BottomNavigationBarItem(
+                icon: _currentIndex == 3 
+                    ? const Icon(Icons.settings, size: 30.0, color: Colors.black) 
+                    : const Icon(Icons.settings_outlined, size: 30.0, color: Colors.black),
+                label: 'Test',
               ),
             ],
             currentIndex: _currentIndex,
