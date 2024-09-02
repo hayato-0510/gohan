@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:gohan/model/api_key_model.dart';
 
 // resutanrant model(レストランの情報,保持するのはviewmodel)
-import 'package:gohan/model/restaurnt/restaurant_model.dart';
+import 'package:gohan/model/restaurant/restaurant_model.dart';
 
 // restaurant search model(レストランの情報をapiから取得するモデル)
 import 'package:gohan/model/restaurnt_search/restaurnt_search_model.dart';

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:gohan/config/theme_data.dart';
+//import 'package:gohan/config/theme_data.dart';
+import 'package:gohan/config/';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // viewのインポート

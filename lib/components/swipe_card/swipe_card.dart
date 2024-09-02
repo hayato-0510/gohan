@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:card_swiper/card_swiper.dart';
-import 'package:gohan/model/restaurnt/restaurant_model.dart';
+import 'package:gohan/model/restaurant/restaurant_model.dart';
 
 class SwipeCardViewController {
   SwiperController? _swiperController;
