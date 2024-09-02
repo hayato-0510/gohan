@@ -1,5 +1,5 @@
-// lib/components/error_overlay/error_listener.dart
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'error_handler.dart';
 import 'error_overlay.dart';
 
@@ -14,15 +14,19 @@ class ErrorListener extends StatefulWidget {
 
 class _ErrorListenerState extends State<ErrorListener> {
   OverlayEntry? _overlayEntry;
+  late StreamSubscription<AppError> _errorSubscription;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ErrorHandler().onError.listen((error) {
-        _showErrorOverlay(error);
-      });
-    });
+    _errorSubscription = ErrorHandler().onError.listen(_showErrorOverlay);
+  }
+
+  @override
+  void dispose() {
+    _errorSubscription.cancel();
+    _overlayEntry?.remove();
+    super.dispose();
   }
 
   void _showErrorOverlay(AppError error) {
@@ -36,7 +40,11 @@ class _ErrorListenerState extends State<ErrorListener> {
         },
       ),
     );
-    Overlay.of(context)?.insert(_overlayEntry!);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        Overlay.of(context)?.insert(_overlayEntry!);
+      }
+    });
   }
 
   @override
