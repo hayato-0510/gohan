@@ -51,6 +51,7 @@ dependencies:
   google_sign_in: ^6.2.1
   google_fonts: ^6.2.1
   cloud_firestore: ^4.14.0
+  card_swiper: ^3.0.1
 
 
 dev_dependencies:
@@ -75,7 +76,9 @@ dev_dependencies:
 flutter:
   assets:
   - .env
-  - assets/images/google_icon.png
+  - assets/logo/google_icon.png
+  - assets/map_icon/food_pin.png
+  - assets/map_icon/food_impact_pin.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
