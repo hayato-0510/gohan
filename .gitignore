@@ -47,3 +47,17 @@ app.*.map.json
 
 # iOS
 /ios/Runner/Environment.swift
+
+
+# Environment files
+.env
+*.env
+.env.*
+
+# Properties files
+*.properties
+local.properties
+
+# Config files that might contain sensitive information
+**/lib/config.dart
+**/lib/config/*.dart

@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:gohan/view_model/user_engagement_viewmodel/user_engagement_viewmodel.dart';
 import 'package:gohan/components/home_restaurant_list/home_restaurant_list.dart';
-import 'package:gohan/view/home/list/restaurat_detail_bottom_sheet.dart';
+import 'package:gohan/screen/home/list/restaurat_detail_bottom_sheet.dart';
 
-class FavoriteListView extends StatefulWidget {
-  const FavoriteListView({super.key});
+class RecomendationListView extends StatefulWidget {
+  const RecomendationListView({super.key});
 
   @override
-  _FavoriteListViewState createState() => _FavoriteListViewState();
+  _RecomendationListViewState createState() => _RecomendationListViewState();
 }
 
-class _FavoriteListViewState extends State<FavoriteListView> {
+class _RecomendationListViewState extends State<RecomendationListView> {
   @override
   void initState() {
     super.initState();
@@ -22,12 +22,13 @@ class _FavoriteListViewState extends State<FavoriteListView> {
     final userEngagementViewModel =
         Provider.of<UserEngagementViewModel>(context, listen: false);
 
-    // 保存履歴（is_likedがtrueのカード）をロード
-    await userEngagementViewModel.loadLikedShopCards();
+    // 閲覧履歴（is_likedがfalseのカード）をロード
+    await userEngagementViewModel.loadBrowsingHistory();
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -39,45 +40,45 @@ class _FavoriteListViewState extends State<FavoriteListView> {
                 children: [
                   Consumer<UserEngagementViewModel>(
                     builder: (context, engagementViewModel, child) {
-                      if (engagementViewModel.likedShopCards.isNotEmpty) {
+                      if (engagementViewModel.browsingHistory.isNotEmpty) {
                         return Column(
-                          children: engagementViewModel.likedShopCards
-                              .map((fovliteItem) {
+                          children: engagementViewModel.browsingHistory
+                              .map((historyItem) {
                             return HomeRestaurantList(
                               onTap: () async {
                                 try {
-                                  final restaurantDetails = await engagementViewModel.getRestaurantById(fovliteItem);
+                                  final restaurantDetails = await engagementViewModel.getRestaurantById(historyItem);
                                   debugPrint('Fetched restaurant details: $restaurantDetails');
 
-                                  if (restaurantDetails != null && mounted) {
-                                    // モーダルボトムシートを表示
+                                  if (restaurantDetails != null) {
                                     showModalBottomSheet(
                                       context: context,
                                       builder: (context) {
                                         return RestaurantDetailsBottomSheet(
+                                          businessHours: restaurantDetails['business_hours'] ?? {},
                                           name: restaurantDetails['name'] ?? 'Unknown',
                                           rating: restaurantDetails['rating'] ?? 0.0,
                                           location: restaurantDetails['location'] ?? 'Unknown',
                                           phone: restaurantDetails['phone'] ?? 'Unknown',
                                           hours: restaurantDetails['hours'] ?? 'Unknown',
-                                          isOpen: restaurantDetails['is_open'] == 1,
+                                          isOpen: restaurantDetails['is_open'] == 0,
                                         );
                                       },
                                     );
                                   } else {
-                                    debugPrint('Restaurant details not found for ID: ${fovliteItem["id"]}');
+                                    debugPrint('Restaurant details not found for ID: ${historyItem["id"]}');
                                   }
                                 } catch (e) {
                                   debugPrint('Error fetching restaurant details: $e');
                                 }
                               },
-                              mainText: fovliteItem['name'],
-                              subText: fovliteItem['rating'].toString(),
+                              mainText: historyItem['name'],
+                              subText: historyItem['rating'].toString(),
                             );
                           }).toList(),
                         );
                       } else {
-                        return const Text('No liked restaurants found');
+                        return const Text('No browsing history found');
                       }
                     },
                   ),

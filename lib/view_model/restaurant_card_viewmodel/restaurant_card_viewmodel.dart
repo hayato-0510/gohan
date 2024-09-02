@@ -1,53 +1,29 @@
 import 'package:flutter/foundation.dart';
-import 'package:uuid/uuid.dart';
-import 'package:gohan/model/restaurant_model.dart';
+import 'package:flutter/material.dart';
+
+// apikey model
+import 'package:gohan/model/api_key_model.dart';
+
+// resutanrant model(レストランの情報,保持するのはviewmodel)
+import 'package:gohan/model/restaurnt/restaurant_model.dart';
+
+// restaurant search model(レストランの情報をapiから取得するモデル)
+import 'package:gohan/model/restaurnt_search/restaurnt_search_model.dart';
+
+
 class RestaurantCardViewModel extends ChangeNotifier {
-  
+  late String _apiKey;
 
   List<RestaurantModel> _restaurants = [];
-
   List<RestaurantModel> get restaurants => _restaurants;
 
-  // コンストラクタとして、テストデータを初期化
   RestaurantCardViewModel() {
-    _initializeTestData();
-  }
-
-  void _initializeTestData() {
-    _restaurants = [
-      RestaurantModel(
-        id: "aaaa",
-        name: 'Sample1',
-        imageUrl: '',
-        rating: 4.5,
-        location: 'Location 1',
-        phone: '123-456-7890',
-        hours: '10:00 - 20:00',
-      ),
-      RestaurantModel(
-        id: "bbbb",
-        name: 'Sample2 restaurant name',
-        imageUrl: '',
-        rating: 4.2,
-        location: 'Location 2',
-        phone: '123-456-7891',
-        hours: '09:00 - 18:00',
-      ),
-      RestaurantModel(
-        id: "cccc",
-        name: 'Sample3 restaurant name',
-        imageUrl: '',
-        rating: 1.2,
-        location: 'Location 3',
-        phone: '123-456-7891',
-        hours: '00:00 - 01:00',
-      ),
-    ];
-
-    // それぞれのレストランのisOpenを計算する
-    for (var restaurant in _restaurants) {
-      restaurant.isOpen = isOpenFlag(restaurant.hours);
-    }
+    ApiKeyModel().loadApiKey().then((apiKey) {
+      _apiKey = apiKey;
+      if (_apiKey.isEmpty) {
+        debugPrint('API key not found');
+      }
+    });
   }
 
   void removeRestaurant(int index) {
@@ -61,65 +37,48 @@ class RestaurantCardViewModel extends ChangeNotifier {
   }
 
   void toggleFavorite(String restaurantId) {
-    final index =
-        _restaurants.indexWhere((restaurant) => restaurant.id == restaurantId);
+    final index = _restaurants.indexWhere((restaurant) => restaurant.id == restaurantId);
     if (index != -1) {
       _restaurants[index].isFavorite = !_restaurants[index].isFavorite;
       notifyListeners();
     }
   }
 
-  Future<void> fetchRestaurantDetails() async {
-    // UUIDを生成して、レストランIDとする
-    const uuid = Uuid();
-    final String restaurantId = uuid.v4();
-
-    // 模擬的なAPI呼び出し（実際にはAPI呼び出しのコードに置き換え）
-    await Future.delayed(const Duration(seconds: 1));
-
-    final restaurant = RestaurantModel(
-      id: restaurantId,
-      name: 'サンプルレストラン',
-      imageUrl: '',
-      rating: 4.5,
-      location: '三重県',
-      phone: '0000000000000',
-      hours: '10:00 - 20:00',
-      isOpen: isOpenFlag('10:00 - 20:00'),
-    );
-
-    updateRestaurants([..._restaurants, restaurant]);
-  }
-
-   bool isOpenFlag(String hours) {
-    if (hours.isEmpty) return false;
-
-    final now = DateTime.now();
-    final currentTime = now.hour * 60 + now.minute;
-
-    final parts = hours.split(' - ');
-    if (parts.length != 2) return false;
-
-    final openTime = _parseTime(parts[0]);
-    final closeTime = _parseTime(parts[1]);
-
-    if (closeTime < openTime) {
-      return currentTime >= openTime || currentTime < closeTime;
-    } else {
-      return currentTime >= openTime && currentTime < closeTime;
+  Future<void> fetchNearbyRestaurants(double lat, double lng) async {
+    if (_apiKey.isEmpty) {
+      debugPrint('APIキーが設定されていません');
+      return;
+    }
+    try{
+      List<RestaurantModel> resultRestaurants = await RestaurantSearchModel().fetchNearbyRestaurants(lat, lng, _apiKey);
+      _restaurants.addAll(resultRestaurants);
+      notifyListeners();
+    } catch(e){
+      debugPrint('Error fetching nearby restaurants: $e');
+      rethrow;
     }
   }
 
-  int _parseTime(String timeString) {
-    final parts = timeString.split(':');
-    if (parts.length != 2) return 0;
-
-    final hours = int.tryParse(parts[0]) ?? 0;
-    final minutes = int.tryParse(parts[1]) ?? 0;
-
-    return hours * 60 + minutes;
+  Future<void> fetchRestaurantDetails(String placeId) async {
+    if (_apiKey.isEmpty) {
+      debugPrint('APIキーが設定されていません');
+      return;
+    }
+    try{
+       RestaurantModel restaurant = await RestaurantSearchModel().fetchRestaurantDetails(placeId, _apiKey);
+      int index = _restaurants.indexWhere((r) => r.id == placeId);
+      if (index != -1) {
+        _restaurants[index] = restaurant;
+      } else {
+        _restaurants.add(restaurant);
+      }
+      notifyListeners();
+       
+    } catch(e){
+      debugPrint('Error fetching restaurant details: $e');
+      rethrow;
+    }
   }
-  // Future<void> search(String restaurantName, String selectedDistance, bool isOpen) async {
-  //  search ロジックを実装
-  // }
+
+  initialize() {}
 }
