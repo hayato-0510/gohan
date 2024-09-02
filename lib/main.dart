@@ -15,17 +15,11 @@ void main() async {
   await dotenv.load(fileName: ".env");
   print('Loaded .env file: ${dotenv.env}');
   
-  // RestaurantCardViewModelの初期化
-  final restaurantCardViewModel = RestaurantCardViewModel();
-  await restaurantCardViewModel.initialize();
-
-  runApp(MyApp(restaurantCardViewModel: restaurantCardViewModel));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final RestaurantCardViewModel restaurantCardViewModel;
-
-  const MyApp({super.key, required this.restaurantCardViewModel});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +27,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => UserLocationViewModel()),
         ChangeNotifierProvider(create: (_) => UserEngagementViewModel()),
-// <<<<<<< restaurant_data-kairi
-        ChangeNotifierProvider.value(value: restaurantCardViewModel),
-// =======
-//         ChangeNotifierProvider(create: (_) => RestaurantCardViewModel()),
+         ChangeNotifierProvider(create: (_) => RestaurantCardViewModel()),
         ChangeNotifierProvider(create: (_) => UserSearchSettingsViewModel()),
       ],
       child: MaterialApp(
