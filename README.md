@@ -51,7 +51,24 @@ Example: `feat ログイン機能の実装`
     - [ios/Runner/](ios/Runner/)に `GoogleService-Info`をドラッグアンドドロップ
     - このとき，Xcodeでビルドが通らないときは`Bundle Identifier`を見直すと良い
 - androidの場合
-    - [android/app/](android/app/)に`google-services.json`をドラッグアンドドロップ
+    1. [android/app/](android/app/)に`google-services.json`をドラッグアンドドロップ
+    2. 以下のコマンドを打つ
+    ```bash
+    cd \android
+    .\gradlew signingReport
+    ```
+    3. 以下のように出るから，**SHA1**をコピペで教える or 自分でfirebaseに追加する(プロジェクtの設定/gonah(android)/SHA 証明書フィンガープリント)
+    ```
+    > Task :app:signingReport
+    Variant: 
+    Config: 
+    Store:
+    Alias:
+    MD5:
+    SHA1:
+    SHA-256:
+    ```
+    参考記事: https://zenn.dev/tsukatsuka1783/articles/flutter_firebase_auth_google_sign_in
 
 ### レストランデータ取得用(kairi)
     - ルートディレクトリに`.env`を追加
