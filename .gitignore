@@ -61,4 +61,4 @@ local.properties
 
 # Config files that might contain sensitive information
 **/lib/config.dart
-**/lib/config/*.dart
+**/lib/config/firebase_options.dart

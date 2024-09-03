@@ -30,7 +30,7 @@ Example: `feat ログイン機能の実装`
 ## アプリの初期設定
 - 環境構築がされている前提
 
-### インストール
+## インストール
 - リポジトリをクローンしそのディレクトリに行くこと
     ```bash
     flutter pub get
@@ -41,8 +41,19 @@ Example: `feat ログイン機能の実装`
     flutter pub get
     ```
 
-### 環境変数の追加
-- レストランデータ取得用(kairi)
+## 環境変数の追加
+
+### Firebase
+> ログイン，firestoreへの書き込みの実装をしています．毎度でバッグにログインが求められてうざいときは，[wrapper.dart](lib/wrapper.dart)を参照して変更をしてください．
+- 全員
+  - [lig/config](lib/config)に `firebase_options.dart`をドラッグアンドドロップ
+- iosの場合
+    - [ios/Runner/](ios/Runner/)に `GoogleService-Info`をドラッグアンドドロップ
+    - このとき，Xcodeでビルドが通らないときは`Bundle Identifier`を見直すと良い
+- androidの場合
+    - [android/app/](android/app/)に`google-services.json`をドラッグアンドドロップ
+
+### レストランデータ取得用(kairi)
     - ルートディレクトリに`.env`を追加
     ```
     GOOGLE_MAPS_API_KEY=`APIキー`
