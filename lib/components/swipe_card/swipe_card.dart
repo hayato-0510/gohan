@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:card_swiper/card_swiper.dart';
-import 'package:gohan/model/restaurant_model.dart';
+import 'package:gohan/model/restaurant/restaurant_model.dart';
+import 'package:gohan/model/restaurant/data/business_hours_model.dart';
 
 class SwipeCardViewController {
-  SwiperController? _swiperController;
+  late SwiperController _swiperController;
 
   void setController(SwiperController controller) {
     _swiperController = controller;
   }
 
   void swipeToCard(String id, List<RestaurantModel> restaurantModels) {
-    if (_swiperController == null) return;
     final index = restaurantModels.indexWhere((restaurant) => restaurant.id == id);
     if (index != -1) {
-      _swiperController!.move(index);
+      _swiperController.move(index);
     }
   }
 }
@@ -68,26 +68,26 @@ class _SwipeCardViewState extends State<SwipeCardView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (restaurant.imageUrl.isNotEmpty)
+                    if (restaurant.mapIconUrl.isNotEmpty)
                       Image.network(
-                        restaurant.imageUrl,
+                        restaurant.mapIconUrl,
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: 120,
                       ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       restaurant.name,
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text('Rating: ${restaurant.rating}'),
-                    SizedBox(height: 4),
-                    Text('Location: ${restaurant.location}'),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
+                    Text('Location: ${restaurant.location.latitude}, ${restaurant.location.longitude}'),
+                    const SizedBox(height: 4),
                     Text('Phone: ${restaurant.phone}'),
-                    SizedBox(height: 4),
-                    Text('Hours: ${restaurant.hours}'),
+                    const SizedBox(height: 4),
+                    Text('Hours: ${restaurant.businessHours.getFormattedHours()}'),
                   ],
                 ),
               ),
