@@ -10,8 +10,10 @@ import 'package:gohan/components/dropdown_menu/animation_dropdown_menu.dart';
 import 'package:gohan/view_model/user_viewmodel/user_search_settings_viewmodel.dart';
 
 class UserFilter extends StatefulWidget {
-  const UserFilter({Key? key}) : super(key: key);
+  final VoidCallback onSearch;
 
+  const UserFilter({super.key, required this.onSearch});
+  
   @override
   _UserFilterState createState() => _UserFilterState();
 }
@@ -20,20 +22,24 @@ class _UserFilterState extends State<UserFilter> {
   late TextEditingController _foodController;
 
   @override
-  void initState() {
+   void initState() {
     super.initState();
-    _foodController = TextEditingController();
+    final userSearchSettings = Provider.of<UserSearchSettingsViewModel>(context, listen: false);
+    _foodController = TextEditingController(text: userSearchSettings.name);
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final userSearchSettings =
-        Provider.of<UserSearchSettingsViewModel>(context);
-    _foodController.text = userSearchSettings.name;
-    _foodController.addListener(() {
-      userSearchSettings.updateRestaurantName(_foodController.text);
-    });
+    final userSearchSettings = Provider.of<UserSearchSettingsViewModel>(context);
+    // リスナーを一度だけ追加するために、既存のリスナーを削除
+    _foodController.removeListener(_updateSearchName);
+    _foodController.addListener(_updateSearchName);
+  }
+
+  void _updateSearchName() {
+    final userSearchSettings = Provider.of<UserSearchSettingsViewModel>(context, listen: false);
+    userSearchSettings.updateRestaurantName(_foodController.text);
   }
 
   @override
@@ -51,14 +57,17 @@ class _UserFilterState extends State<UserFilter> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: CustomDropdownMenu(
-                    value: userSearchSettings.name,
-                    hint: const Text('料理名を入力'),
-                    onChanged: (value) {
-                      userSearchSettings.updateRestaurantName(value ?? '');
-                    },
-                    isSearchable: true,
+                  child: TextField(
                     controller: _foodController,
+                    decoration: const InputDecoration(
+                      hintText: '料理名を入力',
+                      border: OutlineInputBorder(),
+                    ),
+                    // onChangedを使用して、入力ごとに更新
+                    onChanged: (value) {
+                      final userSearchSettings = Provider.of<UserSearchSettingsViewModel>(context, listen: false);
+                      userSearchSettings.updateRestaurantName(value);
+                    },
                   ),
                 ),
               ),
@@ -89,13 +98,21 @@ class _UserFilterState extends State<UserFilter> {
                     controlAffinity: ListTileControlAffinity.leading,
                   ),
                 ),
+                ElevatedButton.icon(
+                  onPressed: userSearchSettings.hasChanges ? widget.onSearch : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: userSearchSettings.hasChanges ? Colors.green : Colors.grey,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20), // 角を丸くする
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), // パディングを調整
+                  ),
+                  icon: const Icon(Icons.search, size: 24), // 検索アイコン
+                  label: const Text("Search"), // "Search"テキスト
+                ),
               ],
             ),
-            const Divider(),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [Text("誰かボタン作ってここ")],
-            )
           ],
         ),
       ),

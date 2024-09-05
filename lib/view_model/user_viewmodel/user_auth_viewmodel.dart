@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gohan/model/auth/auth_model.dart';
 import 'package:gohan/model/firestore/user_firestore_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gohan/components/error_overlay/error_handler.dart';
 
 class AuthViewModel extends ChangeNotifier {
   final AuthModel _authModel = AuthModel();
@@ -15,9 +16,20 @@ class AuthViewModel extends ChangeNotifier {
   }
 
   Future<void> reloadUser() async {
-    _currentUser = FirebaseAuth.instance.currentUser;
-    debugPrint("Reloaded user: $_currentUser");
-    notifyListeners();
+    try {
+      _currentUser = FirebaseAuth.instance.currentUser;
+      await _currentUser?.reload();
+      debugPrint("Reloaded user: $_currentUser");
+      notifyListeners();
+    } catch (e) {
+      ErrorHandler().handleError(AppError(
+        message: 'ユーザー情報の更新に失敗しました。',
+        type: ErrorType.auth,
+        additionalActions: {
+          '再試行': () => reloadUser(),
+        },
+      ));
+    }
   }
 
   Future<bool> signUpWithGoogle() async {
@@ -29,24 +41,34 @@ class AuthViewModel extends ChangeNotifier {
       notifyListeners();
       return true;
     }
-    return false;
   }
 
   Future<bool> logInWithEmail({
     required String email,
     required String password,
   }) async {
-    final user = await _authModel.logInWithEmail(
-      email: email,
-      password: password,
-    );
+    try {
+      final user = await _authModel.logInWithEmail(
+        email: email,
+        password: password,
+      );
 
-    if (user != null) {
-      _currentUser = user.user;
-      notifyListeners();
-      return true;
+      if (user != null) {
+        _currentUser = user.user;
+        notifyListeners();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      ErrorHandler().handleError(AppError(
+        message: 'メールアドレスとパスワードでのログインに失敗しました。',
+        type: ErrorType.auth,
+        additionalActions: {
+          '再試行': () => logInWithEmail(email: email, password: password),
+        },
+      ));
+      return false;
     }
-    return false;
   }
 
   Future<bool> signUpWithEmail({
@@ -54,10 +76,11 @@ class AuthViewModel extends ChangeNotifier {
     required String password,
     required String username,
   }) async {
-    final user = await _authModel.signUpWithEmail(
-      email: email,
-      password: password,
-    );
+    try {
+      final user = await _authModel.signUpWithEmail(
+        email: email,
+        password: password,
+      );
 
     if (user != null) {
       _currentUser = user.user;
@@ -65,7 +88,6 @@ class AuthViewModel extends ChangeNotifier {
       notifyListeners();
       return true;
     }
-    return false;
   }
 
   Future<bool> signOut() async {
@@ -74,7 +96,14 @@ class AuthViewModel extends ChangeNotifier {
       _currentUser = null;
       notifyListeners();
       return true;
-    } catch (_) {
+    } catch (e) {
+      ErrorHandler().handleError(AppError(
+        message: 'サインアウトに失敗しました。',
+        type: ErrorType.auth,
+        additionalActions: {
+          '再試行': () => signOut(),
+        },
+      ));
       return false;
     }
   }
