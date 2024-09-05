@@ -36,6 +36,10 @@ class _SearchPageState extends State<SearchPage> {
   final double testLatitude = 34.8823;
   final double testLongitude = 136.5844;
 
+  // シミュレータ用のデフォルト位置（例：東京都庁）
+  final double defaultLatitude = 35.6762;
+  final double defaultLongitude = 139.6503;
+
   @override
   void initState() {
     super.initState();
@@ -86,9 +90,6 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future<void> loadNearbyRestaurants() async {
-    // シミュレータ用のデフォルト位置（例：東京都庁）
-    const defaultLatitude = 35.6762;
-    const defaultLongitude = 139.6503;
 
     try {
       Position position;
