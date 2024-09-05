@@ -11,6 +11,7 @@ import 'package:gohan/view_model/user_viewmodel/user_auth_viewmodel.dart';
 import 'package:gohan/components/icon_label_button/icon_label_button.dart';
 import 'package:gohan/components/login_component/theme_color.dart';
 import 'package:gohan/components/login_component/login_textfield.dart';
+import 'package:gohan/components/error_overlay/error_handler.dart';
 // import 'package:gohan/components/login_colors/LoginHeader.dart';
 
 // widgetのインポート
@@ -21,6 +22,13 @@ class LoginPage extends StatefulWidget {
 
   @override
   _LoginPageState createState() => _LoginPageState();
+}
+
+void _showFaltLogin() {
+  ErrorHandler().handleError(AppError(
+    message: 'ログインに失敗しました。',
+    type: ErrorType.unknown,
+  ));
 }
 
 class _LoginPageState extends State<LoginPage> {
@@ -58,7 +66,8 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     const SizedBox(height: 10),
                     const LottieAnimation(
-                      url: 'https://lottie.host/13529f94-a921-42de-8043-d4bb8b08e5c1/uf7oSHyuZg.json',
+                      url:
+                          'https://lottie.host/13529f94-a921-42de-8043-d4bb8b08e5c1/uf7oSHyuZg.json',
                     ),
                     const SizedBox(height: 5),
                     _emailSigInForm(context),
@@ -140,9 +149,7 @@ class _LoginPageState extends State<LoginPage> {
           );
         } else {
           // ログイン失敗時の処理
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("ログインに失敗しました")),
-          );
+          _showFaltLogin();
         }
       },
       style: ElevatedButton.styleFrom(
@@ -171,7 +178,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _diverExpanded(double left , double right) {
+  Widget _diverExpanded(double left, double right) {
     return Expanded(
       child: Container(
         margin: EdgeInsets.only(left: left, right: right),
@@ -204,7 +211,7 @@ class _LoginPageState extends State<LoginPage> {
           setState(() {
             _loading = false;
           });
-          debugPrint("Sign in with Google failed");
+          _showFaltLogin();
         }
       },
       icon: Image.asset(
