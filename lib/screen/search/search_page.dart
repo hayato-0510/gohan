@@ -56,9 +56,10 @@ class _SearchPageState extends State<SearchPage> {
     final viewModel =
         Provider.of<RestaurantCardViewModel>(context, listen: false);
     await viewModel.initialize();
-    loadTestRestaurants();
+    loadNearbyRestaurants();
   }
-
+  /* テスト用のレストランデータを読み込む
+  もういらないかも
   Future<void> loadTestRestaurants() async {
     try {
       await Provider.of<RestaurantCardViewModel>(context, listen: false)
@@ -70,6 +71,7 @@ class _SearchPageState extends State<SearchPage> {
       );
     }
   }
+  */
   void _toggleUserFilterBar() {
     setState(() {
       debugPrint('User Filter Bar Toggled');
