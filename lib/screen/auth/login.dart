@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:gohan/view_model/user_viewmodel/user_auth_viewmodel.dart';
 
 import 'package:gohan/screen/tab_page.dart';
+import 'package:gohan/screen/auth/signin.dart';
+
 import 'package:gohan/components/icon_label_button/icon_label_button.dart';
-import 'package:gohan/components/login_colors/theme_color.dart';
+import 'package:gohan/components/login_component/theme_color.dart';
+import 'package:gohan/components/login_component/login_textfield.dart';
+
+// import 'package:gohan/components/login_colors/LoginHeader.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -14,10 +19,20 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _loading = false;
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final authViewModel = AuthViewModel();
+    final AuthViewModel _authViewModel = AuthViewModel();
     final Size size = MediaQuery.of(context).size;
 
     return Theme(
@@ -53,59 +68,62 @@ class _LoginPageState extends State<LoginPage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _googleSignInButton(context, authViewModel),
-                            const SizedBox(width: 40),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 50,
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 5),
-                          decoration: BoxDecoration(
-                              color: Colors.grey[200], // 背景色をグレーに設定
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(20))),
-                          child: const TextField(
-                            decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Email or Phone number"),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SigninPage(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            "Create account",
+                            style: Theme.of(context).textTheme.bodyLarge,
                           ),
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 5),
-                          decoration: BoxDecoration(
-                              color: Colors.grey[200], // 背景色をグレーに設定
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(20))),
-                          child: const TextField(
-                            obscureText: true,
-                            decoration: InputDecoration(
-                                border: InputBorder.none, hintText: "Password"),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
+                        const SizedBox(height: 20),
+                        LoginForm(
+                            emailController: emailController,
+                            passwordController: passwordController),
                         Text(
                           "Forgot Password?",
                           style: Theme.of(context).textTheme.bodyLarge,
-                        )
+                        ),
                       ],
                     ),
                     const SizedBox(height: 20),
                     Column(
                       children: [
                         ElevatedButton(
-                          onPressed: () => {},
+                          onPressed: () async {
+                            // メールとパスワードを取得
+                            String email = emailController.text;
+                            String password = passwordController.text;
+
+                            // ログイン処理
+                            bool success = await _authViewModel.logInWithEmail(
+                              email: email,
+                              password: password,
+                            );
+
+                            if (success) {
+                              // サインアップ成功時の処理
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const BottomTabPage()),
+                              );
+                              print("ログイン成功");
+                            } else {
+                              // ログイン失敗時の処理
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text("ログインに失敗しました")),
+                              );
+                              print("ログイン失敗");
+                            }
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.black, // ボタンの背景色を黒に設定
                             padding: const EdgeInsets.all(18),
@@ -120,9 +138,39 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 30),
-                        Text("Create account",
-                            style: Theme.of(context).textTheme.bodyLarge)
+                        const SizedBox(height: 20),
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Container(
+                                margin: const EdgeInsets.only(
+                                    left: 10.0, right: 15.0),
+                                child: const Divider(
+                                  color: Colors.black,
+                                  height: 50,
+                                ),
+                              ),
+                            ),
+                            const Text("OR"),
+                            Expanded(
+                              child: Container(
+                                margin: const EdgeInsets.only(
+                                    left: 15.0, right: 10.0),
+                                child: const Divider(
+                                  color: Colors.black,
+                                  height: 50,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _googleSignInButton(context, authViewModel),
+                          ],
+                        ),
                       ],
                     )
                   ],

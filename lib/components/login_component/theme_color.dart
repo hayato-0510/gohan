@@ -17,14 +17,14 @@ ThemeData lightTheme = ThemeData(
   ),
   scaffoldBackgroundColor: AppColor.bodyColor,
   hintColor: AppColor.textColor,
-  textTheme: TextTheme(
+  textTheme: const TextTheme(
     headlineLarge: TextStyle(
       color: Colors.black,
       fontSize: 40,
       fontWeight: FontWeight.bold,
     ),
   ),
-  buttonTheme: ButtonThemeData(
+  buttonTheme: const ButtonThemeData(
     textTheme: ButtonTextTheme.primary,
     buttonColor: Colors.black,
   ),
