@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import './google_places_pareser.dart';
-import 'package:gohan/model/restaurnt/restaurant_model.dart';
+import 'package:gohan/model/restaurant/restaurant_model.dart';
 
 class RestaurantSearchModel extends ChangeNotifier {
   RestaurantSearchModel() {

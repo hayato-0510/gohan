@@ -1,5 +1,5 @@
- //これを参考にして、profileかどこかに表示する
- /*
+//これを参考にして、profileかどこかに表示する
+/*
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:gohan/components/map/map_view.dart';
@@ -42,7 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
- */
+*/
 
 
 /* 任意の位置にピンを立てる
