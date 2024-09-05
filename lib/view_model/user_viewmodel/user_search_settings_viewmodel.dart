@@ -12,14 +12,29 @@ class UserSearchSettingsViewModel extends ChangeNotifier {
   String get selectedDistance => _selectedDistance;
   bool get isOpen => _isOpen;
 
+  bool _hasChanges = false;
+
+  bool get hasChanges => _hasChanges;
+
+  void resetChanges() {
+    _hasChanges = false;
+    notifyListeners();
+  }
+
+  void _setHasChanges() {
+    _hasChanges = true;
+    notifyListeners();
+  }
+  
   void updateRestaurantName(String name) {
     try {
       if (name.length > 100) {  // 例: 名前の最大長を100文字に制限
         throw Exception('レストラン名が長すぎます');
       }
-      _name = name;
-      print(_name);
-      notifyListeners();
+      if (_name != name) {
+        _name = name;
+        _setHasChanges();
+      }
     } catch (e) {
       ErrorHandler().handleError(AppError(
         message: 'レストラン名の更新に失敗しました: ${e.toString()}',
@@ -33,8 +48,10 @@ class UserSearchSettingsViewModel extends ChangeNotifier {
       if (!_validDistances.contains(distance)) {
         throw Exception('無効な距離が選択されました');
       }
-      _selectedDistance = distance;
-      notifyListeners();
+      if (_selectedDistance != distance) {
+        _selectedDistance = distance;
+        _setHasChanges();
+      }
     } catch (e) {
       ErrorHandler().handleError(AppError(
         message: '距離の更新に失敗しました: ${e.toString()}',
@@ -45,7 +62,7 @@ class UserSearchSettingsViewModel extends ChangeNotifier {
 
   void toggleIsOpen() {
     _isOpen = !_isOpen;
-    notifyListeners();
+    _setHasChanges();
   }
 
   // 設定をリセットするメソッド

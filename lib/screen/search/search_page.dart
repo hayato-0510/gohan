@@ -125,6 +125,7 @@ class _SearchPageState extends State<SearchPage> {
     setState(() {
       _isExpandedFilterBar = false;
     });
+    userSearchSettings.resetChanges(); // 変更状態をリセット
   } catch (e) {
     print('検索中にエラーが発生しました: $e');
     ScaffoldMessenger.of(context).showSnackBar(
@@ -242,7 +243,7 @@ class _SearchPageState extends State<SearchPage> {
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeInOut,
             color: Colors.white, // 背景色を白に設定
-            height: _isExpandedFilterBar ? 160.0 : 0.0, // フィルターバーの高さ
+            height: _isExpandedFilterBar ? 130.0 : 0.0, // フィルターバーの高さ
             child: _isExpandedFilterBar 
               ? UserFilter(onSearch: _performTextSearch) 
               : null,

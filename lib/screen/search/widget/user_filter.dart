@@ -95,18 +95,21 @@ class _UserFilterState extends State<UserFilter> {
                     controlAffinity: ListTileControlAffinity.leading,
                   ),
                 ),
-              ],
-            ),
-            const Divider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton(
-                  onPressed: widget.onSearch,
-                  child: const Text("検索"),
+                ElevatedButton.icon(
+                  onPressed: userSearchSettings.hasChanges ? widget.onSearch : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: userSearchSettings.hasChanges ? Colors.green : Colors.grey,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20), // 角を丸くする
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), // パディングを調整
+                  ),
+                  icon: const Icon(Icons.search, size: 24), // 検索アイコン
+                  label: const Text("Search"), // "Search"テキスト
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),
