@@ -4,7 +4,6 @@ import 'package:gohan/model/restaurant/restaurant_model.dart';
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:gohan/view_model/user_viewmodel/user_location_viewmodel.dart';
-import 'package:gohan/model/restaurant/data/lat_lng_model.dart';
 
 class MapView extends StatefulWidget {
   final double height;
@@ -33,8 +32,8 @@ class _MapViewState extends State<MapView> {
   BitmapDescriptor? customIcon;
   BitmapDescriptor? highlightedIcon;
   final CameraPosition _initialLocation = const CameraPosition(
-    target: LatLng(34.693200378372154, 136.51342368721336), // 初期位置を適切に設定
-    zoom: 12.0, // 初期ズームレベルを設定
+    target: LatLng(34.693200378372154, 136.51342368721336), // 初期位置
+    zoom: 12.0, // 初期ズームレベル
   );
   
   bool _hasMovedCamera = false; // カメラ移動が行われたかを記録するフラグ
@@ -44,6 +43,7 @@ class _MapViewState extends State<MapView> {
   void initState() {
     super.initState();
     _requestPermissionAndGetCurrentLocation();
+    _loadCustomIcons();
   }
 
   Future<void> _loadCustomIcons() async {
@@ -138,8 +138,8 @@ class _MapViewState extends State<MapView> {
   }
 
   void _reloadIcons() async {
-    customIcon = await _createIcon('lib/assets/images/food_pin.png', _currentZoomLevel);
-    highlightedIcon = await _createIcon('lib/assets/images/food_impact_pin.png', _currentZoomLevel);
+    customIcon = await _createIcon('assets/map_icon/food_pin.png', _currentZoomLevel);
+    highlightedIcon = await _createIcon('assets/map_icon/food_impact_pin.png', _currentZoomLevel);
     setState(() {}); // アイコンのリロード後に再描画
   }
 
