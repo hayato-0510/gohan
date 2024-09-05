@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:gohan/model/api_key_model.dart';
 
 // resutanrant model(レストランの情報,保持するのはviewmodel)
-import 'package:gohan/model/restaurnt/restaurant_model.dart';
+import 'package:gohan/model/restaurant/restaurant_model.dart';
 
 // restaurant search model(レストランの情報をapiから取得するモデル)
 import 'package:gohan/model/restaurnt_search/restaurnt_search_model.dart';
@@ -18,6 +18,8 @@ class RestaurantCardViewModel extends ChangeNotifier {
 
   List<RestaurantModel> _restaurants = [];
   List<RestaurantModel> get restaurants => _restaurants;
+
+  final RestaurantSearchModel _searchModel = RestaurantSearchModel();
 
   RestaurantCardViewModel() {
     _initializeApiKey();
@@ -55,7 +57,7 @@ class RestaurantCardViewModel extends ChangeNotifier {
       return;
     }
     try {
-      List<RestaurantModel> resultRestaurants = await RestaurantSearchModel().fetchNearbyRestaurants(lat, lng, _apiKey);
+      List<RestaurantModel> resultRestaurants = await _searchModel.fetchNearbyRestaurants(lat, lng, _apiKey);
       _restaurants.addAll(resultRestaurants);
       notifyListeners();
     } catch (e) {
@@ -87,7 +89,7 @@ class RestaurantCardViewModel extends ChangeNotifier {
       return;
     }
     try {
-      RestaurantModel restaurant = await RestaurantSearchModel().fetchRestaurantDetails(placeId, _apiKey);
+      RestaurantModel restaurant = await _searchModel.fetchRestaurantDetails(placeId, _apiKey);
       int index = _restaurants.indexWhere((r) => r.id == placeId);
       if (index != -1) {
         _restaurants[index] = restaurant;
@@ -108,7 +110,40 @@ class RestaurantCardViewModel extends ChangeNotifier {
       ));
     }
   }
-    void removeRestaurant(int index) {
+
+  Future<void> searchRestaurantsByText(String query, double lat, double lng) async {
+    if (_apiKey.isEmpty) {
+      ErrorHandler().handleError(AppError(
+        message: '外部サービスへのアクセスに失敗しました。',
+        type: ErrorType.extService,
+        additionalActions: {
+          '再試行': () {
+            print('テキスト検索の再試行');
+            searchRestaurantsByText(query, lat, lng);
+          },
+        },
+      ));
+      return;
+    }
+    try {
+      List<RestaurantModel> resultRestaurants = await _searchModel.searchRestaurantsByText(query, lat, lng, _apiKey);
+      _restaurants = resultRestaurants;  // 検索結果で上書き
+      notifyListeners();
+    } catch (e) {
+      ErrorHandler().handleError(AppError(
+        message: 'レストランのテキスト検索中にエラーが発生しました。',
+        type: ErrorType.network,
+        additionalActions: {
+          '再試行': () {
+            print('テキスト検索の再試行');
+            searchRestaurantsByText(query, lat, lng);
+          },
+        },
+      ));
+    }
+  }
+
+  void removeRestaurant(int index) {
     _restaurants.removeAt(index);
     notifyListeners();
   }

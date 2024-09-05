@@ -1,5 +1,6 @@
 // lib/view/profile/profile_page.dart
 import 'package:flutter/material.dart';
+import 'package:gohan/screen/auth/login.dart';
 import 'package:provider/provider.dart';
 import 'package:gohan/view_model/user_viewmodel/user_auth_viewmodel.dart';
 
@@ -38,7 +39,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 radius: 50,
                 backgroundImage: user.photoURL != null
                     ? NetworkImage(user.photoURL!)
-                    : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
+                    : const AssetImage('assets/images/default_avatar.png')
+                        as ImageProvider,
               ),
               const SizedBox(height: 16),
               Text(
@@ -55,7 +57,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   fontSize: 16,
                 ),
               ),
-            ] ,
+            ],
             _signOutButton(context),
           ],
         ),
@@ -64,11 +66,15 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _signOutButton(BuildContext context) {
-
+    
     return ElevatedButton(
       onPressed: () async {
         final userInfoViewModel = context.read<AuthViewModel>();
         await userInfoViewModel.signOut();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
       },
       child: const Text('Sign Out'),
     );
@@ -76,3 +82,16 @@ class _ProfilePageState extends State<ProfilePage> {
 }
 
 
+  // Widget _signOutButton(BuildContext context) {
+  //   return ElevatedButton(
+  //     onPressed: () async {
+  //       final userInfoViewModel = context.read<AuthViewModel>();
+  //       await userInfoViewModel.signOut();
+  //       Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(builder: (context) => const LoginPage()),
+  //       );
+  //     },
+  //     child: const Text('Sign Out'),
+  //   );
+  // }

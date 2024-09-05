@@ -1,56 +1,155 @@
 import 'package:flutter/material.dart';
+import 'package:gohan/components/login_component/sign_up_textfield.dart';
 import 'package:gohan/view_model/user_viewmodel/user_auth_viewmodel.dart';
-import 'package:provider/provider.dart';
 
+import 'package:gohan/components/login_component/theme_color.dart';
 import 'package:gohan/screen/tab_page.dart';
-import 'package:gohan/components/icon_label_button/icon_label_button.dart';
 
 class SigninPage extends StatefulWidget {
+  const SigninPage({super.key});
+
   @override
-  _SigninPage createState() => _SigninPage();
+  _SignUpPageState createState() => _SignUpPageState();
 }
 
-class _SigninPage extends State<SigninPage> {
-  
+class _SignUpPageState extends State<SigninPage> {
+  bool _loading = false;
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final authViewModel = Provider.of<AuthViewModel>(context);
+    final authViewModel = AuthViewModel();
+    final Size size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return Theme(
+      data: lightTheme, // ここでテーマを適用
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: Text(
+            "新しいアカウント",
+            style: TextStyle(color: Colors.grey[900]), // ここでshade900を使用
+          ),
+        ),
+        body: Stack(
           children: [
-            _googleSignInButton(context, authViewModel),
+            SingleChildScrollView(
+              child: Container(
+                width: size.width,
+                padding: EdgeInsets.only(
+                    left: 20,
+                    right: 20,
+                    bottom: size.height * 0.2,
+                    top: size.height * 0.05),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("アカウント作成",
+                        style:
+                            Theme.of(context).textTheme.headlineLarge?.copyWith(
+                                  fontSize: size.width * 0.1,
+                                )),
+                    const SizedBox(height: 20),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        SignUpForm(
+                            emailController: emailController,
+                            passwordController: passwordController,
+                            usernameController: usernameController)
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Column(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () async {
+                            setState(() {
+                              _loading = true;
+                            });
+                            // メールとパスワードを取得
+                            String email = emailController.text;
+                            String password = passwordController.text;
+                            String username = usernameController.text;
+
+                            try {
+                              // サインアップ処理
+                              bool success =
+                                  await authViewModel.signUpWithEmail(
+                                email: email,
+                                password: password,
+                              );
+
+                              setState(() {
+                                _loading = false;
+                              });
+
+                              if (success) {
+                                // サインアップ成功時の処理
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const BottomTabPage()),
+                                );
+                              } else {
+                                // サインアップ失敗時の処理
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text("サインアップに失敗しました")),
+                                );
+                              }
+                            } catch (e) {
+                              setState(() {
+                                _loading = false;
+                              });
+                              // エラーメッセージを表示
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("エラーが発生しました: $e")),
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.black, // ボタンの背景色を黒に設定
+                            padding: const EdgeInsets.all(18),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              "アカウント作成",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+            if (_loading)
+              Container(
+                color: Colors.black54,
+                child: const Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _googleSignInButton(
-      BuildContext context, AuthViewModel authViewModel) {
-    return IconLabelButton(
-      onPressed: () async {
-        final result = await authViewModel.signUpWithGoogle();
-        if (result) {
-          debugPrint('Sign in with Google succeeded');
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const BottomTabPage(),
-            ),
-          );
-        } else {
-          print('Sign in with Google failed');
-        }
-      },
-      icon: Image.asset(
-        'assets/logo/google_icon.png',
-        height: 24.0,
-        width: 24.0,
-      ),
-      label: 'Googleで続ける',
     );
   }
 }

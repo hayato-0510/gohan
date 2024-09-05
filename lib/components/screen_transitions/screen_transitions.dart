@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:gohan/components/location_button/location_button.dart'; // LocationButtonをインポート
 
 class RestaurantPage1 extends StatelessWidget {
@@ -14,3 +14,4 @@ class RestaurantPage1 extends StatelessWidget {
     );
   }
 }
+*/
