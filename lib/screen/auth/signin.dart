@@ -88,7 +88,6 @@ class _SignUpPageState extends State<SigninPage> {
                                   await authViewModel.signUpWithEmail(
                                 email: email,
                                 password: password,
-                                username: username,
                               );
 
                               setState(() {

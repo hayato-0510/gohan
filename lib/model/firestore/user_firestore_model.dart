@@ -5,7 +5,7 @@ class UserFirestoreModel {
   final CollectionReference _usersCollection =
       FirebaseFirestore.instance.collection('users');
 
-  Future<void> saveUserToFirestore(User user, String username) async {
+  Future<void> saveUserToFirestore(User user) async {
     final userDoc = _usersCollection.doc(user.uid);
     final userDocData = await userDoc.get();
 
