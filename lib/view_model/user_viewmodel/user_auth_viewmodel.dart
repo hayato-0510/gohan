@@ -33,25 +33,13 @@ class AuthViewModel extends ChangeNotifier {
   }
 
   Future<bool> signUpWithGoogle() async {
-    try {
-      final user = await _authModel.signUpWithGoogle();
-      if (user != null) {
-        _currentUser = user.user;
-        debugPrint("User: $_currentUser");
-        await _userFirestoreModel.saveUserToFirestore(_currentUser!);
-        notifyListeners();
-        return true;
-      }
-      return false;
-    } catch (e) {
-      ErrorHandler().handleError(AppError(
-        message: 'Googleアカウントでのサインアップに失敗しました。',
-        type: ErrorType.auth,
-        additionalActions: {
-          '再試行': () => signUpWithGoogle(),
-        },
-      ));
-      return false;
+    final user = await _authModel.signUpWithGoogle();
+    if (user != null) {
+      _currentUser = user.user;
+      debugPrint("User: $_currentUser");
+      await _userFirestoreModel.saveUserToFirestore(_currentUser!, _currentUser!.displayName ?? '');
+      notifyListeners();
+      return true;
     }
   }
 
@@ -86,6 +74,7 @@ class AuthViewModel extends ChangeNotifier {
   Future<bool> signUpWithEmail({
     required String email,
     required String password,
+    required String username,
   }) async {
     try {
       final user = await _authModel.signUpWithEmail(
@@ -93,21 +82,11 @@ class AuthViewModel extends ChangeNotifier {
         password: password,
       );
 
-      if (user != null) {
-        _currentUser = user.user;
-        notifyListeners();
-        return true;
-      }
-      return false;
-    } catch (e) {
-      ErrorHandler().handleError(AppError(
-        message: 'メールアドレスとパスワードでのサインアップに失敗しました。',
-        type: ErrorType.auth,
-        additionalActions: {
-          '再試行': () => signUpWithEmail(email: email, password: password),
-        },
-      ));
-      return false;
+    if (user != null) {
+      _currentUser = user.user;
+      await _userFirestoreModel.saveUserToFirestore(_currentUser!, username);
+      notifyListeners();
+      return true;
     }
   }
 

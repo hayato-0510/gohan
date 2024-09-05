@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gohan/model/restaurnt/data/business_hours_model.dart';
+import 'package:gohan/model/restaurant/data/business_hours_model.dart';
 
 class RestaurantInformation extends StatelessWidget {
   final String address;   // 住所

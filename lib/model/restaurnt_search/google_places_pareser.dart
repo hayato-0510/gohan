@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // 型を合わせるためのmodel import(あくまでもmodelの保持はしていない)
-import 'package:gohan/model/restaurnt/restaurant_model.dart';
-import 'package:gohan/model/restaurnt/data/lat_lng_model.dart';
-import 'package:gohan/model/restaurnt/data/business_hours_model.dart';
-import 'package:gohan/model/restaurnt/data/photo_model.dart';
+import 'package:gohan/model/restaurant/restaurant_model.dart';
+import 'package:gohan/model/restaurant/data/lat_lng_model.dart';
+import 'package:gohan/model/restaurant/data/business_hours_model.dart';
+import 'package:gohan/model/restaurant/data/photo_model.dart';
 
 class GooglePlacesParser {
   static String? _apiKey;

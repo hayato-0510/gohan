@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 // コンポーネントのインポート
 import 'package:gohan/components/check_box_list_tile/check_box_list_tile.dart';
 import 'package:gohan/components/dropdown_menu/dropdown_menu.dart';
+import 'package:gohan/components/dropdown_menu/animation_dropdown_menu.dart';
 
 // viewmodelのインポート
 import 'package:gohan/view_model/user_viewmodel/user_search_settings_viewmodel.dart';
@@ -43,7 +44,8 @@ class _UserFilterState extends State<UserFilter> {
 
   @override
   Widget build(BuildContext context) {
-    final userSearchSettings = Provider.of<UserSearchSettingsViewModel>(context);
+    final userSearchSettings =
+        Provider.of<UserSearchSettingsViewModel>(context);
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -51,6 +53,7 @@ class _UserFilterState extends State<UserFilter> {
         child: Column(
           children: [
             Row(children: [
+              // 料理名のドロップダウン
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -68,17 +71,17 @@ class _UserFilterState extends State<UserFilter> {
                   ),
                 ),
               ),
+              // 距離選択のカスタムドロップダウン
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: CustomDropdownMenu(
+                  child: AnimatedDropdownMenu(
                     value: userSearchSettings.selectedDistance,
                     items: const ['1km', '3km', '5km', '10km'],
                     hint: const Text('距離を選択'),
                     onChanged: (value) {
                       userSearchSettings.updateSelectedDistance(value ?? '5km');
                     },
-                    isSearchable: false,
                   ),
                 ),
               ),
