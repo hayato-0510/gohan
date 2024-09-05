@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gohan/components/restaurant_information/restaurant_information.dart';
 import 'package:gohan/model/restaurant/data/business_hours_model.dart';
-import 'package:gohan/components/restaurant_modal/restaurant_modal.dart';
-import 'package:gohan/model/restaurnt/data/business_hours_model.dart';
 
 class RestaurantDetailsBottomSheet extends StatelessWidget {
   final String name;
@@ -25,12 +23,39 @@ class RestaurantDetailsBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RestaurantModal(
-      name: name,
-      rating: rating,
-      location: location,
-      phone: phone,
-      businessHours: businessHours,
+    return Container(
+      height: 350, // 高さを調整
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            ListTile(
+              leading: Icon(Icons.restaurant),
+              title: Text(name),
+              subtitle: Text('Rating: $rating'),
+            ),
+            RestaurantInformation(
+              // location: location,
+              phone: phone,
+              address: location,
+              businessHours: businessHours,
+              // hours: hours,
+              // isOpen: isOpen,
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Close'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

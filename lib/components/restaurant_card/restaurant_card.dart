@@ -3,10 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:gohan/components/star_rating/star_rating.dart';
 import 'package:gohan/components/restaurant_information/restaurant_information.dart';
 import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
-import 'package:gohan/components/location_button/location_button.dart';
-import 'package:gohan/model/restaurant/data/lat_lng_model.dart';
-import 'package:gohan/model/restaurnt/restaurant_model.dart';
-import 'package:gohan/components/restaurant_modal/restaurant_modal.dart';
+import 'package:gohan/model/restaurant/restaurant_model.dart';
 
 class RestaurantCard extends StatelessWidget {
   final RestaurantModel restaurant;
@@ -44,21 +41,22 @@ class RestaurantCard extends StatelessWidget {
                           overflow: TextOverflow.visible,
                         ),
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.info_outline, size: 24),
-                        onPressed: () {
-                          showModalBottomSheet(
-                            context: context,
-                            builder: (context) => RestaurantModal(
-                              name: restaurant.name,
-                              rating: restaurant.rating,
-                              location: restaurant.address,
-                              phone: restaurant.phone,
-                              businessHours: restaurant.businessHours,
-                            ),
-                          );
-                        },
-                      ),
+                      // IconButton(
+                      //   icon: const Icon(Icons.info_outline, size: 24),
+                      //   // onPressed: () {
+                      //   //   showModalBottomSheet(
+                      //   //     context: context,
+                      //   //     builder: (context) => RestaurantModel(
+                      //   //       id: restaurant.id,
+                      //   //       name: restaurant.name,
+                      //   //       rating: restaurant.rating,
+                      //   //       location: restaurant.address,
+                      //   //       phone: restaurant.phone,
+                      //   //       businessHours: restaurant.businessHours,
+                      //   //     ),
+                      //   //   );
+                      //   // },
+                      // ),
                     ],
                   ),
                   Row(
