@@ -5,6 +5,7 @@ import 'package:gohan/components/restaurant_information/restaurant_information.d
 import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
 import 'package:gohan/components/location_button/location_button.dart';
 import 'package:gohan/model/restaurant/restaurant_model.dart';
+import 'package:gohan/model/restaurant/data/lat_lng_model.dart';
 
 
 class RestaurantCard extends StatelessWidget {
@@ -123,11 +124,14 @@ class RestaurantCard extends StatelessWidget {
                 ],
               ),
             ),
-            Positioned(
+            /*Positioned(
               right: 24,
               bottom: 20,
-              child: LocationButton(),
-            ),
+              child: LocationButton(location: LatLngModel(
+                restaurant.location.latitude,
+                restaurant.location.longitude,
+              )),
+            ),*/
           ],
         );
       },
