@@ -18,6 +18,7 @@ class UserSearchSettingsViewModel extends ChangeNotifier {
         throw Exception('レストラン名が長すぎます');
       }
       _name = name;
+      print(_name);
       notifyListeners();
     } catch (e) {
       ErrorHandler().handleError(AppError(

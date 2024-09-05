@@ -63,4 +63,36 @@ class RestaurantSearchModel extends ChangeNotifier {
       rethrow;
     }
   }
+  Future<List<RestaurantModel>> searchRestaurantsByText(
+    String query,
+    double lat,
+    double lng,
+    String apiKey
+  ) async {
+    if (apiKey.isEmpty) {
+      throw Exception('APIキーが提供されていません');
+    }
+
+    final encodedQuery = Uri.encodeComponent(query);
+    final url = Uri.parse(
+      'https://maps.googleapis.com/maps/api/place/textsearch/json?query=$encodedQuery&location=$lat,$lng&radius=1500&type=restaurant&key=$apiKey'
+    );
+
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final results = data['results'] as List;
+        List<RestaurantModel> restaurants = results
+            .map((place) => GooglePlacesParser.parseRestaurantFromTextSearch(place))
+            .toList();
+        return restaurants;
+      } else {
+        throw Exception('テキスト検索でレストランの読み込みに失敗しました');
+      }
+    } catch (e) {
+      print('テキスト検索でレストランを検索中にエラーが発生しました: $e');
+      rethrow;
+    }
+  }
 }

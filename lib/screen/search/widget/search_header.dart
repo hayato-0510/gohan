@@ -12,6 +12,7 @@ class SearchHeader extends StatelessWidget  {
   final bool isExpanded;
   final Function(bool) onTogglePhotoSelected;
   final Function(bool) onToggleUserFilterBar;
+  final VoidCallback onSearch; // 追加
 
   const SearchHeader({
     super.key,
@@ -19,6 +20,7 @@ class SearchHeader extends StatelessWidget  {
     required this.isExpanded,
     required this.onTogglePhotoSelected,
     required this.onToggleUserFilterBar,
+    required this.onSearch, // 追加
   });
 
   @override

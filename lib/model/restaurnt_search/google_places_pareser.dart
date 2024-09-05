@@ -73,6 +73,33 @@ class GooglePlacesParser {
     );
   }
 
+  static RestaurantModel parseRestaurantFromTextSearch(Map<String, dynamic> place) {
+    return RestaurantModel(
+      id: place['place_id'] ?? '',
+      name: place['name'] ?? '',
+      category: place['types']?.isNotEmpty == true ? place['types'][0] : '',
+      priceRange:
+          place['price_level'] != null ? '\$' * place['price_level'] : '',
+      rating: (place['rating'] as num?)?.toDouble() ?? 0.0,
+      reviewCount: place['user_ratings_total'] ?? 0,
+      userReviews: [],
+      mapIconUrl: place['icon'] ?? '',
+      address: place['vicinity'] ?? '',
+      location: LatLngModel(
+        place['geometry']['location']['lat'],
+        place['geometry']['location']['lng'],
+      ),
+      phone: '',
+      websiteUrl: '',
+      businessHours: BusinessHoursModel(weeklyHours: {}, closedDays: []),
+      businessStatus: place['business_status'] ?? '',
+      photos: place['photos'] != null
+          ? [PhotoModel(url: _getPlacePhotoUrl(place['photos']))]
+          : [],
+      isFavorite: false,
+    );
+  }
+
   static String _getPlacePhotoUrl(List<dynamic>? photos) {
     if (photos == null || photos.isEmpty) return '';
     final photoReference = photos[0]['photo_reference'];
