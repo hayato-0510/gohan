@@ -25,7 +25,7 @@ class AuthViewModel extends ChangeNotifier {
     if (user != null) {
       _currentUser = user.user;
       debugPrint("User: $_currentUser");
-      await _userFirestoreModel.saveUserToFirestore(_currentUser!);
+      await _userFirestoreModel.saveUserToFirestore(_currentUser!, _currentUser!.displayName ?? '');
       notifyListeners();
       return true;
     }
@@ -52,6 +52,7 @@ class AuthViewModel extends ChangeNotifier {
   Future<bool> signUpWithEmail({
     required String email,
     required String password,
+    required String username,
   }) async {
     final user = await _authModel.signUpWithEmail(
       email: email,
@@ -60,6 +61,7 @@ class AuthViewModel extends ChangeNotifier {
 
     if (user != null) {
       _currentUser = user.user;
+      await _userFirestoreModel.saveUserToFirestore(_currentUser!, username);
       notifyListeners();
       return true;
     }

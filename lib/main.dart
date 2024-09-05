@@ -16,6 +16,9 @@ import 'package:gohan/view_model/user_viewmodel/user_auth_viewmodel.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'config/firebase_options.dart';
 
+//エラーをキャッチするためのリスナー
+import 'package:gohan/components/error_overlay/error_listener.dart';
+
 void main() async {
   // Flutter Widgetバインディングを確実に初期化
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +29,6 @@ void main() async {
   
   runApp(const MyApp());
 }
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -49,7 +51,9 @@ class MyApp extends StatelessWidget {
             child: MaterialApp(
               debugShowCheckedModeBanner: false,
               theme: appTheme,
-              home: const AuthWrapper(),
+              home: const ErrorListener(
+                child: AuthWrapper(),
+              ),
             ),
           );
         }
