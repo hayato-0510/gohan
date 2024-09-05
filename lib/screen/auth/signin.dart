@@ -38,7 +38,7 @@ class _SignUpPageState extends State<SigninPage> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           title: Text(
-            "Sign Up",
+            "新しいアカウント",
             style: TextStyle(color: Colors.grey[900]), // ここでshade900を使用
           ),
         ),
@@ -55,7 +55,7 @@ class _SignUpPageState extends State<SigninPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Create Your Account",
+                    Text("アカウント作成",
                         style:
                             Theme.of(context).textTheme.headlineLarge?.copyWith(
                                   fontSize: size.width * 0.1,
@@ -129,7 +129,7 @@ class _SignUpPageState extends State<SigninPage> {
                           ),
                           child: const Center(
                             child: Text(
-                              "Create account",
+                              "アカウント作成",
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),

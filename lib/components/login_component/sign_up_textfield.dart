@@ -40,7 +40,7 @@ class _SignUpFormState extends State<SignUpForm> {
             controller: widget.emailController,
             decoration: const InputDecoration(
               border: InputBorder.none,
-              hintText: "Email",
+              hintText: "メールアドレス",
             ),
           ),
         ),
@@ -56,7 +56,7 @@ class _SignUpFormState extends State<SignUpForm> {
             obscureText: _obscureText,
             decoration: InputDecoration(
               border: InputBorder.none,
-              hintText: "Password",
+              hintText: "パスワード",
               suffixIcon: IconButton(
                 onPressed: _togglePasswordVisibility,
                 icon: Icon(
@@ -80,7 +80,7 @@ class _SignUpFormState extends State<SignUpForm> {
             obscureText: true,
             decoration: const InputDecoration(
               border: InputBorder.none,
-              hintText: "Username",
+              hintText: "ユーザー名",
             ),
           ),
         ),

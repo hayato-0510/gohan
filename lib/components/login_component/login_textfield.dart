@@ -39,7 +39,7 @@ class _LoginFieldsState extends State<LoginForm> {
             controller: widget.emailController,
             decoration: const InputDecoration(
               border: InputBorder.none,
-              hintText: "Email",
+              hintText: "メールアドレス",
             ),
           ),
         ),
@@ -55,7 +55,7 @@ class _LoginFieldsState extends State<LoginForm> {
             obscureText: _obscureText,
             decoration: InputDecoration(
               border: InputBorder.none,
-              hintText: "Password",
+              hintText: "パスワード",
               suffixIcon: IconButton(
                 onPressed: _togglePasswordVisibility,
                 icon: Icon(

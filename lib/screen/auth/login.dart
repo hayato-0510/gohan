@@ -42,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           title: Text(
-            "Login",
+            "ログイン",
             style: TextStyle(color: Colors.grey[900]), // ここでshade900を使用
           ),
         ),
@@ -59,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Hello, \nWelcome Back",
+                    Text("こんにちわ、 \nおかえりなさい",
                         style:
                             Theme.of(context).textTheme.headlineLarge?.copyWith(
                                   fontSize: size.width * 0.1,
@@ -78,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                             );
                           },
                           child: Text(
-                            "Create account",
+                            "アカウントをお持ちでない方",
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                         ),
@@ -87,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
                             emailController: emailController,
                             passwordController: passwordController),
                         Text(
-                          "Forgot Password?",
+                          "パスワードを忘れた方",
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                       ],
@@ -133,7 +133,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           child: const Center(
                             child: Text(
-                              "Login",
+                              "メールアドレスでログイン",
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -151,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                             ),
-                            const Text("OR"),
+                            const Text("お持ちのアカウントでログイン"),
                             Expanded(
                               child: Container(
                                 margin: const EdgeInsets.only(
