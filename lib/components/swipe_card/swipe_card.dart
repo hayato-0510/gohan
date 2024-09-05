@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:gohan/model/restaurant/restaurant_model.dart';
-import 'package:gohan/model/restaurant/data/business_hours_model.dart';
+import 'package:gohan/components/star_rating/star_rating.dart';
 
 class SwipeCardViewController {
   late SwiperController _swiperController;
@@ -24,7 +24,7 @@ class SwipeCardView extends StatefulWidget {
   final Function(String) onInitialCardDisplayed;
   final SwipeCardViewController swipeCardController;
 
-  SwipeCardView({
+  const SwipeCardView({
     Key? key,
     required this.restaurantModels,
     required this.onCardSwiped,
@@ -37,12 +37,12 @@ class SwipeCardView extends StatefulWidget {
 }
 
 class _SwipeCardViewState extends State<SwipeCardView> {
-  final SwiperController _swiperController = SwiperController();
+  late SwiperController _swiperController;
 
   @override
   void initState() {
     super.initState();
-    // コントローラを設定
+    _swiperController = SwiperController();
     widget.swipeCardController.setController(_swiperController);
   }
 
@@ -55,43 +55,60 @@ class _SwipeCardViewState extends State<SwipeCardView> {
         itemCount: widget.restaurantModels.length,
         itemBuilder: (BuildContext context, int index) {
           final restaurant = widget.restaurantModels[index];
-          return SizedBox(
-            width: double.infinity, // 幅を調整
-            height: 100, // 高さを調整
-            child: Card(
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          final photoUrl = restaurant.photos.isNotEmpty ? restaurant.photos[0].url : '';
+
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final cardWidth = constraints.maxWidth;
+              final cardHeight = constraints.maxHeight;
+              final imageWidth = cardWidth / 2; // 画像の横幅をカードの半分に設定
+              final imageHeight = cardHeight;   // 画像の縦幅はカードの高さに合わせる
+
+              return Card(
+                clipBehavior: Clip.hardEdge,
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
                   children: [
-                    if (restaurant.mapIconUrl.isNotEmpty)
-                      Image.network(
-                        restaurant.mapIconUrl,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: 120,
+                    if (photoUrl.isNotEmpty)
+                      Container(
+                        child: Image.network(
+                          photoUrl,
+                          fit: BoxFit.cover,
+                          width: imageWidth,
+                          height: imageHeight,
+                        ),
                       ),
-                    const SizedBox(height: 8),
-                    Text(
-                      restaurant.name,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              restaurant.name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            StarRating(
+                              rating: restaurant.rating,
+                              filledColor: Colors.yellow,
+                              unfilledColor: Colors.grey,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    const SizedBox(height: 4),
-                    Text('Rating: ${restaurant.rating}'),
-                    const SizedBox(height: 4),
-                    Text('Location: ${restaurant.location.latitude}, ${restaurant.location.longitude}'),
-                    const SizedBox(height: 4),
-                    Text('Phone: ${restaurant.phone}'),
-                    const SizedBox(height: 4),
-                    Text('Hours: ${restaurant.businessHours.getFormattedHours()}'),
                   ],
                 ),
-              ),
-            ),
+              );
+            },
           );
         },
         onIndexChanged: (index) {
