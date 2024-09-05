@@ -3,20 +3,19 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class LocationButton extends StatelessWidget {
   final LatLng location;
+  final void Function(LatLng) onLocationButtonPressed; // コールバックを追加
 
-  const LocationButton({super.key, required this.location});
+  const LocationButton({
+    super.key,
+    required this.location,
+    required this.onLocationButtonPressed, // コールバックを受け取る
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // ボタンが押されたときに新しい画面に遷移
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => OneMarkerMap(location: location),
-          ),
-        );
+        onLocationButtonPressed(location); // コールバックを呼び出す
       },
       child: Container(
         width: 50,

@@ -1,22 +1,13 @@
-// flutterの設定
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-// ライブラリのインポート
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:io' show Platform;
-
-// コンポーネントのインポート
 import 'package:gohan/components/restaurant_card/restaurant_card.dart';
 import 'package:gohan/components/map_card/map_card.dart';
-
-//  viewmodelのインポート
 import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
 import 'package:gohan/view_model/user_viewmodel/user_engagement_viewmodel.dart';
 import 'package:gohan/view_model/user_viewmodel/user_search_settings_viewmodel.dart';
-
-// widgetのインポート
 import './widget/search_header.dart';
 import './widget/user_filter.dart';
 
@@ -81,7 +72,6 @@ class _SearchPageState extends State<SearchPage> {
           locationSettings: locationSettings,
         );
       } else {
-        // シミュレータまたはその他の環境の場合はデフォルト位置を使用
         position = Position(
           latitude: defaultLatitude,
           longitude: defaultLongitude,
@@ -91,8 +81,8 @@ class _SearchPageState extends State<SearchPage> {
           heading: 0,
           speed: 0,
           speedAccuracy: 0,
-          altitudeAccuracy: 0, // 新しく追加
-          headingAccuracy: 0, // 新しく追加
+          altitudeAccuracy: 0,
+          headingAccuracy: 0,
         );
         print(
             'Using default location for simulator: ${position.latitude}, ${position.longitude}');
@@ -192,7 +182,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // 背景色を白に設定
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Stack(
           children: [
@@ -216,7 +206,7 @@ class _SearchPageState extends State<SearchPage> {
                 const Divider(),
                 _buildFilterAndSwiper(context),
               ],
-            )
+            ),
           ],
         ),
       ),
@@ -229,19 +219,19 @@ class _SearchPageState extends State<SearchPage> {
         children: [
           Positioned.fill(
             child: _isPhotoSelected
-                ? _cardSwiper(context) // カードスワイパーを表示
-                :  Consumer<RestaurantCardViewModel>(
+                ? _cardSwiper(context)
+                : Consumer<RestaurantCardViewModel>(
                     builder: (context, viewModel, child) {
                       return MapCardPage(
-                        restaurants: viewModel.restaurants, // `restaurants`リストを渡す
+                        restaurants: viewModel.restaurants,
                       );
                     },
-                  ), // マップ表示
+                  ),
           ),
           _isExpandedFilterBar
               ? ModalBarrier(
-                  color: Colors.black.withOpacity(0.5), // 半透明の黒
-                  dismissible: true, // バリアを解除できるようにする
+                  color: Colors.black.withOpacity(0.5),
+                  dismissible: true,
                   onDismiss: _toggleUserFilterBar,
                 )
               : const SizedBox.shrink(),
@@ -266,7 +256,6 @@ class _SearchPageState extends State<SearchPage> {
         builder: (context, viewModel, child) {
           if (viewModel.restaurants.isEmpty) {
             return ElevatedButton(
-              //テストコード
               onPressed: loadNearbyRestaurants,
               child: const Text('Load Test Restaurants'),
             );
