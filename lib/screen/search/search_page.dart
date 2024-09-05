@@ -56,7 +56,7 @@ class _SearchPageState extends State<SearchPage> {
     final viewModel =
         Provider.of<RestaurantCardViewModel>(context, listen: false);
     await viewModel.initialize();
-    loadTestRestaurants();
+    loadNearbyRestaurants();
   }
 
   Future<void> loadTestRestaurants() async {
@@ -173,7 +173,13 @@ class _SearchPageState extends State<SearchPage> {
           Positioned.fill(
             child: _isPhotoSelected
                 ? _cardSwiper(context) // カードスワイパーを表示
-                : MapCard(), // マップ表示
+                :  Consumer<RestaurantCardViewModel>(
+                    builder: (context, viewModel, child) {
+                      return MapCardPage(
+                        restaurants: viewModel.restaurants, // `restaurants`リストを渡す
+                      );
+                    },
+                  ), // マップ表示
           ),
           _isExpandedFilterBar
               ? ModalBarrier(

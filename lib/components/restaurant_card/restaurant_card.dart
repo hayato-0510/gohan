@@ -4,6 +4,7 @@ import 'package:gohan/components/star_rating/star_rating.dart';
 import 'package:gohan/components/restaurant_information/restaurant_information.dart';
 import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
 import 'package:gohan/components/location_button/location_button.dart';
+import 'package:gohan/model/restaurant/data/lat_lng_model.dart';
 import 'package:gohan/model/restaurnt/restaurant_model.dart';
 import 'package:gohan/components/restaurant_modal/restaurant_modal.dart';
 
@@ -106,39 +107,6 @@ class RestaurantCard extends StatelessWidget {
                             child: Center(child: Text('No Image')),
                           ),
                   ),
-// =======
-//                         fontSize: 24, fontWeight: FontWeight.bold),
-//                     softWrap: true,
-//                     overflow: TextOverflow.visible,
-//                   ),
-//                   Row(children: [
-//                     const Spacer(),
-//                     Padding(
-//                       padding: const EdgeInsets.symmetric(
-//                           horizontal: 8.0, vertical: 4.0),
-//                       child: StarRating(
-//                         rating: restaurant.rating,
-//                         filledColor: Colors.yellow,
-//                         unfilledColor: Colors.grey,
-//                       ),
-//                     ),
-//                   ]),
-//                   // //*Container(
-//                   //   height: 200,
-//                   //   decoration: restaurant.imageUrl.isNotEmpty
-//                   //       ? BoxDecoration(
-//                   //           image: DecorationImage(
-//                   //             image: NetworkImage(restaurant.imageUrl),
-//                   //             fit: BoxFit.cover,
-//                   //           ),
-//                   //         )
-//                   //       : BoxDecoration(color: Colors.grey[300]),
-//                   //   child: restaurant.imageUrl.isEmpty
-//                   //       ? const Center(child: Text('画像'))
-//                   //       : null,
-//                   // ),
-
-// >>>>>>> dev-kai-merge
                   const SizedBox(height: 16),
                   RestaurantInformation(
                     address: restaurant.address,
@@ -148,11 +116,14 @@ class RestaurantCard extends StatelessWidget {
                 ],
               ),
             ),
-            Positioned(
+            /*Positioned(
               right: 24,
               bottom: 20,
-              child: LocationButton(),
-            ),
+              child: LocationButton(location: LatLngModel(
+                restaurant.location.latitude,
+                restaurant.location.longitude,
+              )),
+            ),*/
           ],
         );
       },
