@@ -23,5 +23,6 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.4.0' // 必要に応じてバージョンを更新
+        classpath 'com.google.gms:google-services:4.2.0'
     }
 }

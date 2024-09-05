@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:gohan/view_model/user_engagement_viewmodel/user_engagement_viewmodel.dart';
+import 'package:gohan/view_model/user_viewmodel/user_engagement_viewmodel.dart';
 import 'package:gohan/components/home_restaurant_list/home_restaurant_list.dart';
 import 'package:gohan/screen/home/list/restaurat_detail_bottom_sheet.dart';
 
