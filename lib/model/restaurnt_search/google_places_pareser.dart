@@ -29,8 +29,8 @@ class GooglePlacesParser {
       mapIconUrl: place['icon'] ?? '',
       address: place['vicinity'] ?? '',
       location: LatLngModel(
-        place['geometry']['location']['lat'],
-        place['geometry']['location']['lng'],
+        latitude: place['geometry']['location']['lat'],
+        longitude: place['geometry']['location']['lng'],
       ),
       phone: '',
       websiteUrl: '',
@@ -61,8 +61,8 @@ class GooglePlacesParser {
       mapIconUrl: result['icon'] ?? '',
       address: result['formatted_address'] ?? '',
       location: LatLngModel(
-        result['geometry']['location']['lat'],
-        result['geometry']['location']['lng'],
+        latitude: result['geometry']['location']['lat'],
+        longitude: result['geometry']['location']['lng'],
       ),
       phone: result['formatted_phone_number'] ?? '',
       websiteUrl: result['website'] ?? '',
@@ -73,7 +73,8 @@ class GooglePlacesParser {
     );
   }
 
-  static RestaurantModel parseRestaurantFromTextSearch(Map<String, dynamic> place) {
+  static RestaurantModel parseRestaurantFromTextSearch(
+      Map<String, dynamic> place) {
     return RestaurantModel(
       id: place['place_id'] ?? '',
       name: place['name'] ?? '',
@@ -86,8 +87,8 @@ class GooglePlacesParser {
       mapIconUrl: place['icon'] ?? '',
       address: place['vicinity'] ?? '',
       location: LatLngModel(
-        place['geometry']['location']['lat'],
-        place['geometry']['location']['lng'],
+        latitude: place['geometry']['location']['lat'],
+        longitude: place['geometry']['location']['lng'],
       ),
       phone: '',
       websiteUrl: '',
@@ -106,7 +107,8 @@ class GooglePlacesParser {
     return 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$_apiKey';
   }
 
-  static BusinessHoursModel _parseBusinessHours(Map<String, dynamic>? openingHours) {
+  static BusinessHoursModel _parseBusinessHours(
+      Map<String, dynamic>? openingHours) {
     if (openingHours == null)
       return BusinessHoursModel(weeklyHours: {}, closedDays: []);
 

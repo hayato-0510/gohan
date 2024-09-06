@@ -42,6 +42,35 @@ class RestaurantModel {
     this.isFavorite = false,
   });
 
+  //fromJsonメソッド
+  factory RestaurantModel.fromJson(Map<String, dynamic> json) {
+    return RestaurantModel(
+      id: json['id'],
+      name: json['name'],
+      category: json['category'],
+      priceRange: json['priceRange'],
+      rating: json['rating'].toDouble(),
+      reviewCount: json['reviewCount'],
+      userReviews: (json['userReviews'] as List)
+          .map((review) => ReviewModel.fromJson(review))
+          .toList(),
+      mapIconUrl: json['mapIconUrl'],
+      address: json['address'],
+      location: LatLngModel(
+        latitude: json['location']['lat'],
+        longitude: json['location']['lng'],
+      ),
+      phone: json['phone'],
+      websiteUrl: json['websiteUrl'],
+      businessHours: BusinessHoursModel.fromJson(json['businessHours']),
+      businessStatus: json['businessStatus'],
+      photos: (json['photos'] as List)
+          .map((photo) => PhotoModel.fromJson(photo))
+          .toList(),
+      isFavorite: json['isFavorite'] ?? false,
+    );
+  }
+
   // toJson メソッド
   Map<String, dynamic> toJson() {
     return {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class BusinessHoursModel {
   final Map<int, DayHours> weeklyHours;
   final List<int> closedDays;
@@ -14,11 +13,11 @@ class BusinessHoursModel {
 
   bool isOpenNow() {
     final now = DateTime.now();
-    
+
     // 特別な日付かどうかをチェック
     for (var special in specialDates) {
-      if (special.date.year == now.year && 
-          special.date.month == now.month && 
+      if (special.date.year == now.year &&
+          special.date.month == now.month &&
           special.date.day == now.day) {
         return special.isOpen;
       }
@@ -31,10 +30,11 @@ class BusinessHoursModel {
 
     // 通常の営業時間をチェック
     final dayHours = weeklyHours[now.weekday];
-    if (dayHours == null) return false;  // この曜日の情報がない場合は閉店とみなす
+    if (dayHours == null) return false; // この曜日の情報がない場合は閉店とみなす
 
     return dayHours.isOpenAt(TimeOfDay.fromDateTime(now));
   }
+
   String getClosedDaysString() {
     List<String> days = ['月', '火', '水', '木', '金', '土', '日'];
     return closedDays.map((day) => days[day - 1]).join(', ');
@@ -68,8 +68,30 @@ class BusinessHoursModel {
     return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
   }
 
+  factory BusinessHoursModel.fromJson(Map<String, dynamic> json) {
+    return BusinessHoursModel(
+      weeklyHours: (json['weeklyHours'] as Map<String, dynamic>).map(
+        (key, value) => MapEntry(int.parse(key), DayHours.fromJson(value)),
+      ),
+      closedDays: List<int>.from(json['closedDays']),
+      specialDates: (json['specialDates'] as List<dynamic>?)
+              ?.map((e) => SpecialDate.fromJson(e))
+              .toList() ??
+          [],
+    );
+  }
 
-  static BusinessHoursModel parseFromGooglePlaces(Map<String, dynamic>? openingHours) {
+  Map<String, dynamic> toJson() {
+    return {
+      'weeklyHours': weeklyHours
+          .map((key, value) => MapEntry(key.toString(), value.toJson())),
+      'closedDays': closedDays,
+      'specialDates': specialDates.map((e) => e.toJson()).toList(),
+    };
+  }
+
+  static BusinessHoursModel parseFromGooglePlaces(
+      Map<String, dynamic>? openingHours) {
     if (openingHours == null) {
       return BusinessHoursModel(weeklyHours: {}, closedDays: []);
     }
@@ -77,40 +99,46 @@ class BusinessHoursModel {
     final weeklyHours = <int, DayHours>{};
     final closedDays = <int>[];
 
-    final periods = openingHours['periods'] as List<dynamic>?;
-    if (periods != null) {
-      for (var period in periods) {
-        final open = period['open'];
-        final close = period['close'];
-        if (open != null && close != null) {
-          final day = open['day'];
-          final openTime = TimeOfDay(hour: int.parse(open['time'].substring(0, 2)), minute: int.parse(open['time'].substring(2)));
-          final closeTime = TimeOfDay(hour: int.parse(close['time'].substring(0, 2)), minute: int.parse(close['time'].substring(2)));
-          
-          if (weeklyHours.containsKey(day)) {
-            weeklyHours[day]!.openRanges.add(TimeRange(start: openTime, end: closeTime));
-          } else {
-            weeklyHours[day] = DayHours(openRanges: [TimeRange(start: openTime, end: closeTime)]);
+    try {
+      final periods = openingHours['periods'] as List<dynamic>?;
+      if (periods != null) {
+        for (var period in periods) {
+          final open = period['open'];
+          final close = period['close'];
+          if (open != null && close != null) {
+            final day = open['day'];
+            final openTime = TimeOfDay(
+                hour: int.parse(open['time'].substring(0, 2)),
+                minute: int.parse(open['time'].substring(2)));
+            final closeTime = TimeOfDay(
+                hour: int.parse(close['time'].substring(0, 2)),
+                minute: int.parse(close['time'].substring(2)));
+
+            if (weeklyHours.containsKey(day)) {
+              weeklyHours[day]!
+                  .openRanges
+                  .add(TimeRange(start: openTime, end: closeTime));
+            } else {
+              weeklyHours[day] = DayHours(
+                  openRanges: [TimeRange(start: openTime, end: closeTime)]);
+            }
           }
         }
       }
-    }
 
-    // 閉店日を特定
-    for (int i = 0; i < 7; i++) {
-      if (!weeklyHours.containsKey(i)) {
-        closedDays.add(i);
+      // 閉店日を特定
+      for (int i = 0; i < 7; i++) {
+        if (!weeklyHours.containsKey(i)) {
+          closedDays.add(i);
+        }
       }
+
+      return BusinessHoursModel(
+          weeklyHours: weeklyHours, closedDays: closedDays);
+    } catch (e) {
+      print('Error parsing Google Places opening hours: $e');
+      return BusinessHoursModel(weeklyHours: {}, closedDays: []);
     }
-
-    return BusinessHoursModel(weeklyHours: weeklyHours, closedDays: closedDays);
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'weeklyHours': weeklyHours.map((key, value) => MapEntry(key.toString(), value.toJson())),
-      'closedDays': closedDays,
-    };
   }
 }
 
@@ -125,6 +153,15 @@ class DayHours {
     }
     return false;
   }
+
+  factory DayHours.fromJson(Map<String, dynamic> json) {
+    return DayHours(
+      openRanges: (json['openRanges'] as List<dynamic>)
+          .map((e) => TimeRange.fromJson(e))
+          .toList(),
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'openRanges': openRanges.map((range) => range.toJson()).toList(),
@@ -150,11 +187,26 @@ class TimeRange {
       return timeMinutes >= startMinutes || timeMinutes < endMinutes;
     }
   }
+
+  factory TimeRange.fromJson(Map<String, dynamic> json) {
+    return TimeRange(
+      start: _parseTimeOfDay(json['start']),
+      end: _parseTimeOfDay(json['end']),
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
-      'start': '${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')}',
-      'end': '${end.hour.toString().padLeft(2, '0')}:${end.minute.toString().padLeft(2, '0')}',
+      'start':
+          '${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')}',
+      'end':
+          '${end.hour.toString().padLeft(2, '0')}:${end.minute.toString().padLeft(2, '0')}',
     };
+  }
+
+  static TimeOfDay _parseTimeOfDay(String time) {
+    final parts = time.split(':');
+    return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
   }
 }
 
@@ -168,4 +220,22 @@ class SpecialDate {
     required this.isOpen,
     this.customHours,
   });
+
+  factory SpecialDate.fromJson(Map<String, dynamic> json) {
+    return SpecialDate(
+      date: DateTime.parse(json['date']),
+      isOpen: json['isOpen'],
+      customHours: (json['customHours'] as List<dynamic>?)
+          ?.map((e) => TimeRange.fromJson(e))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'date': date.toIso8601String(),
+      'isOpen': isOpen,
+      'customHours': customHours?.map((e) => e.toJson()).toList(),
+    };
+  }
 }

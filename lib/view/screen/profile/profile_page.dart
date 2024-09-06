@@ -1,6 +1,6 @@
 // lib/view/profile/profile_page.dart
 import 'package:flutter/material.dart';
-import 'package:gohan/screen/auth/login.dart';
+import 'package:gohan/view/screen/auth/login.dart';
 import 'package:provider/provider.dart';
 import 'package:gohan/view_model/user_viewmodel/user_auth_viewmodel.dart';
 
@@ -66,7 +66,6 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _signOutButton(BuildContext context) {
-    
     return ElevatedButton(
       onPressed: () async {
         final userInfoViewModel = context.read<AuthViewModel>();

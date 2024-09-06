@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:gohan/screen/home/home_page.dart';
-import 'package:gohan/screen/profile/profile_page.dart';
-import 'package:gohan/screen/search/search_page.dart';
-import 'package:gohan/screen/test/test_page.dart';
+import 'package:gohan/view/screen/home/home_page.dart';
+import 'package:gohan/view/screen/profile/profile_page.dart';
+import 'package:gohan/view/screen/search/search_page.dart';
+import 'package:gohan/view/screen/test/test_page.dart';
 
 class BottomTabPage extends StatefulWidget {
   const BottomTabPage({super.key});
@@ -30,32 +30,38 @@ class _BottomTabPageState extends State<BottomTabPage> {
         children: [
           Container(
             height: 0.5,
-            color: Colors.grey.shade300, 
+            color: Colors.grey.shade300,
           ),
           BottomNavigationBar(
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                icon: _currentIndex == 0 
-                    ? const Icon(Icons.home, size: 30.0, color: Colors.black) 
-                    : const Icon(Icons.home_outlined, size: 30.0, color: Colors.black),
+                icon: _currentIndex == 0
+                    ? const Icon(Icons.home, size: 30.0, color: Colors.black)
+                    : const Icon(Icons.home_outlined,
+                        size: 30.0, color: Colors.black),
                 label: 'Home',
               ),
               BottomNavigationBarItem(
-                icon: _currentIndex == 1 
-                    ? const Icon(Icons.search_rounded, size: 30.0, color: Colors.black) 
-                    : const Icon(Icons.search_outlined, size: 30.0, color: Colors.black),
+                icon: _currentIndex == 1
+                    ? const Icon(Icons.search_rounded,
+                        size: 30.0, color: Colors.black)
+                    : const Icon(Icons.search_outlined,
+                        size: 30.0, color: Colors.black),
                 label: 'Search',
               ),
               BottomNavigationBarItem(
-                icon: _currentIndex == 2 
-                    ? const Icon(Icons.person, size: 30.0, color: Colors.black) 
-                    : const Icon(Icons.person_outline, size: 30.0, color: Colors.black),
+                icon: _currentIndex == 2
+                    ? const Icon(Icons.person, size: 30.0, color: Colors.black)
+                    : const Icon(Icons.person_outline,
+                        size: 30.0, color: Colors.black),
                 label: 'Profile',
               ),
               BottomNavigationBarItem(
-                icon: _currentIndex == 3 
-                    ? const Icon(Icons.settings, size: 30.0, color: Colors.black) 
-                    : const Icon(Icons.settings_outlined, size: 30.0, color: Colors.black),
+                icon: _currentIndex == 3
+                    ? const Icon(Icons.settings,
+                        size: 30.0, color: Colors.black)
+                    : const Icon(Icons.settings_outlined,
+                        size: 30.0, color: Colors.black),
                 label: 'Test',
               ),
             ],

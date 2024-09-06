@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 // screenのインポート
-import 'package:gohan/screen/tab_page.dart';
-import 'package:gohan/screen/auth/signin.dart';
+import 'package:gohan/view/screen/tab_page.dart';
+import 'package:gohan/view/screen/auth/signin.dart';
 
 // viewmodelのインポート
 import 'package:gohan/view_model/user_viewmodel/user_auth_viewmodel.dart';
@@ -15,7 +15,7 @@ import 'package:gohan/components/error_overlay/error_handler.dart';
 // import 'package:gohan/components/login_colors/LoginHeader.dart';
 
 // widgetのインポート
-import 'package:gohan/screen/auth/widget/lottie_animation/lottie_animation.dart';
+import 'package:gohan/view/screen/auth/widget/lottie_animation/lottie_animation.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

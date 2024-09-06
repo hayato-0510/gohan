@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:gohan/screen/auth/login.dart';
-import 'package:gohan/screen/tab_page.dart';
+import 'package:gohan/view/screen/auth/login.dart';
+import 'package:gohan/view/screen/tab_page.dart';
 import 'package:gohan/view_model/user_viewmodel/user_auth_viewmodel.dart';
 
 class AuthWrapper extends StatelessWidget {
