@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:gohan/view_model/user_viewmodel/user_auth_viewmodel.dart';
+import 'package:gohan/screen/profile/pages/account_edit_page.dart';
+import 'package:gohan/screen/profile/pages/allergy_settings_page.dart';
+import 'package:gohan/screen/profile/pages/terms_of_service_page.dart';
+import 'package:gohan/screen/profile/pages/help_and_support_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -106,12 +110,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      IconButton(
-                        icon: const Icon(Icons.edit),
-                        onPressed: () {
-                          // 編集ページへのナビゲーション
-                        },
-                      ),
                     ],
                   ),
                 ),
@@ -121,33 +119,37 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   children: [
-                    ListTile(
-                      leading: const Icon(Icons.account_circle),
-                      title: const Text('アカウント編集'),
-                      onTap: () {
-                        // アカウント編集ページへのナビゲーション
-                      },
+                    _buildListTile(
+                      icon: Icons.account_circle,
+                      title: 'アカウント編集',
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AccountEditPage())),
                     ),
-                    ListTile(
-                      leading: const Icon(Icons.settings),
-                      title: const Text('アレルギー設定'),
-                      onTap: () {
-                        // アレルギー設定ページへのナビゲーション
-                      },
+                    _buildListTile(
+                      icon: Icons.warning,
+                      title: 'アレルギー設定',
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => AllergySettingsPage())),
                     ),
-                    ListTile(
-                      leading: const Icon(Icons.description),
-                      title: const Text('利用規約'),
-                      onTap: () {
-                        // 利用規約ページへのナビゲーション
-                      },
+                    _buildListTile(
+                      icon: Icons.description,
+                      title: '利用規約',
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => TermsOfServicePage())),
                     ),
-                    ListTile(
-                      leading: const Icon(Icons.help),
-                      title: const Text('ヘルプ・お問い合わせ'),
-                      onTap: () {
-                        // ヘルプ・お問い合わせページへのナビゲーション
-                      },
+                    _buildListTile(
+                      icon: Icons.help,
+                      title: 'ヘルプ・お問い合わせ',
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HelpAndSupportPage())),
                     ),
                   ],
                 ),
@@ -155,6 +157,23 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildListTile(
+      {required IconData icon,
+      required String title,
+      required VoidCallback onTap}) {
+    return Card(
+      elevation: 2,
+      margin: EdgeInsets.symmetric(vertical: 8),
+      child: ListTile(
+        leading: Icon(icon, size: 28),
+        title: Text(title, style: TextStyle(fontSize: 18)),
+        trailing: Icon(Icons.arrow_forward_ios),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        onTap: onTap,
       ),
     );
   }
