@@ -41,6 +41,7 @@ class RestaurantDetailsBottomSheet extends StatelessWidget {
               title: Text(name),
               subtitle: Text('Rating: $rating'),
             ),
+            /*
             RestaurantInformation(
               // location: location,
               phone: phone,
@@ -49,6 +50,7 @@ class RestaurantDetailsBottomSheet extends StatelessWidget {
               // hours: hours,
               // isOpen: isOpen,
             ),
+            */
             ElevatedButton(
               onPressed: () => Navigator.pop(context),
               child: Text('Close'),

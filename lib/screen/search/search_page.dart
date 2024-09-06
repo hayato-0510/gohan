@@ -288,9 +288,8 @@ class _SearchPageState extends State<SearchPage> {
         builder: (context, viewModel, child) {
           if (viewModel.restaurants.isEmpty) {
             return ElevatedButton(
-              //テストコード
               onPressed: loadNearbyRestaurants,
-              child: const Text('Load Test Restaurants'),
+              child: const Text('Load Restaurants'),
             );
           }
 
