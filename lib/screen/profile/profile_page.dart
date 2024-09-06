@@ -44,7 +44,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 16),
               Text(
-                user.displayName ?? 'No Name',
+                 user.displayName ?? 'No Name',
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -80,18 +80,3 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
-
-
-  // Widget _signOutButton(BuildContext context) {
-  //   return ElevatedButton(
-  //     onPressed: () async {
-  //       final userInfoViewModel = context.read<AuthViewModel>();
-  //       await userInfoViewModel.signOut();
-  //       Navigator.pushReplacement(
-  //         context,
-  //         MaterialPageRoute(builder: (context) => const LoginPage()),
-  //       );
-  //     },
-  //     child: const Text('Sign Out'),
-  //   );
-  // }

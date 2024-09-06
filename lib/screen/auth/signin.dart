@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gohan/components/login_component/sign_up_textfield.dart';
+import 'package:gohan/screen/tab_page.dart';
 import 'package:gohan/view_model/user_viewmodel/user_auth_viewmodel.dart';
 
 import 'package:gohan/components/login_component/theme_color.dart';
@@ -80,7 +81,7 @@ class _SignUpPageState extends State<SigninPage> {
                             // メールとパスワードを取得
                             String email = emailController.text;
                             String password = passwordController.text;
-                            String username = usernameController.text;
+                            String displayName = usernameController.text;
 
                             try {
                               // サインアップ処理
@@ -88,6 +89,7 @@ class _SignUpPageState extends State<SigninPage> {
                                   await authViewModel.signUpWithEmail(
                                 email: email,
                                 password: password,
+                                displayName: displayName,
                               );
 
                               setState(() {

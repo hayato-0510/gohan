@@ -77,7 +77,6 @@ class _SignUpFormState extends State<SignUpForm> {
           ),
           child: TextField(
             controller: widget.usernameController,
-            obscureText: true,
             decoration: const InputDecoration(
               border: InputBorder.none,
               hintText: "ユーザー名",
