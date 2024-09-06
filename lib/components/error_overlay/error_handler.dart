@@ -4,7 +4,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'error_overlay.dart';
 
-enum ErrorType { network, validation, unknown }
+enum ErrorType { 
+  network,//ネットワークエラー
+  validation,//入力エラー
+  extService,//外部サービスエラー
+  auth,//認証エラー
+  database,//データベースエラー
+  location,//位置情報エラー
+  unknown//不明なエラー
+}
 
 class AppError {
   final String message;

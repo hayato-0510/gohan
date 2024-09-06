@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // 型を合わせるためのmodel import(あくまでもmodelの保持はしていない)
-import 'package:gohan/model/restaurnt/restaurant_model.dart';
-import 'package:gohan/model/restaurnt/data/lat_lng_model.dart';
-import 'package:gohan/model/restaurnt/data/business_hours_model.dart';
-import 'package:gohan/model/restaurnt/data/photo_model.dart';
+import 'package:gohan/model/restaurant/restaurant_model.dart';
+import 'package:gohan/model/restaurant/data/lat_lng_model.dart';
+import 'package:gohan/model/restaurant/data/business_hours_model.dart';
+import 'package:gohan/model/restaurant/data/photo_model.dart';
 
 class GooglePlacesParser {
   static String? _apiKey;
@@ -69,6 +69,33 @@ class GooglePlacesParser {
       businessHours: businessHours,
       businessStatus: result['business_status'] ?? '',
       photos: photos,
+      isFavorite: false,
+    );
+  }
+
+  static RestaurantModel parseRestaurantFromTextSearch(Map<String, dynamic> place) {
+    return RestaurantModel(
+      id: place['place_id'] ?? '',
+      name: place['name'] ?? '',
+      category: place['types']?.isNotEmpty == true ? place['types'][0] : '',
+      priceRange:
+          place['price_level'] != null ? '\$' * place['price_level'] : '',
+      rating: (place['rating'] as num?)?.toDouble() ?? 0.0,
+      reviewCount: place['user_ratings_total'] ?? 0,
+      userReviews: [],
+      mapIconUrl: place['icon'] ?? '',
+      address: place['vicinity'] ?? '',
+      location: LatLngModel(
+        place['geometry']['location']['lat'],
+        place['geometry']['location']['lng'],
+      ),
+      phone: '',
+      websiteUrl: '',
+      businessHours: BusinessHoursModel(weeklyHours: {}, closedDays: []),
+      businessStatus: place['business_status'] ?? '',
+      photos: place['photos'] != null
+          ? [PhotoModel(url: _getPlacePhotoUrl(place['photos']))]
+          : [],
       isFavorite: false,
     );
   }

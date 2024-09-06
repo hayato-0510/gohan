@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gohan/components/restaurant_information/restaurant_information.dart';
-import 'package:gohan/model/restaurnt/data/business_hours_model.dart';
+import 'package:gohan/model/restaurant/data/business_hours_model.dart';
 
 class RestaurantDetailsBottomSheet extends StatelessWidget {
   final String name;

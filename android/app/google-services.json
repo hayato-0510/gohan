@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "715318580982",
+    "project_id": "gohan-flutter-app",
+    "storage_bucket": "gohan-flutter-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:715318580982:android:20a33f285b7701b623fed7",
+        "android_client_info": {
+          "package_name": "com.example.gohan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "715318580982-7pv0bb3s1t9j2aacqa56agr3q0dp9vrm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAum_ugRuoBGSLgUppiZq_ULXSyZUS33AY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "715318580982-7pv0bb3s1t9j2aacqa56agr3q0dp9vrm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "715318580982-a86gdtfsdd5ui5ba7mmigg2sjocde2rm.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.kaitanaka.gohan"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -33,23 +33,53 @@ void someFunction() {
 `error_handler.dart` ファイル内の `ErrorType enum`を拡張して、新しいエラータイプを追加
 
 ```dart
-enum ErrorType { network, validation, unknown, customError }
+enum ErrorType { network, validation, unknown, ... }
 ```
 
-`error_styles.dart` ファイル内の`_getTitleForErrorType`に追加したエラーのタイトルを追加
+`error_styles.dart` ファイル内の`getTitleForErrorType`に追加したエラーのタイトルを追加
 ```dart
-  String _getTitleForErrorType(ErrorType type) {
+  String getTitleForErrorType(ErrorType type) {
     switch (type) {
       case ErrorType.network:
         return 'ネットワークエラー';
       case ErrorType.validation:
         return '入力エラー';
+      ...
       case ErrorType.unknown:
       default:
         return 'エラー';
     }
   }
 ```
+余裕があればこっちも
+```dart
+IconData getIconForErrorType(ErrorType type) {
+  switch (type) {
+    case ErrorType.network:
+      return Icons.wifi_off;
+    case ErrorType.validation:
+      return Icons.error_outline;
+    ...
+    case ErrorType.unknown:
+    default:
+      return Icons.warning_amber;
+  }
+}
+
+Color getColorForErrorType(ErrorType type) {
+  switch (type) {
+    case ErrorType.network:
+      return Colors.blue;
+    case ErrorType.validation:
+      return Colors.orange;
+    ...
+    case ErrorType.unknown:
+    default:
+      return Colors.red;
+  }
+}
+```
+
 .
 └── front/
     ├── lib/
