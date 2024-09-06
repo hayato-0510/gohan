@@ -120,6 +120,7 @@ class RestaurantCard extends StatelessWidget {
                     address: restaurant.address,
                     phone: restaurant.phone,
                     businessHours: restaurant.businessHours,
+                    businessStatus: restaurant.businessStatus,
                   ),
                 ],
               ),
