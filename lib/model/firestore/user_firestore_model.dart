@@ -51,4 +51,17 @@ class UserFirestoreModel {
       'updatedAt': FieldValue.serverTimestamp(),
     });
   }
+
+  Future<void> updateUserProfile(
+      String userId, Map<String, dynamic> data) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .update(data);
+    } catch (e) {
+      print('Firestoreユーザープロフィール更新エラー: $e');
+      rethrow;
+    }
+  }
 }

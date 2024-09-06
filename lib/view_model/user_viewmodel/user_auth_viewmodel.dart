@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gohan/model/auth/auth_model.dart';
 import 'package:gohan/model/firestore/user_firestore_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthViewModel extends ChangeNotifier {
   final AuthModel _authModel = AuthModel();
@@ -15,6 +16,7 @@ class AuthViewModel extends ChangeNotifier {
   }
 
   Future<void> reloadUser() async {
+    await _currentUser?.reload();
     _currentUser = FirebaseAuth.instance.currentUser;
     debugPrint("Reloaded user: $_currentUser");
     notifyListeners();
@@ -77,6 +79,27 @@ class AuthViewModel extends ChangeNotifier {
       return true;
     } catch (_) {
       return false;
+    }
+  }
+
+  Future<void> updateProfile(String name, String? imagePath) async {
+    try {
+      if (_currentUser != null) {
+        // 名前を更新
+        await _currentUser!.updateDisplayName(name);
+
+        // 画像パスをSharedPreferencesに保存
+        if (imagePath != null) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('profile_image_path', imagePath);
+        }
+
+        // ユーザー情報をリロード
+        await reloadUser();
+      }
+    } catch (e) {
+      print('プロフィール更新エラー: $e');
+      rethrow;
     }
   }
 }
