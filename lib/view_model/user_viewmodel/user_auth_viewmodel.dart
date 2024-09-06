@@ -25,8 +25,7 @@ class AuthViewModel extends ChangeNotifier {
     if (user != null) {
       _currentUser = user.user;
       debugPrint("User: $_currentUser");
-      await _userFirestoreModel.saveUserToFirestore(
-          _currentUser!, _currentUser!.displayName ?? '');
+      await _userFirestoreModel.saveUserToFirestore(user: currentUser!);
       notifyListeners();
       return true;
     }
@@ -63,7 +62,7 @@ class AuthViewModel extends ChangeNotifier {
 
     if (user != null) {
       _currentUser = user.user;
-      await _userFirestoreModel.saveUserToFirestore(_currentUser!, displayName);
+      await _userFirestoreModel.saveUserToFirestore(user:_currentUser!, displayName: displayName);
       notifyListeners();
       return true;
     }

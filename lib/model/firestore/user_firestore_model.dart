@@ -5,7 +5,10 @@ class UserFirestoreModel {
   final CollectionReference _usersCollection =
       FirebaseFirestore.instance.collection('users');
 
-  Future<void> saveUserToFirestore(User user) async {
+  Future<void> saveUserToFirestore({
+    required User user,
+    String? displayName,
+  }) async {
     final userDoc = _usersCollection.doc(user.uid);
     final userDocData = await userDoc.get();
 
@@ -13,7 +16,7 @@ class UserFirestoreModel {
       await userDoc.set({
         'uid': user.uid,
         'email': user.email,
-        'name': user.displayName,
+        'name': user.displayName ?? displayName,
         'photoURL': user.photoURL,
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
