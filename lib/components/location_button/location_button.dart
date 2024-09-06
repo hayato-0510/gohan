@@ -42,29 +42,3 @@ class LocationButton extends StatelessWidget {
   }
 }
 
-class OneMarkerMap extends StatelessWidget {
-  final LatLng location;
-
-  const OneMarkerMap({super.key, required this.location});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Map'),
-      ),
-      body: GoogleMap(
-        initialCameraPosition: CameraPosition(
-          target: location, // レストランの位置にフォーカス
-          zoom: 15, // ズームレベルを設定
-        ),
-        markers: {
-          Marker(
-            markerId: MarkerId('restaurant_marker'),
-            position: location, // レストランの位置にマーカーを設置
-          ),
-        },
-      ),
-    );
-  }
-}

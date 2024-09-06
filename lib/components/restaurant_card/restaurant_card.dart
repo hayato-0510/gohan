@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:gohan/components/star_rating/star_rating.dart';
 import 'package:gohan/components/restaurant_information/restaurant_information.dart';
 import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
 import 'package:gohan/model/restaurant/restaurant_model.dart';
+import 'package:gohan/components/location_button/location_button.dart';
 
 class RestaurantCard extends StatelessWidget {
   final RestaurantModel restaurant;
+  final void Function(LatLng) onLocationButtonPressed; // コールバックを追加
 
-  const RestaurantCard({super.key, required this.restaurant});
+  const RestaurantCard({
+    super.key, 
+    required this.restaurant,
+    required this.onLocationButtonPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +23,7 @@ class RestaurantCard extends StatelessWidget {
       builder: (context, viewModel, child) {
         return Stack(
           children: [
+            // レストラン情報のカード部分
             Container(
               padding: const EdgeInsets.all(16),
               margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -41,22 +49,6 @@ class RestaurantCard extends StatelessWidget {
                           overflow: TextOverflow.visible,
                         ),
                       ),
-                      // IconButton(
-                      //   icon: const Icon(Icons.info_outline, size: 24),
-                      //   // onPressed: () {
-                      //   //   showModalBottomSheet(
-                      //   //     context: context,
-                      //   //     builder: (context) => RestaurantModel(
-                      //   //       id: restaurant.id,
-                      //   //       name: restaurant.name,
-                      //   //       rating: restaurant.rating,
-                      //   //       location: restaurant.address,
-                      //   //       phone: restaurant.phone,
-                      //   //       businessHours: restaurant.businessHours,
-                      //   //     ),
-                      //   //   );
-                      //   // },
-                      // ),
                     ],
                   ),
                   Row(
@@ -91,10 +83,8 @@ class RestaurantCard extends StatelessWidget {
                               if (loadingProgress == null) return child;
                               return Center(
                                 child: CircularProgressIndicator(
-                                  value: loadingProgress.expectedTotalBytes !=
-                                          null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
                                       : null,
                                 ),
                               );
@@ -114,14 +104,21 @@ class RestaurantCard extends StatelessWidget {
                 ],
               ),
             ),
-            /*Positioned(
+            // LocationButton の位置調整
+            Positioned(
               right: 24,
-              bottom: 20,
-              child: LocationButton(location: LatLngModel(
-                restaurant.location.latitude,
-                restaurant.location.longitude,
-              )),
-            ),*/
+              bottom: 20, // 地図の高さ分だけ調整
+              child: LocationButton(
+                location: LatLng(
+                  restaurant.location.latitude,
+                  restaurant.location.longitude,
+                ),
+                onLocationButtonPressed: (LatLng location) {
+                  onLocationButtonPressed(location); // SearchPageのコールバックを呼び出す
+                  viewModel.toggleMapVisibility(); // 地図の表示を切り替える
+                },
+              ),
+            ),
           ],
         );
       },

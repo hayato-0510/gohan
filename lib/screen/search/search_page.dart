@@ -1,13 +1,26 @@
+// flutterの設定
 import 'package:flutter/material.dart';
+import 'package:gohan/model/restaurant/restaurant_model.dart';
 import 'package:provider/provider.dart';
+
+// ライブラリのインポート
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:io' show Platform;
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+
+// コンポーネントのインポート
 import 'package:gohan/components/restaurant_card/restaurant_card.dart';
 import 'package:gohan/components/map_card/map_card.dart';
+import 'package:gohan/components/map_card/one_marker_map.dart';
+
+//  viewmodelのインポート
 import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewmodel.dart';
 import 'package:gohan/view_model/user_viewmodel/user_engagement_viewmodel.dart';
 import 'package:gohan/view_model/user_viewmodel/user_search_settings_viewmodel.dart';
+
+// widgetのインポート
 import './widget/search_header.dart';
 import './widget/user_filter.dart';
 
@@ -22,6 +35,9 @@ class _SearchPageState extends State<SearchPage> {
   late TextEditingController _foodController;
   bool _isExpandedFilterBar = false; // 矢印の向き管理
   bool _isPhotoSelected = true;// 写真表示モードか地図表示モードかを管理
+  bool _isLocationButtonPressed = false; // 現在地に戻るボタンが押されたかを管理
+  LatLng? _selectedLocation; // 選択された位置を管理
+
 
 
   // シミュレータ用のデフォルト位置（例：東京都庁）
@@ -37,6 +53,15 @@ class _SearchPageState extends State<SearchPage> {
       _initializeViewModel();
     });
   }
+
+  void _onLocationButtonPressed(LatLng location) {
+    setState(() {
+      _isPhotoSelected = false; // 写真表示モードを解除
+      _isLocationButtonPressed = true; // LocationButtonが押されたことを記録
+      _selectedLocation = location; // 押された位置を保存
+    });
+  }
+
   // ビューモデルの初期化と近くのレストラン情報の読み込み
   Future<void> _initializeViewModel() async {
     final viewModel = Provider.of<RestaurantCardViewModel>(context, listen: false);
@@ -72,6 +97,7 @@ class _SearchPageState extends State<SearchPage> {
           locationSettings: locationSettings,
         );
       } else {
+        // シミュレータまたはその他の環境の場合はデフォルト位置を使用
         position = Position(
           latitude: defaultLatitude,
           longitude: defaultLongitude,
@@ -81,8 +107,8 @@ class _SearchPageState extends State<SearchPage> {
           heading: 0,
           speed: 0,
           speedAccuracy: 0,
-          altitudeAccuracy: 0,
-          headingAccuracy: 0,
+          altitudeAccuracy: 0, // 新しく追加
+          headingAccuracy: 0, // 新しく追加
         );
         print(
             'Using default location for simulator: ${position.latitude}, ${position.longitude}');
@@ -182,7 +208,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.white, // 背景色を白に設定
       body: SafeArea(
         child: Stack(
           children: [
@@ -206,7 +232,7 @@ class _SearchPageState extends State<SearchPage> {
                 const Divider(),
                 _buildFilterAndSwiper(context),
               ],
-            ),
+            )
           ],
         ),
       ),
@@ -219,19 +245,24 @@ class _SearchPageState extends State<SearchPage> {
         children: [
           Positioned.fill(
             child: _isPhotoSelected
-                ? _cardSwiper(context)
-                : Consumer<RestaurantCardViewModel>(
-                    builder: (context, viewModel, child) {
-                      return MapCardPage(
-                        restaurants: viewModel.restaurants,
-                      );
-                    },
-                  ),
-          ),
+                ? _cardSwiper(context) // カードスワイパーを表示
+                :  Consumer<RestaurantCardViewModel>(
+                      builder: (context, viewModel, child) {
+                        if (_isLocationButtonPressed) {
+                          return OneMarkerMap(customMarkerPosition: _selectedLocation,);
+                          }
+                        else {
+                          return MapCardPage(
+                            restaurants: viewModel.restaurants, // `restaurants` リストを渡す
+                          );
+                        }
+                      },
+                ),
+),
           _isExpandedFilterBar
               ? ModalBarrier(
-                  color: Colors.black.withOpacity(0.5),
-                  dismissible: true,
+                  color: Colors.black.withOpacity(0.5), // 半透明の黒
+                  dismissible: true, // バリアを解除できるようにする
                   onDismiss: _toggleUserFilterBar,
                 )
               : const SizedBox.shrink(),
@@ -250,12 +281,14 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _cardSwiper(BuildContext context) {
+    _isLocationButtonPressed = false;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
       child: Consumer<RestaurantCardViewModel>(
         builder: (context, viewModel, child) {
           if (viewModel.restaurants.isEmpty) {
             return ElevatedButton(
+              //テストコード
               onPressed: loadNearbyRestaurants,
               child: const Text('Load Test Restaurants'),
             );
@@ -264,7 +297,7 @@ class _SearchPageState extends State<SearchPage> {
           return AppinioSwiper(
             cardCount: viewModel.restaurants.length,
             cardBuilder: (BuildContext context, int index) {
-              return RestaurantCard(restaurant: viewModel.restaurants[index]);
+              return RestaurantCard(restaurant: viewModel.restaurants[index], onLocationButtonPressed: _onLocationButtonPressed);
             },
             maxAngle: 15,
             onSwipeEnd: (int previousIndex, int targetIndex, SwiperActivity activity) async {

@@ -21,6 +21,10 @@ class RestaurantCardViewModel extends ChangeNotifier {
 
   final RestaurantSearchModel _searchModel = RestaurantSearchModel();
 
+  // 地図の表示状態を管理するプロパティ
+  bool _isMapVisible = false;
+  bool get isMapVisible => _isMapVisible;
+
   RestaurantCardViewModel() {
     _initializeApiKey();
   }
@@ -148,6 +152,14 @@ class RestaurantCardViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removeRestaurantById(String restaurantId) {
+    final index = _restaurants.indexWhere((r) => r.id == restaurantId);
+    if (index != -1) {
+      _restaurants.removeAt(index);
+      notifyListeners();
+    }
+  }
+
   void updateRestaurants(List<RestaurantModel> restaurants) {
     _restaurants = restaurants;
     notifyListeners();
@@ -160,5 +172,17 @@ class RestaurantCardViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+   void resetMapVisibility() {
+    _isMapVisible = false;
+    notifyListeners();
+  }
+
+  // 地図の表示状態を切り替えるメソッド
+  void toggleMapVisibility() {
+    _isMapVisible = !_isMapVisible;
+    notifyListeners();
+  }
+
   initialize() {}
 }
