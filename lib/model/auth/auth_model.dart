@@ -26,13 +26,13 @@ class AuthModel {
     return null;
   }
 
-
   Future<UserCredential?> logInWithEmail({
     required String email,
     required String password,
   }) async {
-    try{
-      final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+    try {
+      final UserCredential userCredential =
+          await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -45,12 +45,16 @@ class AuthModel {
   Future<UserCredential?> signUpWithEmail({
     required String email,
     required String password,
+    required String displayName,
   }) async {
-    try{
-      final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+    try {
+      final UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+      await userCredential.user?.updateProfile(displayName: displayName);
+      await userCredential.user?.reload();
       return userCredential;
     } catch (e) {
       return null;
@@ -59,7 +63,6 @@ class AuthModel {
 
   Future<bool> signOut() async {
     try {
-    
       debugPrint('Sign out');
       await _auth.signOut();
       return true;
