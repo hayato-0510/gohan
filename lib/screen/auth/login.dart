@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 // screenのインポート
 import 'package:gohan/screen/tab_page.dart';
 import 'package:gohan/screen/auth/signin.dart';
+import 'package:gohan/screen/auth/reset_password.dart';
 
 // viewmodelのインポート
 import 'package:gohan/view_model/user_viewmodel/user_auth_viewmodel.dart';
@@ -118,11 +119,21 @@ class _LoginPageState extends State<LoginPage> {
         LoginForm(
             emailController: emailController,
             passwordController: passwordController),
-        Text(
-          "パスワードを忘れた方",
-          style: Theme.of(context).textTheme.bodyLarge,
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ResetPasswordScreen(),
+              ),
+            );
+          },
+          child: Text(
+            "パスワードを忘れた方",
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
         ),
-        const SizedBox(height: 5),
+        const SizedBox(height: 20),
       ],
     );
   }

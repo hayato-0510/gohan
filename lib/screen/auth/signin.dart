@@ -4,7 +4,6 @@ import 'package:gohan/screen/tab_page.dart';
 import 'package:gohan/view_model/user_viewmodel/user_auth_viewmodel.dart';
 
 import 'package:gohan/components/login_component/theme_color.dart';
-import 'package:gohan/screen/tab_page.dart';
 
 class SigninPage extends StatefulWidget {
   const SigninPage({super.key});
@@ -101,7 +100,8 @@ class _SignUpPageState extends State<SigninPage> {
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const BottomTabPage()),
+                                      builder: (context) =>
+                                          const BottomTabPage()),
                                 );
                               } else {
                                 // サインアップ失敗時の処理
