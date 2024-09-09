@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:gohan/model/restaurant/data/business_hours_model.dart';
 
 class RestaurantInformation extends StatelessWidget {
-  final String address;   // 住所
-  final String businessStatus;  // 追加
+  final String address;
+  final String businessStatus;
+  final BusinessHoursModel businessHours;
   final TextStyle? textStyle;
   
   const RestaurantInformation({
     super.key,
     required this.address,
-    required this.businessStatus,  // 追加
+    required this.businessStatus,
+    required this.businessHours,
     this.textStyle,
   });
 
@@ -28,22 +30,24 @@ class RestaurantInformation extends StatelessWidget {
     String status;
     Color color;
 
-    switch (businessStatus) {
-      case 'OPERATIONAL':
-        status = '営業中';
-        color = Colors.green;
-        break;
-      case 'CLOSED_TEMPORARILY':
-        status = '営業時間外';
-        color = Colors.red;
-        break;
-      case 'CLOSED_PERMANENTLY':
-        status = '閉店';
-        color = const Color.fromARGB(255, 153, 10, 0);
-        break;
-      default:
-        status = '営業状況不明';
-        color = Colors.grey;
+    if (businessStatus == 'OPERATIONAL') {
+      final isOpen = businessHours.isOpenNow();
+      status = isOpen ? '営業中' : '営業時間外';
+      color = isOpen ? Colors.green : Colors.orange;
+    } else {
+      switch (businessStatus) {
+        case 'CLOSED_TEMPORARILY':
+          status = '一時閉店中';
+          color = Colors.orange;
+          break;
+        case 'CLOSED_PERMANENTLY':
+          status = '閉店';
+          color = Colors.red;
+          break;
+        default:
+          status = '営業状況不明';
+          color = Colors.grey;
+      }
     }
 
     final statusStyle = textStyle?.copyWith(
@@ -54,9 +58,6 @@ class RestaurantInformation extends StatelessWidget {
       fontWeight: FontWeight.bold,
     );
 
-    return Text(
-      status,
-      style: statusStyle,
-    );
+    return Text(status, style: statusStyle);
   }
 }
