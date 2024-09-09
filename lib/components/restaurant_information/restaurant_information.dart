@@ -3,16 +3,12 @@ import 'package:gohan/model/restaurant/data/business_hours_model.dart';
 
 class RestaurantInformation extends StatelessWidget {
   final String address;   // 住所
-  final String phone;      // 電話番号
-  final BusinessHoursModel businessHours;  // 営業時間を BusinessHours オブジェクトに変更
   final String businessStatus;  // 追加
   final TextStyle? textStyle;
   
   const RestaurantInformation({
     super.key,
     required this.address,
-    required this.phone,
-    required this.businessHours,
     required this.businessStatus,  // 追加
     this.textStyle,
   });
@@ -23,8 +19,6 @@ class RestaurantInformation extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('住所: $address', style: textStyle),
-        Text('電話: $phone', style: textStyle),
-        Text('営業時間: ${businessHours.getFormattedHours()}', style: textStyle),
         _buildOpenStatus(),
       ],
     );
@@ -40,12 +34,12 @@ class RestaurantInformation extends StatelessWidget {
         color = Colors.green;
         break;
       case 'CLOSED_TEMPORARILY':
-        status = '一時閉店中';
-        color = Colors.orange;
+        status = '営業時間外';
+        color = Colors.red;
         break;
       case 'CLOSED_PERMANENTLY':
         status = '閉店';
-        color = Colors.red;
+        color = const Color.fromARGB(255, 153, 10, 0);
         break;
       default:
         status = '営業状況不明';

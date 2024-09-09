@@ -85,14 +85,14 @@ class RestaurantCard extends StatelessWidget {
                       // ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Icon(Icons.attach_money, size: 18, color: Colors.green),
-                      const SizedBox(width: 4),
-                      Text('Price Range: ${restaurant.priceRange}', style: TextStyle(fontSize: 16)),
-                    ],
-                  ),
+                  // const SizedBox(height: 8),
+                  // Row(
+                  //   children: [
+                  //     Icon(Icons.attach_money, size: 18, color: Colors.green),
+                  //     const SizedBox(width: 4),
+                  //     Text('Price Range: ${restaurant.priceRange}', style: TextStyle(fontSize: 16)),
+                  //   ],
+                  // ),
                   const SizedBox(height: 12),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
@@ -126,8 +126,6 @@ class RestaurantCard extends StatelessWidget {
                   const SizedBox(height: 16),
                   RestaurantInformation(
                     address: restaurant.address,
-                    phone: restaurant.phone,
-                    businessHours: restaurant.businessHours,
                     businessStatus: restaurant.businessStatus,
                   ),
                 ],
