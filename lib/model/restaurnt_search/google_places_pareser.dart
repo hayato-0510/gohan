@@ -48,7 +48,7 @@ class GooglePlacesParser {
       Map<String, dynamic> result, String placeId) {
     final photos = _parsePhotos(result['photos'], _apiKey);
     final businessHours = _parseBusinessHours(result['opening_hours']);
-
+  
     return RestaurantModel(
       id: placeId,
       name: result['name'] ?? '',
@@ -119,7 +119,8 @@ class GooglePlacesParser {
         final open = period['open'];
         final close = period['close'];
         if (open != null && close != null) {
-          final day = open['day'] as int;
+          final origineDay = open['day'] as int;
+          final day = (origineDay + 1) % 7 + 1;
           final openTime = _parseTimeOfDay(open['time']);
           final closeTime = _parseTimeOfDay(close['time']);
           if (weeklyHours.containsKey(day)) {

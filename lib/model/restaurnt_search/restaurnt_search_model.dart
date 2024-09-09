@@ -26,10 +26,15 @@ class RestaurantSearchModel extends ChangeNotifier {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final results = data['results'] as List;
-        List<RestaurantModel> restaurants = results
-            .map((place) =>
-                GooglePlacesParser.parseRestaurantFromNearbySearch(place))
-            .toList();
+        List<RestaurantModel> restaurants = [];
+
+        for (var place in results) {
+          RestaurantModel basicInfo = GooglePlacesParser.parseRestaurantFromNearbySearch(place);
+          // 各レストランの詳細情報を取得
+          RestaurantModel detailedInfo = await fetchRestaurantDetails(basicInfo.id, apiKey);
+          restaurants.add(detailedInfo);
+        }
+
         return restaurants;
       } else {
         throw Exception('Failed to load nearby restaurants');

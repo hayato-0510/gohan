@@ -30,24 +30,20 @@ class RestaurantInformation extends StatelessWidget {
     String status;
     Color color;
 
-    if (businessStatus == 'OPERATIONAL') {
-      final isOpen = businessHours.isOpenNow();
-      status = isOpen ? '営業中' : '営業時間外';
-      color = isOpen ? Colors.green : Colors.orange;
-    } else {
-      switch (businessStatus) {
-        case 'CLOSED_TEMPORARILY':
-          status = '一時閉店中';
-          color = Colors.orange;
-          break;
-        case 'CLOSED_PERMANENTLY':
-          status = '閉店';
-          color = Colors.red;
-          break;
-        default:
-          status = '営業状況不明';
-          color = Colors.grey;
-      }
+    switch (businessStatus) {
+      case 'CLOSED_TEMPORARILY':
+        status = '一時閉店中';
+        color = Colors.orange;
+        break;
+      case 'CLOSED_PERMANENTLY':
+        status = '閉店';
+        color = Colors.red;
+        break;
+      default:
+        // OPERATIONAL または businessStatus が空の場合の処理
+        final isOpen = businessHours.isOpenNow();
+        status = isOpen ? '営業中' : '営業時間外';
+        color = isOpen ? Colors.green : Colors.orange;
     }
 
     final statusStyle = textStyle?.copyWith(
