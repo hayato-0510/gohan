@@ -53,7 +53,7 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               const SizedBox(height: 150),
               _userInfoCard(context, user),
-               _signOutButton(context),
+              _signOutButton(context),
               const SizedBox(height: 20),
               Expanded(child: _buildListTile(context)),
             ],
@@ -106,33 +106,78 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildListTile(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: const Color.fromARGB(255, 7, 7, 7).withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 3,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          _buildListItem(
+            Icons.account_circle,
+            'アカウント編集',
+            onTap: () => Navigator.push(context,
+                MaterialPageRoute(builder: (context) => AccountEditPage())),
+          ),
+          _buildListItem(
+            Icons.warning,
+            'アレルギー設定',
+            onTap: () => Navigator.push(context,
+                MaterialPageRoute(builder: (context) => AllergySettingsPage())),
+          ),
+          _buildListItem(
+            Icons.description,
+            '利用規約',
+            onTap: () => Navigator.push(context,
+                MaterialPageRoute(builder: (context) => TermsOfServicePage())),
+          ),
+          _buildListItem(
+            Icons.help,
+            'ヘルプ・お問い合わせ',
+            onTap: () => Navigator.push(context,
+                MaterialPageRoute(builder: (context) => HelpAndSupportPage())),
+            isLast: true, // ここで名前付き引数として指定
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildListItem(IconData icon, String title,
+      {required VoidCallback onTap, bool isLast = false}) {
+    return Column(
       children: [
-        ListTitle(
-          icon: Icons.account_circle,
-          title: 'アカウント編集',
-          onTap: () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => AccountEditPage())),
+        ListTile(
+          leading: Icon(icon,
+              color: const Color.fromARGB(255, 82, 80, 80), size: 24),
+          title: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          trailing:
+              Icon(Icons.chevron_right, color: Colors.grey[400], size: 24),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          onTap: onTap,
         ),
-        ListTitle(
-          icon: Icons.warning,
-          title: 'アレルギー設定',
-          onTap: () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => AllergySettingsPage())),
-        ),
-        ListTitle(
-          icon: Icons.description,
-          title: '利用規約',
-          onTap: () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => TermsOfServicePage())),
-        ),
-        ListTitle(
-          icon: Icons.help,
-          title: 'ヘルプ・お問い合わせ',
-          onTap: () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => HelpAndSupportPage())),
-        ),
+        if (!isLast)
+          Divider(
+            height: 1,
+            thickness: 0.5,
+            color: const Color.fromARGB(255, 93, 91, 91),
+          ),
       ],
     );
   }
