@@ -6,11 +6,11 @@ class HomeRestaurantList extends StatefulWidget {
   final String? subText;
 
   const HomeRestaurantList({
-      super.key,
-      required this.onTap,
-      this.mainText,
-      this.subText,
-    });
+    super.key,
+    required this.onTap,
+    this.mainText,
+    this.subText,
+  });
 
   @override
   State<HomeRestaurantList> createState() => _HomeRestaurantListState();
@@ -20,7 +20,7 @@ class _HomeRestaurantListState extends State<HomeRestaurantList> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 115,
+      height: 400,
       width: double.infinity,
       decoration: BoxDecoration(
         color: const Color.fromARGB(255, 234, 232, 232),
@@ -42,23 +42,23 @@ class _HomeRestaurantListState extends State<HomeRestaurantList> {
             ),
             ListTile(
               title: widget.mainText != null
-              ? Text(
-                widget.mainText!,
-                style: const TextStyle(
-                  fontSize: 18.0,
-                  color: Colors.black54,
-                ),
-              )
-              : null,
+                  ? Text(
+                      widget.mainText!,
+                      style: const TextStyle(
+                        fontSize: 18.0,
+                        color: Colors.black54,
+                      ),
+                    )
+                  : null,
               subtitle: widget.subText != null
-              ? Text(
-                widget.subText!,
-                style: const TextStyle(
-                  fontSize: 13.0,
-                  color: Colors.black54,
-                ),
-              )
-              : null,
+                  ? Text(
+                      widget.subText!,
+                      style: const TextStyle(
+                        fontSize: 13.0,
+                        color: Colors.black54,
+                      ),
+                    )
+                  : null,
             )
           ],
         ),

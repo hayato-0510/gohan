@@ -29,6 +29,16 @@ class _FavoriteListViewState extends State<FavoriteListView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Favorite'), // タイトルを設定
+        leading: IconButton(
+          // 戻るボタンを追加
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pop(context); // 元の画面に戻る
+          },
+        ),
+      ),
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Scrollbar(
@@ -46,8 +56,11 @@ class _FavoriteListViewState extends State<FavoriteListView> {
                             return HomeRestaurantList(
                               onTap: () async {
                                 try {
-                                  final restaurantDetails = await engagementViewModel.getRestaurantById(fovliteItem);
-                                  debugPrint('Fetched restaurant details: $restaurantDetails');
+                                  final restaurantDetails =
+                                      await engagementViewModel
+                                          .getRestaurantById(fovliteItem);
+                                  debugPrint(
+                                      'Fetched restaurant details: $restaurantDetails');
 
                                   if (restaurantDetails != null && mounted) {
                                     // モーダルボトムシートを表示
@@ -55,21 +68,32 @@ class _FavoriteListViewState extends State<FavoriteListView> {
                                       context: context,
                                       builder: (context) {
                                         return RestaurantDetailsBottomSheet(
-                                          businessHours: restaurantDetails['business_hours'] ?? {},
-                                          name: restaurantDetails['name'] ?? 'Unknown',
-                                          rating: restaurantDetails['rating'] ?? 0.0,
-                                          location: restaurantDetails['location'] ?? 'Unknown',
-                                          phone: restaurantDetails['phone'] ?? 'Unknown',
-                                          hours: restaurantDetails['hours'] ?? 'Unknown',
-                                          isOpen: restaurantDetails['is_open'] == 1,
+                                          businessHours: restaurantDetails[
+                                                  'business_hours'] ??
+                                              {},
+                                          name: restaurantDetails['name'] ??
+                                              'Unknown',
+                                          rating: restaurantDetails['rating'] ??
+                                              0.0,
+                                          location:
+                                              restaurantDetails['location'] ??
+                                                  'Unknown',
+                                          phone: restaurantDetails['phone'] ??
+                                              'Unknown',
+                                          hours: restaurantDetails['hours'] ??
+                                              'Unknown',
+                                          isOpen:
+                                              restaurantDetails['is_open'] == 1,
                                         );
                                       },
                                     );
                                   } else {
-                                    debugPrint('Restaurant details not found for ID: ${fovliteItem["id"]}');
+                                    debugPrint(
+                                        'Restaurant details not found for ID: ${fovliteItem["id"]}');
                                   }
                                 } catch (e) {
-                                  debugPrint('Error fetching restaurant details: $e');
+                                  debugPrint(
+                                      'Error fetching restaurant details: $e');
                                 }
                               },
                               mainText: fovliteItem['name'],
