@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:gohan/view_model/user_viewmodel/user_auth_viewmodel.dart';
+import 'package:gohan/screen/auth/login.dart';
 
 class AccountEditPage extends StatefulWidget {
   @override
@@ -59,6 +60,25 @@ class _AccountEditPageState extends State<AccountEditPage> {
     Navigator.pop(context);
   }
 
+  Widget _signOutButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () async {
+        final userInfoViewModel = context.read<AuthViewModel>();
+        await userInfoViewModel.signOut();
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+          (Route<dynamic> route) => false,
+        );
+      },
+      child: const Text('Sign Out'),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color.fromARGB(255, 242, 240, 240),
+        foregroundColor: const Color.fromARGB(255, 235, 30, 30),
+        minimumSize: Size(200, 50),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,13 +90,12 @@ class _AccountEditPageState extends State<AccountEditPage> {
           padding: EdgeInsets.all(16),
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              minHeight:
-                  MediaQuery.of(context).size.height - 100, // AppBarの高さを考慮
+              minHeight: MediaQuery.of(context).size.height - 100,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 40), // 上部に余白を追加
+                SizedBox(height: 40),
                 GestureDetector(
                   onTap: _pickImage,
                   child: CircleAvatar(
@@ -105,24 +124,27 @@ class _AccountEditPageState extends State<AccountEditPage> {
                     ),
                   ),
                 ),
+                SizedBox(height: 20),
                 SizedBox(
-                  width: 100, // ボタンの幅を指定
-                  height: 80, // ボタンの高さを指定
+                  width: 100,
+                  height: 80,
                   child: ElevatedButton(
                     onPressed: _saveProfile,
                     child: Text(
                       '保存',
-                      style: TextStyle(fontSize: 24), // フォントサイズを大きく
+                      style: TextStyle(fontSize: 24),
                     ),
                     style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 12), // パディングを追加
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10), // 角を丸くする
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                   ),
                 ),
+                SizedBox(height: 100),
+                _signOutButton(context), // サインアウトボタンを追加
               ],
             ),
           ),

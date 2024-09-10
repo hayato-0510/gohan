@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// ログアウト後の画面
-import 'package:gohan/screen/auth/login.dart';
-
 // view_model
 import 'package:gohan/view_model/user_viewmodel/user_auth_viewmodel.dart';
 
@@ -53,8 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               const SizedBox(height: 150),
               _userInfoCard(context, user),
-              _signOutButton(context),
-              const SizedBox(height: 20),
+              const SizedBox(height: 70),
               Expanded(child: _buildListTile(context)),
             ],
           ),
@@ -179,20 +175,6 @@ class _ProfilePageState extends State<ProfilePage> {
             color: const Color.fromARGB(255, 93, 91, 91),
           ),
       ],
-    );
-  }
-
-  Widget _signOutButton(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () async {
-        final userInfoViewModel = context.read<AuthViewModel>();
-        await userInfoViewModel.signOut();
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LoginPage()),
-        );
-      },
-      child: const Text('Sign Out'),
     );
   }
 }
