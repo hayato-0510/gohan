@@ -1,62 +1,112 @@
 import 'package:flutter/material.dart';
+import 'package:gohan/model/restaurant/restaurant_model.dart';
 import 'package:gohan/components/restaurant_information/restaurant_information.dart';
-import 'package:gohan/model/restaurant/data/business_hours_model.dart';
+import 'package:gohan/constants/category_icons/category_icons.dart';
+import 'package:gohan/components/star_rating/star_rating.dart';
 
 class RestaurantDetailsBottomSheet extends StatelessWidget {
-  final String name;
-  final double rating;
-  final String location;
-  final String phone;
-  final String hours;
-  final bool isOpen;
-  final BusinessHoursModel businessHours;
+  final RestaurantModel restaurant;
 
   const RestaurantDetailsBottomSheet({
-    required this.name,
-    required this.rating,
-    required this.location,
-    required this.phone,
-    required this.hours,
-    required this.isOpen,
-    required this.businessHours,
-  });
+    Key? key,
+    required this.restaurant,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 350, // 高さを調整
+      height: MediaQuery.of(context).size.height * 0.75,
       decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            ListTile(
-              leading: Icon(Icons.restaurant),
-              title: Text(name),
-              subtitle: Text('Rating: $rating'),
+      child: Column(
+        children: [
+          Container(
+            width: 40,
+            height: 5,
+            margin: EdgeInsets.symmetric(vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(2.5),
             ),
-            /*
-            RestaurantInformation(
-              // location: location,
-              phone: phone,
-              address: location,
-              businessHours: businessHours,
-              // hours: hours,
-              // isOpen: isOpen,
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: [
+                      Icon(CategoryIcons.getIcon(restaurant.category), size: 24, color: Colors.orange),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          restaurant.name,
+                          //style: Theme.of(context).textTheme.headline6,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8),
+                  Row(
+                    children: [
+                      StarRating(
+                        rating: restaurant.rating,
+                        starSize: 20,
+                        filledColor: Colors.amber,
+                        unfilledColor: Colors.grey[300]!,
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        '(${restaurant.reviewCount})',
+                        //style: Theme.of(context).textTheme.caption,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  if (restaurant.photos.isNotEmpty)
+                    Container(
+                      height: 200,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: restaurant.photos.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.only(right: 8),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                restaurant.photos[index].url,
+                                width: 200,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  SizedBox(height: 16),
+                  RestaurantInformation(
+                    restaurant: restaurant,
+                    showDetails: true,
+                  ),
+                ],
+              ),
             ),
-            */
-            ElevatedButton(
+          ),
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: ElevatedButton(
               onPressed: () => Navigator.pop(context),
               child: Text('Close'),
+              style: ElevatedButton.styleFrom(
+                minimumSize: Size(double.infinity, 50),
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

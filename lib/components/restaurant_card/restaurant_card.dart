@@ -7,6 +7,7 @@ import 'package:gohan/view_model/restaurant_card_viewmodel/restaurant_card_viewm
 import 'package:gohan/model/restaurant/restaurant_model.dart';
 import 'package:gohan/components/location_button/location_button.dart';
 import 'package:gohan/constants/category_icons/category_icons.dart';
+import 'package:gohan/components/info_button/info_button.dart';
 
 class RestaurantCard extends StatelessWidget {
   final RestaurantModel restaurant;
@@ -44,14 +45,21 @@ class RestaurantCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    restaurant.name,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    softWrap: true,
-                    overflow: TextOverflow.visible,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          restaurant.name,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          softWrap: true,
+                          overflow: TextOverflow.visible,
+                        ),
+                      ),
+                      InfoButton(restaurant: restaurant), // InfoButtonを追加
+                    ],
                   ),
                   const SizedBox(height: 8),
                   Row(
@@ -125,9 +133,7 @@ class RestaurantCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   RestaurantInformation(
-                    address: restaurant.address,
-                    businessStatus: restaurant.businessStatus,
-                    businessHours: restaurant.businessHours,
+                    restaurant: restaurant,
                   ),
                 ],
               ),
