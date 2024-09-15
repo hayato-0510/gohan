@@ -15,6 +15,10 @@ class RestaurantDetailsBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextStyle Style = TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+    );
     return Container(
       height: MediaQuery.of(context).size.height * 0.75,
       decoration: const BoxDecoration(
@@ -45,14 +49,10 @@ class RestaurantDetailsBottomSheet extends StatelessWidget {
                       Expanded(
                         child: Text(
                           restaurant.name,
+                          style: Style,
                           //style: Theme.of(context).textTheme.headline6,
                         ),
                       ),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    children: [
                       StarRating(
                         rating: restaurant.rating,
                         starSize: 20,
@@ -62,6 +62,7 @@ class RestaurantDetailsBottomSheet extends StatelessWidget {
                       SizedBox(width: 8),
                       Text(
                         '(${restaurant.reviewCount})',
+
                         //style: Theme.of(context).textTheme.caption,
                       ),
                     ],
@@ -105,6 +106,7 @@ class RestaurantDetailsBottomSheet extends StatelessWidget {
                   RestaurantInformation(
                     restaurant: restaurant,
                     showDetails: true,
+                    textStyle: Style,
                   ),
                 ],
               ),
@@ -114,7 +116,7 @@ class RestaurantDetailsBottomSheet extends StatelessWidget {
             padding: EdgeInsets.all(16),
             child: ElevatedButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Close', style: TextStyle(color: Colors.white),),
+              child: Text('Close', style: TextStyle(fontSize: 22,color: Colors.white,fontWeight: FontWeight.bold)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
                 minimumSize: Size(double.infinity, 50),
