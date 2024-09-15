@@ -3,6 +3,7 @@ import 'package:gohan/model/restaurant/restaurant_model.dart';
 import 'package:gohan/components/restaurant_information/restaurant_information.dart';
 import 'package:gohan/constants/category_icons/category_icons.dart';
 import 'package:gohan/components/star_rating/star_rating.dart';
+import 'package:gohan/model/restaurant/data/photo_model.dart';
 
 class RestaurantDetailsBottomSheet extends StatelessWidget {
   final RestaurantModel restaurant;
@@ -73,14 +74,27 @@ class RestaurantDetailsBottomSheet extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                         itemCount: restaurant.photos.length,
                         itemBuilder: (context, index) {
-                          return Padding(
-                            padding: EdgeInsets.only(right: 8),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                restaurant.photos[index].url,
-                                width: 200,
-                                fit: BoxFit.cover,
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => GalleryPhotoViewWrapper(
+                                    galleryItems: restaurant.photos,
+                                    initialIndex: index,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.only(right: 8),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.network(
+                                  restaurant.photos[index].url,
+                                  width: 200,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           );
@@ -100,8 +114,9 @@ class RestaurantDetailsBottomSheet extends StatelessWidget {
             padding: EdgeInsets.all(16),
             child: ElevatedButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Close'),
+              child: Text('Close', style: TextStyle(color: Colors.white),),
               style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
                 minimumSize: Size(double.infinity, 50),
               ),
             ),
