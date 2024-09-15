@@ -9,7 +9,6 @@ import 'package:geolocator/geolocator.dart';
 import 'dart:io' show Platform;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-
 // コンポーネントのインポート
 import 'package:gohan/components/restaurant_card/restaurant_card.dart';
 import 'package:gohan/components/map_card/map_card.dart';
@@ -34,11 +33,9 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   late TextEditingController _foodController;
   bool _isExpandedFilterBar = false; // 矢印の向き管理
-  bool _isPhotoSelected = true;// 写真表示モードか地図表示モードかを管理
+  bool _isPhotoSelected = true; // 写真表示モードか地図表示モードかを管理
   bool _isLocationButtonPressed = false; // 現在地に戻るボタンが押されたかを管理
   LatLng? _selectedLocation; // 選択された位置を管理
-
-
 
   // シミュレータ用のデフォルト位置（例：東京都庁）
   final double defaultLatitude = 35.6762;
@@ -64,10 +61,12 @@ class _SearchPageState extends State<SearchPage> {
 
   // ビューモデルの初期化と近くのレストラン情報の読み込み
   Future<void> _initializeViewModel() async {
-    final viewModel = Provider.of<RestaurantCardViewModel>(context, listen: false);
+    final viewModel =
+        Provider.of<RestaurantCardViewModel>(context, listen: false);
     await viewModel.initialize();
     await loadNearbyRestaurants();
   }
+
   // フィルターバーの表示/非表示を切り替え
   void _toggleUserFilterBar() {
     setState(() {
@@ -81,12 +80,12 @@ class _SearchPageState extends State<SearchPage> {
     _foodController.dispose();
     super.dispose();
   }
+
   // 近くのレストラン情報を読み込む
   Future<void> loadNearbyRestaurants() async {
     try {
       Position position;
       if (Platform.isAndroid || Platform.isIOS) {
-
         // 実機の場合は位置情報の取得を試みる
         LocationSettings locationSettings = const LocationSettings(
           accuracy: LocationAccuracy.high,
@@ -128,54 +127,67 @@ class _SearchPageState extends State<SearchPage> {
           .fetchNearbyRestaurants(defaultLatitude, defaultLongitude);
     }
   }
+
   Future _performTextSearch() async {
-  final viewModel = Provider.of<RestaurantCardViewModel>(context, listen: false);
-  final userSearchSettings = Provider.of<UserSearchSettingsViewModel>(context, listen: false);
-  try {
-    Position position = await _getCurrentPosition();
-    await viewModel.searchRestaurantsByText(
-      userSearchSettings.name,
-      position.latitude,
-      position.longitude
-    );
-    setState(() {
-      _isExpandedFilterBar = false;
-    });
-    userSearchSettings.resetChanges(); // 変更状態をリセット
-  } catch (e) {
-    print('検索中にエラーが発生しました: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('検索中にエラーが発生しました。デフォルトの位置情報を使用します。')),
-    );
-    await viewModel.searchRestaurantsByText(
-      userSearchSettings.name,
-      defaultLatitude,
-      defaultLongitude
-    );
+    final viewModel =
+        Provider.of<RestaurantCardViewModel>(context, listen: false);
+    final userSearchSettings =
+        Provider.of<UserSearchSettingsViewModel>(context, listen: false);
+    try {
+      Position position = await _getCurrentPosition();
+      await viewModel.searchRestaurantsByText(
+          userSearchSettings.name, position.latitude, position.longitude);
+      setState(() {
+        _isExpandedFilterBar = false;
+      });
+      userSearchSettings.resetChanges(); // 変更状態をリセット
+    } catch (e) {
+      print('検索中にエラーが発生しました: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('検索中にエラーが発生しました。デフォルトの位置情報を使用します。')),
+      );
+      await viewModel.searchRestaurantsByText(
+          userSearchSettings.name, defaultLatitude, defaultLongitude);
+    }
   }
-}
+
   Future<Position> _getCurrentPosition() async {
-  try {
-    if (Platform.isAndroid || Platform.isIOS) {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        throw Exception('位置情報サービスが無効です');
-      }
-
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          throw Exception('位置情報の権限が拒否されました');
+    try {
+      if (Platform.isAndroid || Platform.isIOS) {
+        bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+        if (!serviceEnabled) {
+          throw Exception('位置情報サービスが無効です');
         }
-      }
 
-      if (permission == LocationPermission.deniedForever) {
-        throw Exception('位置情報の権限が永久に拒否されました');
-      }
+        LocationPermission permission = await Geolocator.checkPermission();
+        if (permission == LocationPermission.denied) {
+          permission = await Geolocator.requestPermission();
+          if (permission == LocationPermission.denied) {
+            throw Exception('位置情報の権限が拒否されました');
+          }
+        }
 
-      return await Geolocator.getCurrentPosition();
-    } else {
+        if (permission == LocationPermission.deniedForever) {
+          throw Exception('位置情報の権限が永久に拒否されました');
+        }
+
+        return await Geolocator.getCurrentPosition();
+      } else {
+        return Position(
+          latitude: defaultLatitude,
+          longitude: defaultLongitude,
+          timestamp: DateTime.now(),
+          accuracy: 0,
+          altitude: 0,
+          heading: 0,
+          speed: 0,
+          speedAccuracy: 0,
+          altitudeAccuracy: 0,
+          headingAccuracy: 0,
+        );
+      }
+    } catch (e) {
+      print('位置情報の取得に失敗しました: $e');
       return Position(
         latitude: defaultLatitude,
         longitude: defaultLongitude,
@@ -189,22 +201,8 @@ class _SearchPageState extends State<SearchPage> {
         headingAccuracy: 0,
       );
     }
-  } catch (e) {
-    print('位置情報の取得に失敗しました: $e');
-    return Position(
-      latitude: defaultLatitude,
-      longitude: defaultLongitude,
-      timestamp: DateTime.now(),
-      accuracy: 0,
-      altitude: 0,
-      heading: 0,
-      speed: 0,
-      speedAccuracy: 0,
-      altitudeAccuracy: 0,
-      headingAccuracy: 0,
-    );
   }
-}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -246,19 +244,21 @@ class _SearchPageState extends State<SearchPage> {
           Positioned.fill(
             child: _isPhotoSelected
                 ? _cardSwiper(context) // カードスワイパーを表示
-                :  Consumer<RestaurantCardViewModel>(
-                      builder: (context, viewModel, child) {
-                        if (_isLocationButtonPressed) {
-                          return OneMarkerMap(customMarkerPosition: _selectedLocation,);
-                          }
-                        else {
-                          return MapCardPage(
-                            restaurants: viewModel.restaurants, // `restaurants` リストを渡す
-                          );
-                        }
-                      },
-                ),
-),
+                : Consumer<RestaurantCardViewModel>(
+                    builder: (context, viewModel, child) {
+                      if (_isLocationButtonPressed) {
+                        return OneMarkerMap(
+                          customMarkerPosition: _selectedLocation,
+                        );
+                      } else {
+                        return MapCardPage(
+                          restaurants:
+                              viewModel.restaurants, // `restaurants` リストを渡す
+                        );
+                      }
+                    },
+                  ),
+          ),
           _isExpandedFilterBar
               ? ModalBarrier(
                   color: Colors.black.withOpacity(0.5), // 半透明の黒
@@ -271,9 +271,9 @@ class _SearchPageState extends State<SearchPage> {
             curve: Curves.easeInOut,
             color: Colors.white, // 背景色を白に設定
             height: _isExpandedFilterBar ? 130.0 : 0.0, // フィルターバーの高さ
-            child: _isExpandedFilterBar 
-              ? UserFilter(onSearch: _performTextSearch) 
-              : null,
+            child: _isExpandedFilterBar
+                ? UserFilter(onSearch: _performTextSearch)
+                : null,
           ),
         ],
       ),
@@ -296,20 +296,31 @@ class _SearchPageState extends State<SearchPage> {
           return AppinioSwiper(
             cardCount: viewModel.restaurants.length,
             cardBuilder: (BuildContext context, int index) {
-              return RestaurantCard(restaurant: viewModel.restaurants[index], onLocationButtonPressed: _onLocationButtonPressed);
+              return RestaurantCard(
+                  restaurant: viewModel.restaurants[index],
+                  onLocationButtonPressed: _onLocationButtonPressed);
             },
             maxAngle: 15,
-            onSwipeEnd: (int previousIndex, int targetIndex, SwiperActivity activity) async {
+            swipeOptions: const SwipeOptions.only(
+              up: false,
+              down: false,
+              left: true,
+              right: true,
+            ),
+            onSwipeEnd: (int previousIndex, int targetIndex,
+                SwiperActivity activity) async {
               if (activity is Swipe) {
                 final isFavorite = activity.direction == AxisDirection.right;
-                await Provider.of<UserEngagementViewModel>(context, listen: false)
+                await Provider.of<UserEngagementViewModel>(context,
+                        listen: false)
                     .saveToEngagementDB(
                   id: viewModel.restaurants[previousIndex].id.toString(),
                   name: viewModel.restaurants[previousIndex].name,
                   rating: viewModel.restaurants[previousIndex].rating,
                   location: viewModel.restaurants[previousIndex].address,
                   phone: viewModel.restaurants[previousIndex].phone,
-                  hours: viewModel.restaurants[previousIndex].businessHours.toString(),
+                  hours: viewModel.restaurants[previousIndex].businessHours
+                      .toString(),
                   isFavorite: isFavorite,
                 );
                 WidgetsBinding.instance.addPostFrameCallback((_) {
