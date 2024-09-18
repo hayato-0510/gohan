@@ -51,6 +51,7 @@ class _FavoriteListViewState extends State<FavoriteListView> {
 
                                   if (restaurantDetails != null && mounted) {
                                     // モーダルボトムシートを表示
+                                    /*
                                     showModalBottomSheet(
                                       context: context,
                                       builder: (context) {
@@ -65,6 +66,7 @@ class _FavoriteListViewState extends State<FavoriteListView> {
                                         );
                                       },
                                     );
+                                    */
                                   } else {
                                     debugPrint('Restaurant details not found for ID: ${fovliteItem["id"]}');
                                   }

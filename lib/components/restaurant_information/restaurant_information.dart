@@ -23,7 +23,8 @@ class RestaurantInformation extends StatelessWidget {
         SizedBox(height: 4),
         _buildOpenStatus(),
         if (showDetails) ...[
-          SizedBox(height: 16),
+          _buildPhonenumber(),
+          SizedBox(height: 4),
           Text('営業時間:', style: textStyle?.copyWith(fontWeight: FontWeight.bold)),
           SizedBox(height: 4),
           _buildWeeklyHours(),
@@ -61,6 +62,13 @@ class RestaurantInformation extends StatelessWidget {
     );
 
     return Text(status, style: statusStyle);
+  }
+
+  Widget _buildPhonenumber() {
+    return Text(
+      '電話番号: ${restaurant.phone}',
+      style: textStyle,
+    );
   }
 
   Widget _buildWeeklyHours() {

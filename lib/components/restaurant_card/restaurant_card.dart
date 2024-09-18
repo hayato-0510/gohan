@@ -51,7 +51,7 @@ class RestaurantCard extends StatelessWidget {
                         child: Text(
                           restaurant.name,
                           style: const TextStyle(
-                            fontSize: 24,
+                            fontSize: 28,
                             fontWeight: FontWeight.bold,
                           ),
                           softWrap: true,
@@ -64,14 +64,15 @@ class RestaurantCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Icon(CategoryIcons.getIcon(restaurant.category), size: 18, color: Colors.orange),
+                      Icon(CategoryIcons.getIcon(restaurant.category), size: 24, color: Colors.orange),
                       const SizedBox(width: 4),
-                      Text(restaurant.category, style: TextStyle(fontSize: 16)),
+                      Text(restaurant.category, style: TextStyle(fontSize: 22)),
                       const Spacer(),
                       StarRating(
                         rating: restaurant.rating,
                         filledColor: Colors.amber,
                         unfilledColor: Colors.grey[300]!,
+                        starSize: 22,
                       ),
                       const SizedBox(width: 4),
                       Text('(${restaurant.reviewCount})', style: TextStyle(color: Colors.grey[600])),
@@ -134,6 +135,7 @@ class RestaurantCard extends StatelessWidget {
                   const SizedBox(height: 16),
                   RestaurantInformation(
                     restaurant: restaurant,
+                    textStyle: const TextStyle(fontSize: 20),
                   ),
                 ],
               ),
