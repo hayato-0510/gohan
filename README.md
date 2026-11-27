@@ -7,6 +7,29 @@ Gohanは、従来のアプリやGoogle Mapsでは見つけにくいレストラ�
 最新のフローは`flow.drawio`ファイルを[drawio](https://app.diagrams.net/)で確認してください。
 ![フロー図](docs/img/image.png)
 
+## 画面と機能
+
+| 画面 | 内容 |
+| :--- | :--- |
+| Home（おすすめ） | 条件に合うレストランのカード一覧。写真を見ながら選べる |
+| 保存リスト | 気になった店を保存しておくリスト |
+| Search | 営業中などの条件で絞り込み、店のカードと地図で探す |
+| 店舗詳細 | 評価や営業時間などの詳細ページ |
+| Profile | 利用状況（エンゲージメント）の管理 |
+
+## レコメンドの仕組み
+
+好みのジャンル（和食・イタリアンなど）、予算、距離、最低評価を入力すると、条件に合う店を絞り込んで提示します（[gohan_recommend](https://github.com/hayato-0510/gohan_recommend)）。アプリ本体は、利用者の行動をもとにおすすめを出す ViewModel と、現在地をもとに探す ViewModel、レストランカードの ViewModel を Riverpod の Provider で分けて持つ構成です。
+
+## 技術構成
+
+| 部分 | 技術 |
+| :--- | :--- |
+| アプリ | Flutter（iOS / Android） |
+| 状態管理 | Riverpod（Provider / ViewModel） |
+| 地図 | Google Maps API |
+| 認証・データ | Firebase（ログイン、Firestore、ローカルDB） |
+
 ## Git命名規則
 
 ### コミットメッセージのルール
