@@ -7,6 +7,12 @@ Gohanは、従来のアプリやGoogle Mapsでは見つけにくいレストラ�
 最新のフローは`flow.drawio`ファイルを[drawio](https://app.diagrams.net/)で確認してください。
 ![フロー図](docs/img/image.png)
 
+## 画面
+
+ログイン画面（Web版をビルドして撮影）。
+
+![ログイン画面](docs/images/screen-login.png)
+
 ## 画面と機能
 
 | 画面 | 内容 |
