@@ -23,6 +23,12 @@ Web版をビルドし、実際にログインして撮影した画面です。
 
 ![探す画面](docs/images/screen-search.png)
 
+探す画面の店舗カード（動作確認用のサンプル店舗データを入れて撮影。カードをスワイプして次の店に進めます）:
+
+![店舗カード1](docs/images/screen-search-card.png)
+
+![店舗カード2](docs/images/screen-search-card2.png)
+
 プロフィール画面（アカウント編集、アレルギー設定、利用規約、ヘルプ）:
 
 ![プロフィール画面](docs/images/screen-profile.png)
